@@ -29,6 +29,7 @@
 #include "TStyle.h"
 #include "THStack.h"
 #include <iostream>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <string>
@@ -42,18 +43,18 @@ struct MCsample
 {
   std::string Fname;
   std::string Sname;
+  bool IsSignal;
   double Xsec;
   double Color;
   double Nevents;
   double Scale;
-  double NEff;
-  double NEff4j;
+  double NSel;
   TFile* File;
   MCsample(std::string fname="Test", std::string sname="TestSample", 
-      double xsec = 0.0, double color=0, double nevents = 0, 
-        double scale = 0.0, double neff = 0.0, TFile* file=NULL):
-      Fname(fname), Sname(sname), Xsec(xsec), Color(color), Nevents(nevents), 
-      Scale(scale), NEff(neff), File(file){}
+      bool issignal=false, double xsec = 0.0, double color=0, double nevents = 0, 
+        double scale = 0.0, double NSel = 0.0, TFile* file=NULL):
+      Fname(fname), Sname(sname), IsSignal(issignal),  Xsec(xsec), Color(color), 
+      Nevents(nevents), Scale(scale), NSel(NSel), File(file){}
 };
 
 std::vector<string> GetAllHis (std::vector<MCsample> ProList);
@@ -64,23 +65,32 @@ int main ( int argc, char *argv[] )
   StopStyle();
   TRint *theApp = new TRint("plot interactively", &argc, argv);
 
-  const double InitLumifb = 700; // in the unit of /fb
+  const double InitLumifb = 500000; // in the unit of pb
 
-  MCsample Wino200("./Wino/Wino200_14TeV_140PileUp_NoCut.root", "Wino200_140PileUp_NoCut", 964.6, 1); //14TeV XS 
-  MCsample Wino250("./Wino/Wino200_14TeV_140PileUp_CTMjj.root", "Wino200_140PileUp_CTMjj", 964.6, 3); //14TeV XS 
-  MCsample Wino500("./Wino/Wino200_14TeV_NoPileUp_CTMet50.root", "Wino200_NoPileUp_CTMet50", 21022, 2); //14TeV XS 
-  //MCsample TTbar("../HComp/Delphes/TTBAR_13TEV_140PileUp_AllCut.root", 964.6, 1); //14TeV XS 
-  //MCsample WJJ("../HComp/Delphes/WJETS_13TEV_NoPileUp_NoCut.root", 21022, 2); //14TeV XS 
+ //const std::string Label = "14TEV_50PileUp_AllCut";
+ ////Signal
+ //MCsample Wino200("HH/Wino200PU0_AllCut.root", "Wino200", true,  0.02, 100); //14TeV XS 
+ //// Background
+ //MCsample ZJJ("HH/DYNN_AllCut.root", "DYNN", false,  12930, 38); //14TeV XS for Z/gamma
+ //MCsample TT("HH/TAll_AllCut.root", "TTBAR",  false, 882.29, 93); //14TeV XS for ttbar
+ //MCsample WJJ("HH/WJETS_AllCut.root", "WJJ",  false, 63066, 8); //14TeV XS for W
 
-  Wino500.Fname="df";
-
+ const std::string Label = "14TEV_50PileUp_CTMjj";
+ //Signal
+ MCsample Wino200("HH/Wino200PU0_CTMjj.root", "Wino200", true,  0.02, 100); //14TeV XS 
+ // Background
+ MCsample ZJJ("HH/DYNN_CTMjj.root", "DYNN", false,  12930, 38); //14TeV XS for Z/gamma
+ MCsample TT("HH/TAll_CTMjj.root", "TTBAR",  false, 882.29, 93); //14TeV XS for ttbar
+ MCsample WJJ("HH/WJETS_CTMjj.root", "WJJ",  false, 63066, 8); //14TeV XS for W
 
   std::vector<MCsample> ProList; //List of process to be stacked
-  const std::string Prefix = "Test";
+  ProList.push_back(WJJ);
+  ProList.push_back(TT);
+  ProList.push_back(ZJJ);
   ProList.push_back(Wino200);
-  ProList.push_back(Wino250);
-  ProList.push_back(Wino500);
 
+  std::vector<double> NSignal; //Number of signal
+  std::vector<double> NBackg; //Number of signal
   // First load all the needed information into the structure
   for(std::vector<MCsample>::iterator it=ProList.begin();
       it!=ProList.end(); it++)
@@ -114,13 +124,13 @@ int main ( int argc, char *argv[] )
           std::cout << "Some thing is wrong! " << std::endl;
       }
 
-      if (it->NEff == 0)
+      if (it->NSel == 0)
       {
         TH1F *SEvt = (TH1F*)it->File->Get("NEVTS");
         double bvale = SEvt->GetBinContent(SEvt->FindBin(1)); 
         if (bvale != 0 && it->Nevents != 0)
         {
-          it->NEff = bvale / it->Nevents;
+          it->NSel = bvale;
           delete SEvt;
         }
         else
@@ -129,14 +139,37 @@ int main ( int argc, char *argv[] )
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Now let do the calculation! ~~~~~
       double SampleLumi = it->Nevents / it->Xsec;
       double SampleScale = InitLumifb / SampleLumi;
-      it->Scale = SampleScale * it->NEff;
+      it->Scale = SampleScale;
+      if (it->IsSignal)
+        NSignal.push_back(it->Scale * it->NSel);
+      else
+        NBackg.push_back(it->Scale * it->NSel);
 
-      std::cout << "Inital Nevent : " << it->Nevents << " Eff : " << it->NEff << std::endl;
+      std::string cat =  it->IsSignal ? " Signal " : " Background ";
+      std::cout << cat << " Sample  : \033[0;31m" << it->Sname 
+        <<  "\033[0m  Cross Section : \033[1;36m" << it->Xsec 
+        <<  "\033[0m  Inital Nevent : \033[0;34m" << it->Nevents
+        << "\033[0m Selected : \033[0;34m" << it->NSel << "\033[0m" << std::endl;
     }
-
-
   }
 
+//----------------------------------------------------------------------------
+//  Now let us calculate the S/sqrt(S+B)
+//----------------------------------------------------------------------------
+  double sgl=0.0;
+  double bkg=0.0;
+  for(std::vector<double>::iterator it=NSignal.begin();
+    it!=NSignal.end(); it++)
+  {
+    sgl += *it;
+  }
+  for(std::vector<double>::iterator it=NBackg.begin();
+    it!=NBackg.end(); it++)
+  {
+    bkg += *it;
+  }
+  double sb = sgl / sqrt(sgl+bkg);
+  std::cout<<" S/sqrt(S+B) = \033[0;31m"<<sb<<"\033[0m"<< std::endl; 
 
   //----------------------------------------------------------------------------
   //  Now get all the input variable to draw..
@@ -158,8 +191,9 @@ int main ( int argc, char *argv[] )
     std::cout << "Ploting " << *hit << std::endl;
     c1->cd();
     c1->Clear();
+    c1->SetLogy();
     std::vector<TH1F*> Stackh; //Keep all the stack histograms in this loop
-  THStack *Hstack = new THStack(hit->c_str(), hit->c_str());
+    THStack *Hstack = new THStack(hit->c_str(), hit->c_str());
 
     double maxy = 0;
     double miny = 0;
@@ -172,39 +206,45 @@ int main ( int argc, char *argv[] )
     f.SetTextSize(0.045);
     //
 
+    std::string Xlabel;
     for(std::vector<MCsample>::iterator it=ProList.begin();
         it!=ProList.end(); it++)
     {
       TH1F* h = (TH1F*)it->File->Get(hit->c_str());
       std::cout << "NA : " << h->GetTitle() << " from : " << it->Fname<< std::endl;
+      f.AddEntry(h, it->Sname.c_str(), "fl");
+      Xlabel = h->GetTitle();
+      h->SetTitle(Label.c_str());
       h->SetFillColor(it->Color);
-      h->SetLineColor(it->Color);
+      h->SetLineColor(1);
+      //h->SetLineColor(it->Color);
       // Now let us rescale it 
       if (h->Integral() <= 0)
-      {
-        std::cout << "Shit!! what should I do? Let us go party..." << std::endl;
-        break;
-      }
+        continue;
       h->Scale(it->Scale/ h->Integral());
 
       Stackh.push_back(h);
       Hstack->Add(h);
-      f.AddEntry(h, it->Sname.c_str(), "f");
       std::cout << "Title : " << h->GetTitle() << std::endl;
       Hstack->SetTitle(h->GetTitle());
     }
 
+    if (Stackh.size() == 0)
+    {
+      delete Hstack;
+      continue;
+    }
+
     Hstack->Draw();
+    Hstack->GetXaxis()->SetTitle(Xlabel.c_str());
     f.Draw();
 
     //Print out the plots
-    TString outname = Prefix+"_"+*hit + ".png";
+    TString outname = Label+"_"+*hit + ".png";
     c1->Print(outname);
-    //outname = cit->first+ *hit + ".root";
-    //c1->Print(outname);
 
     for(std::vector<TH1F*>::iterator it=Stackh.begin();
-      it!=Stackh.end(); it++)
+        it!=Stackh.end(); it++)
     {
       delete *it;
     }

@@ -11,3 +11,10 @@
 *.lai
 *.la
 *.a
+
+## Ignore root
+*.root
+
+## Ignore picture
+*.png
+*.eps

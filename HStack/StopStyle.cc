@@ -95,17 +95,17 @@ void StopStyle()
 
   //Axis
   SStyle->SetTickLength ( 0.015,"X");
-  SStyle->SetTitleSize  ( 0.07,"X");
+  SStyle->SetTitleSize  ( 0.05,"X");
   SStyle->SetNdivisions ( 505 ,"X");
-  SStyle->SetLabelSize  ( 0.07,"X");
-  SStyle->SetTitleOffset( 1.1,"X");
+  SStyle->SetLabelSize  ( 0.04,"X");
+  SStyle->SetTitleOffset( 0.8,"X");
   //SStyle->SetTitleColor ( 1    ,"X");
   //SStyle->SetLabelOffset( 0.01,"X");
   //SStyle->SetLabelFont  ( 42   ,"X");
 
   SStyle->SetTickLength ( 0.015,"Y");
   SStyle->SetTitleSize  ( 0.07,"Y");
-  SStyle->SetLabelSize  ( 0.07,"Y");
+  SStyle->SetLabelSize  ( 0.04,"Y");
   SStyle->SetTitleOffset( 1.3,"Y");
   SStyle->SetNdivisions ( 505   ,"Y");
   //SStyle->SetLabelOffset( 0.01,"Y");

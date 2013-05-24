@@ -37,6 +37,8 @@ XTDraw: XTDraw.o StopStyle.o
 
 HistStack: HistStack.o StopStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
+
 fit2d: fit2d.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"

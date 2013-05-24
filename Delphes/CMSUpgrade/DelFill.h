@@ -69,7 +69,7 @@ class DPhes
     TVector2 ZLLMet();
     int FillEvents();
     TVector2 PUCorrectedMet();
-    TVector2 FindZProduct(std::vector<GenParticle*> VPart, std::list<GenParticle*> LFound) const;
+    TVector2 FindZProduct(std::vector<GenParticle*> VPart, std::list<int> LFound) const;
     std::list<int> CheckZ();
     int FillEle();
     int FillMet();

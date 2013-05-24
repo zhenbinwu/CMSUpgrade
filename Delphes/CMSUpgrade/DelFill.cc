@@ -593,9 +593,7 @@ TVector2 DPhes::ZLLMet()
 
   if (VPart.size() != 2)
   {
-    CheckZ();
-    //oldMet += FindZProduct(VPart, );
-    //oldMet += FindZProduct(VPart, CheckZ());
+    oldMet += FindZProduct(VPart, CheckZ());
   }
 
   return oldMet;
@@ -727,7 +725,7 @@ std::list<int> DPhes::CheckZ()
   {
     GenParticle* p = (GenParticle*)branchParticle->At(i);
 
-       if  (std::abs(p->PID) == 11 || std::abs(p->PID) == 13 || std::abs(p->PID) == 15)
+    if  (std::abs(p->PID) == 11 || std::abs(p->PID) == 13 || std::abs(p->PID) == 15)
     {
       VLep.push_back(i);
       VLep.push_back(++i);
@@ -745,7 +743,7 @@ std::list<int> DPhes::CheckZ()
 //  We need to find out where the other particles goes when there is only 1 or
 //  0 lepton in the event
 // ===========================================================================
-TVector2 DPhes::FindZProduct(std::vector<GenParticle*> VPart, std::list<GenParticle*> LFound) const
+TVector2 DPhes::FindZProduct(std::vector<GenParticle*> VPart, std::list<int> LFound) const
 {
   TVector2 addmet(0, 0);
   GenParticle *particle = 0;
@@ -758,20 +756,23 @@ TVector2 DPhes::FindZProduct(std::vector<GenParticle*> VPart, std::list<GenParti
   {
 
     // Lepton particle is referred as lit
-    for(std::list<GenParticle*>::iterator it=LFound.begin();
-        it!=LFound.end(); it++)
+    std::list<int>::iterator it=LFound.begin();
+    while( it!=LFound.end() )
     {
-      if ((*it)->P4() == (*lit)->P4() && (*it)->Charge == (*lit)->Charge)
-        LFound.erase(it);
+      GenParticle* p = (GenParticle*)branchParticle->At(*it);
+      if (p->P4() == (*lit)->P4() && p->Charge == (*lit)->Charge)
+        it = LFound.erase(it);
+      else it++;
     }
   }
 
-
-  for(std::list<GenParticle*>::iterator it=LFound.begin();
-    it!=LFound.end(); it++)
+  std::list<int>::iterator it=LFound.begin();
+  while (it!=LFound.end())
   {
-      addmet += TVector2((*it)->Px, (*it)->Py);
+    GenParticle* p = (GenParticle*)branchParticle->At(*it);
+    addmet += TVector2(p->Px, p->Py);
+    it++;
   }
-    
+
   return addmet;
 }       // -----  end of function DPhes::FindZProduct  -----

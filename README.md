@@ -1,4 +1,7 @@
 CMSUpgrade
 ==========
 
-Project for CMS Upgrade study
+Project for CMS Phase 2 Upgrade study
+
+
+

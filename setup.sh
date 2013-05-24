@@ -1,0 +1,1 @@
+setenv LD_LIBRARY_PATH $PWD/Delphes/:$LD_LIBRARY_PATH

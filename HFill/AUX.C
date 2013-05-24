@@ -75,6 +75,7 @@ void AUX::Loop()
   HisMap["Njet"] = new TH1F("Njet", "Num. of Jets", 20, 0, 20.0 );
   HisMap["Nele"] = new TH1F("Nele", "Num. of Eles", 10, 0, 10.0 );
   HisMap["Nmuon"] = new TH1F("Nmuon", "Num. of Muons", 10, 0, 10.0 );
+  HisMap["NVTX"] = new TH1F("NVTX", "Vertex Size", 60, 0, 60.0 );
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
   HisMap["Met"] = new TH1F("Met", "MET", 40, 0, 800.0 );
@@ -89,6 +90,11 @@ void AUX::Loop()
   HisMap["MhtSgn"] = new TH1F("MhtSgn", "MHT Sgnf.", 8, -4, 4 );
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
+  HisMap["JetEta"] = new TH1F("JetEta", "#eta_{Jet}", 28, -7, 7 );
+  HisMap["JetPt"] = new TH1F("JetPt", "Pt_{Jet}", 30, 0, 300.0 );
+  HisMap["JetPhi"] = new TH1F("JetPhi", "#phi_{Jet}", 28, -7, 7);
+  HisMap["JetN"] = new TH1F("JetN", "Pt oreder of Jet", 28, 0, 28);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jet 1 ~~~~~
   HisMap["J1Pt"] = new TH1F("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
   HisMap["J1Eta"] = new TH1F("J1Eta", "#eta_{J1}", 14, -7, 7 );
   HisMap["J1Phi"] = new TH1F("J1Phi", "#phi_{J1}", 14, -7, 7);
@@ -106,6 +112,7 @@ void AUX::Loop()
   HisMap["dRJJ"] = new TH1F("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
  
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
+  HisMap2D["Jet2D"] = new TH2D("Jet2D", "Jets  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   HisMap2D["J12D"] = new TH2D("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   HisMap2D["J22D"] = new TH2D("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   HisMap2D["J32D"] = new TH2D("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
@@ -147,6 +154,7 @@ void AUX::Loop()
 //----------------------------------------------------------------------------
      if (Cut(cutbit, jet_map) == false) continue;
 
+    FillJet(jet_map);
     HisMap["NEVTS"]->Fill(1);
     //----------------------------------------------------------------------------
     //  Start to fill His
@@ -253,21 +261,21 @@ int AUX::HistWriteDraw()
     it->second->SetTitle(hisname);
     it->second->Draw();
     TString outname = OutPicName+"_"+it->first+".png";
-    //c1->Print(outname);
+    c1->Print(outname);
   }
 
-  //for(std::map<std::string, TH2D*>::iterator it=HisMap2D.begin();
-    //it!=HisMap2D.end(); it++)
-  //{
-    //std::cout << "Printing :" << it->first << std::endl;
-    //it->second->Write();
-    //c1->Clear();
-    //TString hisname = OutPicName + " : " + it->second->GetTitle();
-    //it->second->SetTitle(hisname);
-    //it->second->Draw("CONT4Z ");
-    //TString outname = OutPicName+"_"+it->first+".png";
-    //c1->Print(outname);
-  //}
+  for(std::map<std::string, TH2D*>::iterator it=HisMap2D.begin();
+    it!=HisMap2D.end(); it++)
+  {
+    std::cout << "Printing :" << it->first << std::endl;
+    it->second->Write();
+    c1->Clear();
+    TString hisname = OutPicName + " : " + it->second->GetTitle();
+    it->second->SetTitle(hisname);
+    it->second->Draw("CONT4Z ");
+    TString outname = OutPicName+"_"+it->first+".png";
+    c1->Print(outname);
+  }
   delete c1;
 
   f.Close();
@@ -364,3 +372,38 @@ int AUX::SetCutBit(std::string inp)
   cutbit = std::bitset<10>(inp); //No selection
   return 1;
 }       // -----  end of function AUX::SetCutBit  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  AUX::FillJet
+//  Description:  Fill in all the jet's eta for jet_pt > 20Gev
+// ===========================================================================
+int AUX::FillJet(std::list< std::pair<double, int> > jet_map)
+{
+  int order=1;
+  for (std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
+    jit!=jet_map.end(); jit++)
+  {
+    TLorentzVector jet = (*jetsLVec)[jit->second];
+    if (jet.Pt() > 20 && std::fabs(jet.Eta()) < 2.5)
+    {
+      HisMap["JetPt"]->Fill(jet.Pt());
+      HisMap["JetEta"]->Fill(jet.Eta());
+      HisMap["JetPhi"]->Fill(jet.Phi());
+      HisMap["JetN"]->Fill(order);
+      HisMap2D["Jet2D"]->Fill(jet.Eta(), jet.Phi());
+      HisMap["NVTX"]->Fill(vtxSize);
+    }
+    order++;
+  }
+  //for ( int ijet = 0; ijet < jetsLVec->size() ; ijet++) 
+  //{
+    //TLorentzVector jet = (*jetsLVec)[ijet];
+    //if (jet.Pt() > 20 && std::fabs(jet.Eta()) < 5)
+    //{
+      //HisMap["JetPt"]->Fill(jet.Pt());
+      //HisMap["JetEta"]->Fill(jet.Eta());
+      //HisMap["JetPhi"]->Fill(jet.Phi());
+    //}
+  //}
+  return 1;
+}       // -----  end of function AUX::FillJet  -----

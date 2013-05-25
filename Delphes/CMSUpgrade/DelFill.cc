@@ -84,7 +84,7 @@ DPhes::operator = ( const DPhes &other )
 // ===========================================================================
 int DPhes::InitDelPhes(std::string process, std::string pu)
 {
-  treeReader        = 0;
+  treeReader       = 0;
   branchJet        = 0;
   branchElectron   = 0;
   branchMuon       = 0;
@@ -167,56 +167,56 @@ int DPhes::BookHistogram()
   //----------------------------------------------------------------------------
   //  Define His
   //----------------------------------------------------------------------------
-  HisMap["NEVT"] = new TH1F("NEVT", "Num. of Events", 2, 0, 2 );
-  HisMap["NEVTS"] = new TH1F("NEVTS", "Selected Num. of Events", 2, 0, 2 );
-  HisMap["Njet"] = new TH1F("Njet", "Num. of Jets", 20, 0, 20.0 );
-  HisMap["Nele"] = new TH1F("Nele", "Num. of Eles", 10, 0, 10.0 );
-  HisMap["Nmuon"] = new TH1F("Nmuon", "Num. of Muons", 10, 0, 10.0 );
+  HisMap["NEVT"]    = new TH1F("NEVT", "Num. of Events", 2, 0, 2 );
+  HisMap["NEVTS"]   = new TH1F("NEVTS", "Selected Num. of Events", 2, 0, 2 );
+  HisMap["Njet"]    = new TH1F("Njet", "Num. of Jets", 20, 0, 20.0 );
+  HisMap["Nele"]    = new TH1F("Nele", "Num. of Eles", 10, 0, 10.0 );
+  HisMap["Nmuon"]   = new TH1F("Nmuon", "Num. of Muons", 10, 0, 10.0 );
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
-  HisMap["Met"] = new TH1F("Met", "MET", 40, 0, 800.0 );
-  HisMap["Metx"] = new TH1F("Metx", "MET_X", 40, -400, 400.0 );
-  HisMap["Mety"] = new TH1F("Mety", "MET_Y", 40, -400, 400.0 );
-  HisMap["MetPhi"] = new TH1F("MetPhi", "#Phi_{MET}", 16, 0, 8 );
-  HisMap["MetSgn"] = new TH1F("MetSgn", "Met Sgnf.", 16, 0, 8 );
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
+  HisMap["Met"]     = new TH1F("Met", "MET", 40, 0, 800.0 );
+  HisMap["Metx"]    = new TH1F("Metx", "MET_X", 40, -400, 400.0 );
+  HisMap["Mety"]    = new TH1F("Mety", "MET_Y", 40, -400, 400.0 );
+  HisMap["MetPhi"]  = new TH1F("MetPhi", "#Phi_{MET}", 16, 0, 8 );
+  HisMap["MetSgn"]  = new TH1F("MetSgn", "Met Sgnf.", 16, 0, 8 );
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
-  HisMap["CMet"] = new TH1F("CMet", "PU Corrected MET", 40, 0, 800.0 );
-  HisMap["CMetx"] = new TH1F("CMetx", "PU Corrected MET_X", 40, -400, 400.0 );
-  HisMap["CMety"] = new TH1F("CMety", "PU Corrected MET_Y", 40, -400, 400.0 );
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
+  HisMap["CMet"]    = new TH1F("CMet", "PU Corrected MET", 40, 0, 800.0 );
+  HisMap["CMetx"]   = new TH1F("CMetx", "PU Corrected MET_X", 40, -400, 400.0 );
+  HisMap["CMety"]   = new TH1F("CMety", "PU Corrected MET_Y", 40, -400, 400.0 );
   HisMap["CMetPhi"] = new TH1F("CMetphi", "PU Corrected MET_Phi", 40, 0, 8 );
-  HisMap["CMHT"] = new TH1F("CMHT", "C MHT", 40, 0, 800.0 );
+  HisMap["CMHT"]    = new TH1F("CMHT", "C MHT", 40, 0, 800.0 );
   HisMap["CMHTEta"] = new TH1F("CMHTEta", "C MHT Eta", 40, 0, 800.0 );
   HisMap["CMHTPhi"] = new TH1F("CMHTPHi", "C MHT Phi", 40, 0, 800.0 );
-  HisMap["CHT"] = new TH1F("CHT", "C HT", 40, 0, 800.0 );
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HT ~~~~~
-  HisMap["HT"] = new TH1F("HT", "HT", 40, 0, 1600.0 );
-  HisMap["MT"] = new TH1F("MT", "W Transverse Mass", 40, -200, 800.0 );
-  HisMap["MHT"] = new TH1F("MHT", "MHT", 40, 0, 800.0 );
-  HisMap["MhtPhi"] = new TH1F("MhtPhi", "#Phi_{MHT}", 14, -7, 7 );
-  HisMap["MhtSgn"] = new TH1F("MhtSgn", "MHT Sgnf.", 8, -4, 4 );
+  HisMap["CHT"]     = new TH1F("CHT", "C HT", 40, 0, 800.0 );
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HT ~~~~~
+  HisMap["HT"]      = new TH1F("HT", "HT", 40, 0, 1600.0 );
+  HisMap["MT"]      = new TH1F("MT", "W Transverse Mass", 40, -200, 800.0 );
+  HisMap["MHT"]     = new TH1F("MHT", "MHT", 40, 0, 800.0 );
+  HisMap["MhtPhi"]  = new TH1F("MhtPhi", "#Phi_{MHT}", 14, -7, 7 );
+  HisMap["MhtSgn"]  = new TH1F("MhtSgn", "MHT Sgnf.", 8, -4, 4 );
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
-  HisMap["J1Pt"] = new TH1F("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
-  HisMap["J1Eta"] = new TH1F("J1Eta", "#eta_{J1}", 14, -7, 7 );
-  HisMap["J1Phi"] = new TH1F("J1Phi", "#phi_{J1}", 14, -7, 7);
-  HisMap["J2Pt"] = new TH1F("J2Pt", "Pt_{J2}", 40, 0, 800.0 );
-  HisMap["J2Eta"] = new TH1F("J2Eta", "#eta_{J2}", 14, -7, 7 );
-  HisMap["J2Phi"] = new TH1F("J2Phi", "#phi_{J2}", 14, -7, 7);
-  HisMap["J3Pt"] = new TH1F("J3Pt", "Pt_{J3}", 40, 0, 800.0 );
-  HisMap["J3Eta"] = new TH1F("J3Eta", "#eta_{J3}", 14, -7, 7 );
-  HisMap["J3Phi"] = new TH1F("J3Phi", "#phi_{J3}", 14, -7, 7);
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
+  HisMap["J1Pt"]    = new TH1F("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
+  HisMap["J1Eta"]   = new TH1F("J1Eta", "#eta_{J1}", 14, -7, 7 );
+  HisMap["J1Phi"]   = new TH1F("J1Phi", "#phi_{J1}", 14, -7, 7);
+  HisMap["J2Pt"]    = new TH1F("J2Pt", "Pt_{J2}", 40, 0, 800.0 );
+  HisMap["J2Eta"]   = new TH1F("J2Eta", "#eta_{J2}", 14, -7, 7 );
+  HisMap["J2Phi"]   = new TH1F("J2Phi", "#phi_{J2}", 14, -7, 7);
+  HisMap["J3Pt"]    = new TH1F("J3Pt", "Pt_{J3}", 40, 0, 800.0 );
+  HisMap["J3Eta"]   = new TH1F("J3Eta", "#eta_{J3}", 14, -7, 7 );
+  HisMap["J3Phi"]   = new TH1F("J3Phi", "#phi_{J3}", 14, -7, 7);
 
-  HisMap["MJJ"] = new TH1F("MJJ", "M_{J1, J2}", 40, 0, 2800.0 );
-  HisMap["dPtJJ"] = new TH1F("dPtJJ", "#Delta Pt_{J1, J2}", 40, 0, 1200 );
-  HisMap["dPhiJJ"] = new TH1F("dPhiJJ", "#Delta #phi_{J1, J2}", 14, -7, 7 );
-  HisMap["dEtaJJ"] = new TH1F("dEtaJJ", "#Delta #eta_{J1, J2}", 14, -7, 7 );
-  HisMap["dRJJ"] = new TH1F("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
- 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
-  HisMap2D["J12D"] = new TH2D("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
-  HisMap2D["J22D"] = new TH2D("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
-  HisMap2D["J32D"] = new TH2D("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
+  HisMap["MJJ"]     = new TH1F("MJJ", "M_{J1, J2}", 40, 0, 2800.0 );
+  HisMap["dPtJJ"]   = new TH1F("dPtJJ", "#Delta Pt_{J1, J2}", 40, 0, 1200 );
+  HisMap["dPhiJJ"]  = new TH1F("dPhiJJ", "#Delta #phi_{J1, J2}", 14, -7, 7 );
+  HisMap["dEtaJJ"]  = new TH1F("dEtaJJ", "#Delta #eta_{J1, J2}", 14, -7, 7 );
+  HisMap["dRJJ"]    = new TH1F("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
+  HisMap2D["J12D"]  = new TH2D("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
+  HisMap2D["J22D"]  = new TH2D("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
+  HisMap2D["J32D"]  = new TH2D("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   return 1;
 }       // -----  end of function DPhes::BookHistogram  -----
 
@@ -235,16 +235,16 @@ int DPhes::Looping()
       std::cout << "--------------------" << entry << std::endl;
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
+    CorMet.Clear();
 
-
+    HisMap["NEVT"]->Fill(1);
     if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
-    {
       HisMap["NEVT"]->Fill(0);
-    }
-    else
-      HisMap["NEVT"]->Fill(1);
+
     // Clear our the jet ordering list
     OrderJet();
+
+    CorMet = PUCorrectedMet();
 
     //// Apply cuts before filling up the histogram
     if (Cut(cutbit) == false) continue;
@@ -256,7 +256,6 @@ int DPhes::Looping()
     FillMuon();
     FillHT();
     FillJets();
-    PUCorrectedMet();
 
   }
 
@@ -308,17 +307,17 @@ int DPhes::FillMet()
     HisMap["Met"]->Fill(met.Mod());
     HisMap["MetPhi"]->Fill(met.Phi());
   } else{
-    // If event contains at least 1 jet
-    if(branchMet->GetEntries() != 1)
-      return 0;
+    //// If event contains at least 1 jet
+    //if(branchMet->GetEntries() != 1)
+    //return 0;
 
-    MissingET *met = (MissingET*) branchMet->At(0);
-    HisMap["Met"]->Fill(met->MET);
-    HisMap["MetPhi"]->Fill(met->Phi);
-    TVector2 met2V;
-    met2V.SetMagPhi(met->MET, met->Phi);
-    HisMap["Metx"]->Fill(met2V.Px());
-    HisMap["Mety"]->Fill(met2V.Py());
+    //MissingET *met = (MissingET*) branchMet->At(0);
+    //TVector2 met2V;
+    //met2V.SetMagPhi(met->MET, met->Phi);
+    HisMap["Met"]->Fill(CorMet.Mod());
+    HisMap["MetPhi"]->Fill(CorMet.Phi());
+    HisMap["Metx"]->Fill(CorMet.Px());
+    HisMap["Mety"]->Fill(CorMet.Py());
   }
 
   return 1;
@@ -368,7 +367,12 @@ TVector2 DPhes::PUCorrectedMet()
 
   if (MHT == TLorentzVector(0, 0, 0,0))
   {
-    return TVector2(0,0);
+    if(branchMet->GetEntries() != 1)
+      return TVector2(0,0);
+    MissingET *met = (MissingET*) branchMet->At(0);
+    TVector2 met2V;
+    met2V.SetMagPhi(met->MET, met->Phi);
+    return met2V;
   }
 
   double met_x = -MHT.Px();
@@ -385,6 +389,8 @@ TVector2 DPhes::PUCorrectedMet()
   return CMet;
 
 }       // -----  end of function DPhes::PUCorrectedMet  -----
+
+
 // ===  FUNCTION  ============================================================
 //         Name:  DPhes::FillEle
 //  Description:  Filling up electron information
@@ -550,7 +556,7 @@ int DPhes::SetCutBit(std::string inp)
 TVector2 DPhes::ZLLMet()
 {
   // First get the PU corrected Met in the event
-  TVector2 oldMet = PUCorrectedMet();
+  TVector2 oldMet = CorMet;
 
 //----------------------------------------------------------------------------
 //  Looping the events for Z decay products 
@@ -607,7 +613,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
 // returns -1 otherwise.
    TLorentzVector J1(0, 0, 0, 0);
    TLorentzVector J2(0, 0, 0, 0);
-   double MET = 0;
+   double MET = CorMet.Mod();
 //----------------------------------------------------------------------------
 //  VBF Selection
 //----------------------------------------------------------------------------
@@ -658,7 +664,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
     if (FakingZNN)
       MET = ZLLMet().Mod();
     else
-      MET = ((MissingET*) branchMet->At(0))->MET;
+      MET = CorMet.Mod();
     if (MET < 50) return false;
   }
 

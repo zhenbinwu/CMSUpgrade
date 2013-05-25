@@ -113,6 +113,7 @@ class DPhes
 
     std::bitset<10> cutbit; //Cut flow  
     bool FakingZNN;
+    TVector2 CorMet;
     std::list< std::pair<double, int> > jet_map; //Sorting jet energy 
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 

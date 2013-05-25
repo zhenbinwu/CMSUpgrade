@@ -278,9 +278,9 @@ int DPhes::DrawHistogram()
     c1->cd();
     c1->Clear();
     i->second->Write();
-    i->second->Draw();
-    TString name = OutPicName +"_"+ i->first + ".png";
-    c1->Print(name);
+    //i->second->Draw();
+    //TString name = OutPicName +"_"+ i->first + ".png";
+    //c1->Print(name);
   }
   delete c1;
   f.Close();

@@ -28,6 +28,7 @@
 #include "TLine.h"
 #include "TStyle.h"
 #include "THStack.h"
+#include "TPaveText.h"
 #include <iostream>
 #include <cmath>
 #include <map>
@@ -199,12 +200,19 @@ int main ( int argc, char *argv[] )
     double miny = 0;
     TAxis* yaix = 0;
     // Add Legend?? Need a better handling of this
-    TLegend f(0.6862416,0.5995763,0.9228188,0.8940678,NULL,"brNDC");
-    f.SetBorderSize(0);
-    f.SetFillStyle(0); //transparent hollow?
-    f.SetTextFont(62); 
-    f.SetTextSize(0.045);
-    //
+    TLegend *f = new TLegend(0.6862416,0.5995763,0.9228188,0.8940678,NULL,"brNDC");
+    f->SetBorderSize(0);
+    f->SetFillStyle(0); //transparent hollow?
+    f->SetTextFont(62); 
+    f->SetTextSize(0.045);
+
+    // Add to the plot the S/B ratio
+    TPaveText *pt = new TPaveText(0.7080537,0.9194915,0.9077181,0.9745763,"brNDC");
+    pt->SetFillColor(0);
+    pt->SetBorderSize(0);
+    pt->SetTextSize(0.05);
+    TString Tsb =  Form( "S/#sqrt{S+B} = %.1f", sb);
+    pt->AddText(Tsb);
 
     std::string Xlabel;
     for(std::vector<MCsample>::iterator it=ProList.begin();
@@ -212,7 +220,7 @@ int main ( int argc, char *argv[] )
     {
       TH1F* h = (TH1F*)it->File->Get(hit->c_str());
       std::cout << "NA : " << h->GetTitle() << " from : " << it->Fname<< std::endl;
-      f.AddEntry(h, it->Sname.c_str(), "fl");
+      f->AddEntry(h, it->Sname.c_str(), "fl");
       Xlabel = h->GetTitle();
       h->SetTitle(Label.c_str());
       h->SetFillColor(it->Color);
@@ -237,7 +245,8 @@ int main ( int argc, char *argv[] )
 
     Hstack->Draw();
     Hstack->GetXaxis()->SetTitle(Xlabel.c_str());
-    f.Draw();
+    pt->Draw();
+    f->Draw();
 
     //Print out the plots
     TString outname = Label+"_"+*hit + ".png";
@@ -248,8 +257,9 @@ int main ( int argc, char *argv[] )
     {
       delete *it;
     }
-    //break;
     delete Hstack;
+    delete pt;
+    delete f;
   }
   //delete c1;
   theApp->Run();

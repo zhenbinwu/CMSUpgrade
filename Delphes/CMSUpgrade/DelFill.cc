@@ -275,6 +275,9 @@ int DPhes::Looping()
         continue;
     }
 
+    if (FakingZNN)
+      RelMet = ZLLMet();
+
     //// Apply cuts before filling up the histogram
     if (Cut(cutbit) == false) continue;
     HisMap["NEVTS"]->Fill(1);
@@ -338,12 +341,12 @@ int DPhes::FillEvents()
 // ===========================================================================
 int DPhes::FillMet()
 {
-  if (FakingZNN)
-  {
-    TVector2 met = ZLLMet();
-    HisMap["Met"]->Fill(met.Mod());
-    HisMap["MetPhi"]->Fill(met.Phi());
-  } else{
+  //if (FakingZNN)
+  //{
+    //TVector2 met = ZLLMet();
+    //HisMap["Met"]->Fill(met.Mod());
+    //HisMap["MetPhi"]->Fill(met.Phi());
+  //} else{
     //// If event contains at least 1 jet
     //if(branchMet->GetEntries() != 1)
     //return 0;
@@ -351,11 +354,19 @@ int DPhes::FillMet()
     //MissingET *met = (MissingET*) branchMet->At(0);
     //TVector2 met2V;
     //met2V.SetMagPhi(met->MET, met->Phi);
+<<<<<<< HEAD
     HisMap["Met"]->Fill(RelMet.Mod());
     HisMap["MetPhi"]->Fill(RelMet.Phi());
     HisMap["Metx"]->Fill(RelMet.Px());
     HisMap["Mety"]->Fill(RelMet.Py());
   }
+=======
+    HisMap["Met"]->Fill(CorMet.Mod());
+    HisMap["MetPhi"]->Fill(CorMet.Phi());
+    HisMap["Metx"]->Fill(CorMet.Px());
+    HisMap["Mety"]->Fill(CorMet.Py());
+  //}
+>>>>>>> 83d091a796071688ac8af1290fbab41fe493b3f3
 
   return 1;
 }       // -----  end of function DPhes::FillMet  -----

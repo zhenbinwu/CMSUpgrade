@@ -16,6 +16,7 @@
 
 #include "DelFill.h"
 #include "TRefArray.h"
+#include "TSystem.h"
 /*
  *--------------------------------------------------------------------------------------
  *       Class:  DPhes
@@ -95,10 +96,18 @@ int DPhes::InitDelPhes(std::string process, std::string pu)
   branchEFlowTrack = 0;
   branchEFlowTower = 0;
 
-  NEntries = 0;
+  NEntries         = 0;
   //helper
-  result =0;
-  FakingZNN = false;
+  result           = 0;
+  FakingZNN        = false;
+
+  PUCorMet         = false;
+  PUCorJetEta      = 10;
+  PUCorJetPt       = 0.0;
+
+    // Intrisic Vs Leptonic Met
+  LeptonicTT       = false;
+  TTBarMetThre     = 0;
 
   // Set the output name
   SetPreName(process, pu);
@@ -235,7 +244,7 @@ int DPhes::Looping()
       std::cout << "--------------------" << entry << std::endl;
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
-    CorMet.Clear();
+    RelMet.Clear();
 
     HisMap["NEVT"]->Fill(1);
     if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
@@ -244,7 +253,27 @@ int DPhes::Looping()
     // Clear our the jet ordering list
     OrderJet();
 
-    CorMet = PUCorrectedMet();
+//----------------------------------------------------------------------------
+//  Whether to do PU corrected Met
+//----------------------------------------------------------------------------
+    if (PUCorMet) //Using PU corrected Met 
+    RelMet = PUCorrectedMet();
+    else
+    {
+      MissingET *met = (MissingET*) branchMet->At(0);
+      RelMet.SetMagPhi(met->MET, met->Phi);
+    }
+
+//----------------------------------------------------------------------------
+//  Whether to do the TTBAR
+//----------------------------------------------------------------------------
+    if (LeptonicTT)
+    {
+      if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
+        continue;
+      if (RelMet.Mod() < TTBarMetThre )
+        continue;
+    }
 
     //// Apply cuts before filling up the histogram
     if (Cut(cutbit) == false) continue;
@@ -266,8 +295,16 @@ int DPhes::Looping()
 //         Name:  DPhes::DrawHistogram
 //  Description:  
 // ===========================================================================
-int DPhes::DrawHistogram()
+int DPhes::DrawHistogram(std::string Dir)
 {
+  if (Dir != "")
+  {
+    TSystem f;
+    if (f.OpenDirectory(Dir.c_str()) == 0)
+      f.MakeDirectory(Dir.c_str());
+    OutFileName = Dir + "/" + OutFileName;
+    OutPicName = Dir + "/" + OutPicName;
+  }
   TFile f(OutFileName.c_str(), "RECREATE");
   f.cd();
   TCanvas *c1 = new TCanvas("fd", "fdj", 600, 500);
@@ -314,10 +351,10 @@ int DPhes::FillMet()
     //MissingET *met = (MissingET*) branchMet->At(0);
     //TVector2 met2V;
     //met2V.SetMagPhi(met->MET, met->Phi);
-    HisMap["Met"]->Fill(CorMet.Mod());
-    HisMap["MetPhi"]->Fill(CorMet.Phi());
-    HisMap["Metx"]->Fill(CorMet.Px());
-    HisMap["Mety"]->Fill(CorMet.Py());
+    HisMap["Met"]->Fill(RelMet.Mod());
+    HisMap["MetPhi"]->Fill(RelMet.Phi());
+    HisMap["Metx"]->Fill(RelMet.Px());
+    HisMap["Mety"]->Fill(RelMet.Py());
   }
 
   return 1;
@@ -337,8 +374,11 @@ TVector2 DPhes::PUCorrectedMet()
   if (branchJet->GetEntries() > 0)
     for (int i = 0; i < branchJet->GetEntries(); ++i)
     {
-      MHT += ((Jet*)branchJet->At(i))->P4();
-      HT += ((Jet*)branchJet->At(i))->P4().Mag();
+      Jet* jet = (Jet*)branchJet->At(i);
+      if(std::fabs(jet->Eta) > PUCorJetEta || jet->PT < PUCorJetPt)
+        continue;
+      MHT += jet->P4();
+      HT += jet->P4().Mag();
     }
 
   //Loop over the Electron correction
@@ -556,7 +596,7 @@ int DPhes::SetCutBit(std::string inp)
 TVector2 DPhes::ZLLMet()
 {
   // First get the PU corrected Met in the event
-  TVector2 oldMet = CorMet;
+  TVector2 oldMet = RelMet;
 
 //----------------------------------------------------------------------------
 //  Looping the events for Z decay products 
@@ -613,7 +653,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
 // returns -1 otherwise.
    TLorentzVector J1(0, 0, 0, 0);
    TLorentzVector J2(0, 0, 0, 0);
-   double MET = CorMet.Mod();
+   double MET = RelMet.Mod();
 //----------------------------------------------------------------------------
 //  VBF Selection
 //----------------------------------------------------------------------------
@@ -664,7 +704,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
     if (FakingZNN)
       MET = ZLLMet().Mod();
     else
-      MET = CorMet.Mod();
+      MET = RelMet.Mod();
     if (MET < 50) return false;
   }
 
@@ -676,6 +716,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   {
     if ( (J1+J2).M()< 1500 ) return false;
   }
+
 //----------------------------------------------------------------------------
 // Large Met Cut
 //----------------------------------------------------------------------------
@@ -683,6 +724,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   {
     if (MET < 200) return false;
   }
+
   return true;
 }
 
@@ -782,3 +824,29 @@ TVector2 DPhes::FindZProduct(std::vector<GenParticle*> VPart, std::list<int> LFo
 
   return addmet;
 }       // -----  end of function DPhes::FindZProduct  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::SetPUCorMet
+//  Description:  Interface for setting the PU corrected info
+// ===========================================================================
+bool DPhes::SetPUCorMet(bool CorMet, double JetPT, double JetEta)
+{
+  PUCorMet = CorMet;
+  PUCorJetEta = JetEta;
+  PUCorJetPt = JetPT;
+  return true;
+}       // -----  end of function DPhes::SetPUCorMet  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::SetTTBar
+//  Description:  Cut for the ttbar samples for met study
+// ===========================================================================
+bool DPhes::SetTTBar(bool leptonic, double metthred) 
+{
+  LeptonicTT = leptonic;
+  if (LeptonicTT)
+  {
+    TTBarMetThre = metthred;
+  }
+  return  true;
+}       // -----  end of function DPhes::SetTTBar  -----

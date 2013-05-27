@@ -59,9 +59,15 @@ class DPhes
     int ReadDelPhes();
     int BookHistogram();
     int Looping();
-    int DrawHistogram();
-    /* ====================  MUTATORS      ======================================= */
+    int DrawHistogram(std::string Dir = "");
     int SetCutBit(std::string inp);
+
+    // Setting flags for different analysis .....
+    bool SetTTBar(bool leptonic, double metthred=0.0);
+    bool SetPUCorMet(bool CorMet, double JetPT, double JetEta);
+
+
+    /* ====================  MUTATORS      ======================================= */
     bool Cut(std::bitset<10> cutflag);
 
     /* ====================  OPERATORS     ======================================= */
@@ -105,6 +111,17 @@ class DPhes
     TClonesArray *branchEFlowTower;
     //TClonesArray *branchGenParticle;
 
+    // Setting flags for different analysis .....
+    // PU corrected Met
+    bool PUCorMet;
+    double PUCorJetEta;
+    double PUCorJetPt;
+
+    // Intrisic Vs Leptonic Met
+    bool LeptonicTT;
+    double TTBarMetThre;
+
+
     // Useful ExRoot helper
     ExRootResult *result;
     //
@@ -113,7 +130,7 @@ class DPhes
 
     std::bitset<10> cutbit; //Cut flow  
     bool FakingZNN;
-    TVector2 CorMet;
+    TVector2 RelMet; //Use the real Met instead of the met from delphes 
     std::list< std::pair<double, int> > jet_map; //Sorting jet energy 
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 

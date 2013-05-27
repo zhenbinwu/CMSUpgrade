@@ -20,15 +20,16 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 using namespace std;
 int Loop(TChain* chain, std::string Process, std::string PileUp );
-int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys);
+int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys,
+    bool PUCorMet, double PUCorJetPt , double PUCorJetEta, 
+    bool LeptonicTT = false, double TTBarMetThre = 0.0);
 
 const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.7/";
-//const std::string Pileup = "NoPileUp";
-//const std::string Pileup = "50PileUp";
-//const std::string Pileup = "140PileUp";
 
 int main ( int argc, char *argv[] )
 {
@@ -39,25 +40,63 @@ int main ( int argc, char *argv[] )
     return EXIT_FAILURE;
   }
 
-  //std::string Pileup = "TEST";
-  //std::string Process = "ZJETS";
 
-  std::string Pileup = argv[1];
-  std::string Process = argv[2];
-  const bool LoopCuts = false;
+//----------------------------------------------------------------------------
+//  Define all the variables here
+//----------------------------------------------------------------------------
+  std::string Pileup        = "TEST";
+  std::string Process       = "TTBAR";
+  //std::string Process     = "ZJETS";
+
+  //std::string Pileup      = argv[1];
+  //std::string Process     = argv[2];
+  const bool LoopCuts       = false;
+
+
+  // PU corrected Met
+  const bool PUCorMet       = true;
+  const double PUCorJetEta  = 5;
+  const double PUCorJetPt   = 30;
+
+  // Intrisic Vs Leptonic Met
+  const bool LeptonicTT     = true;
+  const double TTBarMetThre = 100;
+
+  const std::string Ourdir  = "test";
+
+//----------------------------------------------------------------------------
+//  Done with input variables
+//----------------------------------------------------------------------------
 
   std::cout<<"Running Process : \033[0;31m"<< Process<<"\033[0m with pileup : \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
 
-  TString TreeList = Path + Pileup +"/"+Process+"/"+Process+"_"+Pileup+"_*.root";
+  //TString TreeList = Path + Pileup +"/"+Process+"/"+Process+"_"+Pileup+"_*.root";
+  TString TreeList = "FileList/"+Process+"_"+Pileup+".list";
   std::cout << "Files to be run on : " << TreeList  << std::endl;
-
   TChain chain("Delphes");
-  //chain.Add("./TTBARW_13TEV_50PileUp_6351.root");
+/*
+ *
+ *  TChain chain("Delphes");
+ *  if (TreeList.Contains("FileList")<##>)
+ *  {
+ *    std::fstream input(TreeList.Data());
+ *    for(std::string line; getline(input, line);)
+ *    {
+ *      std::cout << "Add File: " << line << std::endl;
+ *      chain.Add(line.c_str());
+ *    }
+ *  }
+ *  else
+ *    chain.Add(TreeList);
+ */
+
+  chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
   //chain.Add("/uscms_data/d3/benwu/CMSSW_6_0_1_PostLS1v2_patch3/src/UserCode/spadhi/Snowmass/Delphes/Delphes-3.0.7/CMSUpgrade/test/ZJETS_13TEV_NoPileUp_9850.root");
-  chain.Add(TreeList);
+  
+
   if (chain.GetEntriesFast() == 0)
   {
-    std::cout << "No files are attached! Exiting... " < std::endl;
+    std::cout << "No files are attached! Exiting... " << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -85,7 +124,8 @@ int main ( int argc, char *argv[] )
     }
 
     std::cout << " input " << input << " sys " << order.at(input) << std::endl;
-    RunSys(&chain, Process, Pileup, order.at(input));
+    RunSys(&chain, Process, Pileup, order.at(input), PUCorMet, 
+        PUCorJetPt, PUCorJetEta, LeptonicTT, TTBarMetThre);
 
   } else {
     DPhes DP(&chain);
@@ -93,9 +133,12 @@ int main ( int argc, char *argv[] )
     DP.ReadDelPhes();
     DP.SetCutBit("0"); //No Cut applied 
     //DP.SetCutBit("-1"); //All Cuts applied
+    if (Process.find("TTBAR") != std::string::npos)
+      DP.SetTTBar(LeptonicTT, TTBarMetThre);
+    DP.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
     DP.BookHistogram();
     DP.Looping();
-    DP.DrawHistogram();
+    DP.DrawHistogram(Ourdir);
 
   }
 
@@ -131,10 +174,10 @@ int Loop(TChain* chain, std::string Process, std::string PileUp )
   return 1;
 }
 
-int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys)
+int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys,
+    bool PUCorMet, double PUCorJetEta , double PUCorJetPt, bool LeptonicTT, double TTBarMetThre)
 {
   typedef  std::map<std::string, std::string>  maps;
-  //typedef  std::map<std::string, std::string>::iterator  maps_it;
   maps CutMap;
 
   CutMap["NoCut"]    = "0";
@@ -151,6 +194,8 @@ int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string s
   DP->ReadDelPhes();
   DP->SetCutBit(CutMap[sys]); //No Cut applied 
   DP->BookHistogram();
+  DP->SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
+  DP->SetTTBar(LeptonicTT, TTBarMetThre);
   DP->Looping();
   DP->DrawHistogram();
   delete DP;

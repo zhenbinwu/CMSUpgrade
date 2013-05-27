@@ -57,7 +57,7 @@ int main ( int argc, char *argv[] )
   chain.Add(TreeList);
   if (chain.GetEntriesFast() == 0)
   {
-    std::cout << "No files are attached! Exiting... " < std::endl;
+    std::cout << "No files are attached! Exiting... " << std::endl;
     return EXIT_FAILURE;
   }
 

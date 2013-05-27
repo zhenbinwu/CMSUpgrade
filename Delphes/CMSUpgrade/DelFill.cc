@@ -245,6 +245,8 @@ int DPhes::Looping()
     OrderJet();
 
     CorMet = PUCorrectedMet();
+    if (FakingZNN)
+      CorMet = ZLLMet();
 
     //// Apply cuts before filling up the histogram
     if (Cut(cutbit) == false) continue;
@@ -301,12 +303,12 @@ int DPhes::FillEvents()
 // ===========================================================================
 int DPhes::FillMet()
 {
-  if (FakingZNN)
-  {
-    TVector2 met = ZLLMet();
-    HisMap["Met"]->Fill(met.Mod());
-    HisMap["MetPhi"]->Fill(met.Phi());
-  } else{
+  //if (FakingZNN)
+  //{
+    //TVector2 met = ZLLMet();
+    //HisMap["Met"]->Fill(met.Mod());
+    //HisMap["MetPhi"]->Fill(met.Phi());
+  //} else{
     //// If event contains at least 1 jet
     //if(branchMet->GetEntries() != 1)
     //return 0;
@@ -318,7 +320,7 @@ int DPhes::FillMet()
     HisMap["MetPhi"]->Fill(CorMet.Phi());
     HisMap["Metx"]->Fill(CorMet.Px());
     HisMap["Mety"]->Fill(CorMet.Py());
-  }
+  //}
 
   return 1;
 }       // -----  end of function DPhes::FillMet  -----

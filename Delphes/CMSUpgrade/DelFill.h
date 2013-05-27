@@ -130,6 +130,7 @@ class DPhes
 
     std::bitset<10> cutbit; //Cut flow  
     bool FakingZNN;
+    bool TTBARSam;
     TVector2 RelMet; //Use the real Met instead of the met from delphes 
     std::list< std::pair<double, int> > jet_map; //Sorting jet energy 
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 

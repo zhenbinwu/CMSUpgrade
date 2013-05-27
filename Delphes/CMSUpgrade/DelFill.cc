@@ -100,6 +100,8 @@ int DPhes::InitDelPhes(std::string process, std::string pu)
   //helper
   result           = 0;
   FakingZNN        = false;
+  TTBARSam         = false;
+
 
   PUCorMet         = false;
   PUCorJetEta      = 10;
@@ -125,6 +127,10 @@ int DPhes::SetPreName(std::string process, std::string pu)
   if (process.find("ZJETS") != std::string::npos)
   {
     FakingZNN = true;
+  }
+  if (process.find("TTBAR") != std::string::npos)
+  {
+    TTBARSam = true;
   }
   TString name = process+"_"+pu;
   OutPicName = name.Data();
@@ -267,12 +273,18 @@ int DPhes::Looping()
 //----------------------------------------------------------------------------
 //  Whether to do the TTBAR
 //----------------------------------------------------------------------------
-    if (LeptonicTT)
+    if (TTBARSam)
     {
-      if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
-        continue;
-      if (RelMet.Mod() < TTBarMetThre )
-        continue;
+      if (LeptonicTT)
+      {
+        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
+          continue;
+        if (RelMet.Mod() < TTBarMetThre )
+          continue;
+      } else {
+        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) != 0)
+          continue;
+      }
     }
 
     if (FakingZNN)
@@ -351,22 +363,13 @@ int DPhes::FillMet()
     //if(branchMet->GetEntries() != 1)
     //return 0;
 
-    //MissingET *met = (MissingET*) branchMet->At(0);
-    //TVector2 met2V;
-    //met2V.SetMagPhi(met->MET, met->Phi);
-<<<<<<< HEAD
-    HisMap["Met"]->Fill(RelMet.Mod());
-    HisMap["MetPhi"]->Fill(RelMet.Phi());
-    HisMap["Metx"]->Fill(RelMet.Px());
-    HisMap["Mety"]->Fill(RelMet.Py());
-  }
-=======
-    HisMap["Met"]->Fill(CorMet.Mod());
-    HisMap["MetPhi"]->Fill(CorMet.Phi());
-    HisMap["Metx"]->Fill(CorMet.Px());
-    HisMap["Mety"]->Fill(CorMet.Py());
-  //}
->>>>>>> 83d091a796071688ac8af1290fbab41fe493b3f3
+    MissingET *met = (MissingET*) branchMet->At(0);
+    TVector2 met2V;
+    met2V.SetMagPhi(met->MET, met->Phi);
+    HisMap["Met"]->Fill(met2V.Mod());
+    HisMap["MetPhi"]->Fill(met2V.Phi());
+    HisMap["Metx"]->Fill(met2V.Px());
+    HisMap["Mety"]->Fill(met2V.Py());
 
   return 1;
 }       // -----  end of function DPhes::FillMet  -----

@@ -25,9 +25,12 @@
 
 using namespace std;
 int Loop(TChain* chain, std::string Process, std::string PileUp );
-int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys,
+int RunSys(TChain* chain, std::string Process, std::string PileUp, 
+    std::string sys, std::string outdir, 
     bool PUCorMet, double PUCorJetPt , double PUCorJetEta, 
     bool LeptonicTT = false, double TTBarMetThre = 0.0);
+
+
 
 const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.7/";
 
@@ -55,14 +58,16 @@ int main ( int argc, char *argv[] )
 
   // PU corrected Met
   const bool PUCorMet       = true;
-  const double PUCorJetEta  = 4;
-  const double PUCorJetPt   = 50;
+  const double PUCorJetEta  = atof(argv[4]);
+  const double PUCorJetPt   = atof(argv[5]);
 
   // Intrisic Vs Leptonic Met
-  const bool LeptonicTT     = true;
+  const bool LeptonicTT     = false;
   const double TTBarMetThre = 100;
 
-  const std::string Ourdir  = "Lep_4_50";
+  char buf[100];
+  sprintf(buf, "%s_%.0f_%.0f", LeptonicTT?"Lep":"Had", PUCorJetEta, PUCorJetPt );
+  const std::string Outdir  = buf;
 
 //----------------------------------------------------------------------------
 //  Done with input variables
@@ -101,7 +106,7 @@ int main ( int argc, char *argv[] )
   if (LoopCuts)
     Loop(&chain, Process, Pileup);
 
-  if (argc == 4)
+  if (argc >= 4)
   {
     int input = atoi( argv[3]);
 
@@ -124,10 +129,11 @@ int main ( int argc, char *argv[] )
     std::cout << " input " << input << " sys " << order.at(input) << std::endl;
 
     if (Process.find("TTBAR") != std::string::npos)
-      RunSys(&chain, Process, Pileup, order.at(input), PUCorMet, 
+      RunSys(&chain, Process, Pileup, order.at(input), Outdir, PUCorMet, 
           PUCorJetPt, PUCorJetEta, LeptonicTT, TTBarMetThre);
     else
-      RunSys(&chain, Process, Pileup, order.at(input), PUCorMet, PUCorJetPt, PUCorJetEta);
+      RunSys(&chain, Process, Pileup, order.at(input), Outdir, 
+          PUCorMet, PUCorJetPt, PUCorJetEta);
 
   } else {
     DPhes DP(&chain);
@@ -140,7 +146,7 @@ int main ( int argc, char *argv[] )
     DP.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
     DP.BookHistogram();
     DP.Looping();
-    DP.DrawHistogram(Ourdir);
+    DP.DrawHistogram(Outdir);
 
   }
 
@@ -176,7 +182,7 @@ int Loop(TChain* chain, std::string Process, std::string PileUp )
   return 1;
 }
 
-int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys,
+int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys, std::string outdir,
     bool PUCorMet, double PUCorJetEta , double PUCorJetPt, bool LeptonicTT, double TTBarMetThre)
 {
   typedef  std::map<std::string, std::string>  maps;
@@ -199,7 +205,7 @@ int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string s
   DP->SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
   DP->SetTTBar(LeptonicTT, TTBarMetThre);
   DP->Looping();
-  DP->DrawHistogram();
+  DP->DrawHistogram(outdir);
   delete DP;
   return 1;
 }

@@ -16,7 +16,7 @@
 
 #include "DelFill.h"
 #include "TRefArray.h"
-#include "TSystem.h"
+#include <sys/stat.h>
 /*
  *--------------------------------------------------------------------------------------
  *       Class:  DPhes
@@ -314,9 +314,11 @@ int DPhes::DrawHistogram(std::string Dir)
 {
   if (Dir != "")
   {
-    TSystem f;
-    if (f.OpenDirectory(Dir.c_str()) == 0)
-      f.MakeDirectory(Dir.c_str());
+    struct stat st;
+    if (stat(Dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+      ;
+    else
+      mkdir(Dir.c_str(), S_IRWXU);
     OutFileName = Dir + "/" + OutFileName;
     OutPicName = Dir + "/" + OutPicName;
   }

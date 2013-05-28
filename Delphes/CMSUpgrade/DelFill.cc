@@ -312,6 +312,7 @@ int DPhes::Looping()
     FillEvents();
     FillEle();
     FillMet();
+    FillPUCorMet();
     FillMuon();
     FillHT();
     FillJets();
@@ -449,18 +450,29 @@ TVector2 DPhes::PUCorrectedMet()
   double met_x = -MHT.Px();
   double met_y = -MHT.Py();
   TVector2 CMet(met_x, met_y);
-  HisMap["CMet"]->Fill(CMet.Mod());
-  HisMap["CMetx"]->Fill(met_x);
-  HisMap["CMety"]->Fill(met_y);
-  HisMap["CMetPhi"]->Fill(CMet.Phi());
-  HisMap["CMHT"]->Fill(MHT.Mag());
-  HisMap["CMHTEta"]->Fill(MHT.Eta());
-  HisMap["CMHTPhi"]->Fill(MHT.Phi());
-  HisMap["CHT"]->Fill(HT);
-  return CMet;
+  RelMet = CMet;
+  RelMHT = MHT;
+  RelHT = HT;
+  return RelMet;
 
 }       // -----  end of function DPhes::PUCorrectedMet  -----
 
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::FillPUCorMet
+//  Description:  A Function to fill in real Corrected Met
+// ===========================================================================
+int DPhes::FillPUCorMet()
+{
+  HisMap["CMet"]->Fill(RelMet.Mod());
+  HisMap["CMetx"]->Fill(RelMet.Px());
+  HisMap["CMety"]->Fill(RelMet.Py());
+  HisMap["CMetPhi"]->Fill(RelMet.Phi());
+  HisMap["CMHT"]->Fill(RelMHT.Mag());
+  HisMap["CMHTEta"]->Fill(RelMHT.Eta());
+  HisMap["CMHTPhi"]->Fill(RelMHT.Phi());
+  HisMap["CHT"]->Fill(RelHT);
+  return 1;
+}       // -----  end of function DPhes::FillPUCorMet  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DPhes::FillEle
@@ -629,7 +641,6 @@ TVector2 DPhes::ZLLMet()
   // First get the PU corrected Met in the event
   TVector2 oldMet = RelMet;
 
-
 //----------------------------------------------------------------------------
 //  Looping the events for Z decay products 
 //----------------------------------------------------------------------------
@@ -645,10 +656,6 @@ TVector2 DPhes::ZLLMet()
   for (int i = 0; i < branchElectron->GetEntries(); ++i)
   {
     Electron* ele = (Electron*) branchElectron->At(i);
-    TVector2 temp(0, 0);
-    particle = 0;
-    temp.SetMagPhi(ele->P4().Perp(), ele->P4().Phi());
-    oldMet += temp;
     particle = (GenParticle*) ele->Particle.GetObject();
     EleGen[i] = particle;
   }
@@ -659,9 +666,6 @@ TVector2 DPhes::ZLLMet()
   for (int i = 0; i < branchMuon->GetEntries(); ++i)
   {
     Muon* muon = (Muon*) branchMuon->At(i);
-    TVector2 temp(0, 0);
-    temp.SetMagPhi(muon->P4().Perp(), muon->P4().Phi());
-    oldMet += temp;
     particle = (GenParticle*) muon->Particle.GetObject();
     MuonGen[i] = particle;
   }
@@ -872,7 +876,6 @@ std::list<int> DPhes::CheckZ()
   //if (DY.M() < 40 || DY.M() > 140) 
   //{
     //std::cout << "DY " <<DY.M() << std::endl;
-    //std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
     //ZVeto = true;
   //}
 
@@ -979,16 +982,21 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
   for(std::map<int, GenParticle*>::iterator it=EleGen.begin();
     it!=EleGen.end(); it++)
   {
-    for(std::map<int, int>::iterator git=GenStat.begin();
-      git!=GenStat.end(); git++)
+    if (it->second != 0)
     {
-      if (git->second == 1) continue;
-      GenParticle* p = (GenParticle*)branchParticle->At(git->first);
-      if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
+      for(std::map<int, int>::iterator git=GenStat.begin();
+          git!=GenStat.end(); git++)
       {
-        git->second += 1;
-        Electron* ele = (Electron*) branchElectron->At(it->first);
-        addmet += TVector2(ele->P4().Px(), it->second->P4().Py());
+        if (git->second == 1) continue;
+        GenParticle* p = (GenParticle*)branchParticle->At(git->first);
+        std::cout << "Git first " << git->first << std::endl;
+        std::cout << " " << it->second->P4().Pt() << std::endl;
+        if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
+        {
+          git->second += 1;
+          Electron* ele = (Electron*) branchElectron->At(it->first);
+          addmet += TVector2(ele->P4().Px(), ele->P4().Py());
+        }
       }
     }
   }
@@ -1002,7 +1010,6 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
     for(std::map<int, int>::iterator git=GenStat.begin();
       git!=GenStat.end(); git++)
     {
-      
       if (git->second == 1) continue;
       GenParticle* p = (GenParticle*)branchParticle->At(git->first);
       if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
@@ -1099,8 +1106,6 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
       //Still no found? Taking the Gen Particle info or just veto them
       ZVeto = true;
     }
-    if (git->second > 1)
-      std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   }
   return addmet;
 }       // -----  end of function DPhes::ZLL1Lep  -----

@@ -638,6 +638,7 @@ TVector2 DPhes::ZLLMet()
   std::map<int, GenParticle*> MuonGen; 
   std::list<int> LGen = CheckZ();
   
+  if (ZVeto) return oldMet;
 //----------------------------------------------------------------------------
 //  Adding electron
 //----------------------------------------------------------------------------
@@ -837,13 +838,21 @@ std::list<int> DPhes::CheckZ()
 
     if  (std::abs(p->PID) == 11 || std::abs(p->PID) == 13 || std::abs(p->PID) == 15)
     {
-      GenParticle* p2 = (GenParticle*)branchParticle->At(i+1);
-      if  (std::abs(p2->PID) == 11 || std::abs(p2->PID) == 13 || std::abs(p2->PID) == 15)
+      VLep.push_back(i);
+      // Search another lepton afterward
+      for (int j = i; j < branchParticle->GetEntries(); ++j)
       {
-        VLep.push_back(i);
-        VLep.push_back(i+1);
-        break;
+        GenParticle* p2 = (GenParticle*)branchParticle->At(j);
+        if  (std::abs(p2->PID) == 11 || std::abs(p2->PID) == 13 || std::abs(p2->PID) == 15)
+        {
+          if (p2->P4() != p->P4() && p2->P4().DeltaR(p->P4()) > 0.4)
+          {
+            VLep.push_back(j);
+            break;
+          }
+        }
       }
+      break;
     }
   }
 
@@ -860,9 +869,15 @@ std::list<int> DPhes::CheckZ()
     DY += p->P4();
   }
 
-  if (VLep.size() == 2) return VLep;
+  //if (DY.M() < 40 || DY.M() > 140) 
+  //{
+    //std::cout << "DY " <<DY.M() << std::endl;
+    //std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+    //ZVeto = true;
+  //}
 
-  std::cout << "Should never come to here! " << VLep.size() << std::endl;
+  if (VLep.size() != 2) ZVeto = true;
+  if (VLep.size() == 2) return VLep;
 }       // -----  end of function DPhes::CheckZ  -----
 
 // ===  FUNCTION  ============================================================

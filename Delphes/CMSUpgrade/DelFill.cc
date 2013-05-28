@@ -113,6 +113,7 @@ int DPhes::InitDelPhes(std::string process, std::string pu)
 
   // Whether to veto this Z event
   ZVeto = false;
+  IgnoreDY = false;
 
   // Set the output name
   SetPreName(process, pu);
@@ -190,6 +191,7 @@ int DPhes::BookHistogram()
   HisMap["Njet"]    = new TH1F("Njet", "Num. of Jets", 20, 0, 20.0 );
   HisMap["Nele"]    = new TH1F("Nele", "Num. of Eles", 10, 0, 10.0 );
   HisMap["Nmuon"]   = new TH1F("Nmuon", "Num. of Muons", 10, 0, 10.0 );
+  HisMap["ZVeto"]   = new TH1F("ZVeto", "Reason of Z Veto", 10, 0, 10.0 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
   HisMap["Met"]     = new TH1F("Met", "MET", 40, 0, 800.0 );
@@ -199,6 +201,9 @@ int DPhes::BookHistogram()
   HisMap["MetSgn"]  = new TH1F("MetSgn", "Met Sgnf.", 16, 0, 8 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
+  HisMap["GenMet"]  = new TH1F("GenMet", "MET from the Gen Particle", 200, 0, 200.0 );
+  HisMap["GenZ"]    = new TH1F("GenZ", "Mll from Gen Particle", 200, 0, 200.0 );
+  HisMap["GenZEt"]  = new TH1F("GenZEt", "Et of Mll from Gen Particle", 200, 0, 200.0 );
   HisMap["CMet"]    = new TH1F("CMet", "PU Corrected MET", 40, 0, 800.0 );
   HisMap["CMetx"]   = new TH1F("CMetx", "PU Corrected MET_X", 40, -400, 400.0 );
   HisMap["CMety"]   = new TH1F("CMety", "PU Corrected MET_Y", 40, -400, 400.0 );
@@ -254,8 +259,14 @@ int DPhes::Looping()
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
     RelMet.Clear();
+    RelHT = 0.0;
+    RelMHT.Clear();
+    IgnoreDY = false;
+    CheckZ();
 
-    HisMap["NEVT"]->Fill(1);
+    if (FakingZNN && IgnoreDY);
+    else
+      HisMap["NEVT"]->Fill(1);
     if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
       HisMap["NEVT"]->Fill(0);
 
@@ -347,6 +358,16 @@ int DPhes::DrawHistogram(std::string Dir)
     c1->cd();
     c1->Clear();
     i->second->Write();
+    i->second->Draw();
+    TString name = OutPicName +"_"+ i->first + ".png";
+    c1->Print(name);
+  }
+  for(std::map<std::string, TH2D*>::iterator i=HisMap2D.begin();
+    i!=HisMap2D.end(); i++)
+  {
+    //c1->cd();
+    //c1->Clear();
+    //i->second->Write();
     //i->second->Draw();
     //TString name = OutPicName +"_"+ i->first + ".png";
     //c1->Print(name);
@@ -650,6 +671,7 @@ TVector2 DPhes::ZLLMet()
   std::list<int> LGen = CheckZ();
   
   if (ZVeto) return oldMet;
+
 //----------------------------------------------------------------------------
 //  Adding electron
 //----------------------------------------------------------------------------
@@ -807,11 +829,13 @@ std::list<int> DPhes::CheckZ()
     }
   }
 
+  int sign=1;
   // Double check the parents of the Z decay products
   for(std::list<int>::iterator it=VLep.begin();
     it!=VLep.end(); it++)
   {
     GenParticle* p = (GenParticle*)branchParticle->At(*it);
+    sign *= p->PID;
     if (p->M1 != -1)
     {
       GenParticle* Mp = (GenParticle*)branchParticle->At(p->M1);
@@ -831,7 +855,35 @@ std::list<int> DPhes::CheckZ()
     std::cout << "some thing fuck!"  << std::endl;
   }
 
-  if (VLep.size() == 2) return VLep;
+  if (VLep.size() > 0)
+  {
+    if (sign > 0)
+    {
+      std::cout << "Same sign from Z? Fuck?" << VLep.size() << std::endl;
+      HisMap["ZVeto"]->Fill(1);
+      ZVeto = true;
+    }
+  }
+
+  if (VLep.size() == 2) 
+  {
+    TLorentzVector DY;
+    double metx=0.0;
+    double mety=0.0;
+    for(std::list<int>::iterator it=VLep.begin();
+        it!=VLep.end(); it++)
+    {
+      GenParticle* p = (GenParticle*)branchParticle->At(*it);
+      DY += p->P4();
+      metx += p->P4().Et()*cos(p->Phi);
+      mety +=  p->P4().Et()*sin(p->Phi);
+    }
+    TVector2 GenMet(metx, mety);
+    HisMap["GenZ"]->Fill(DY.M());
+    HisMap["GenZEt"]->Fill(DY.Et());
+    HisMap["GenMet"]->Fill(GenMet.Mod());
+    return VLep;
+  }
   
 //----------------------------------------------------------------------------
 //// In case of DY ... the first two leptons in the order  
@@ -849,7 +901,7 @@ std::list<int> DPhes::CheckZ()
         GenParticle* p2 = (GenParticle*)branchParticle->At(j);
         if  (std::abs(p2->PID) == 11 || std::abs(p2->PID) == 13 || std::abs(p2->PID) == 15)
         {
-          if (p2->P4() != p->P4() && p2->P4().DeltaR(p->P4()) > 0.4)
+          if (p2->P4() != p->P4() && p2->P4().DeltaR(p->P4()) > 0.4 && p->PID * p2->PID < 0)
           {
             VLep.push_back(j);
             break;
@@ -866,21 +918,48 @@ std::list<int> DPhes::CheckZ()
   // Solution: Just check the DY Mass
 
   TLorentzVector DY;
+  sign = 1;
+  double metx=0.0;
+  double mety=0.0;
   for(std::list<int>::iterator it=VLep.begin();
     it!=VLep.end(); it++)
   {
     GenParticle* p = (GenParticle*)branchParticle->At(*it);
-    DY += p->P4();
+    DY   += p->P4();
+    metx += p->P4().Et()*cos(p->Phi);
+    mety += p->P4().Et()*sin(p->Phi);
+    sign *= p->PID;
   }
 
-  //if (DY.M() < 40 || DY.M() > 140) 
-  //{
-    //std::cout << "DY " <<DY.M() << std::endl;
-    //ZVeto = true;
-  //}
+  TVector2 GenMet(metx, mety);
+  HisMap["GenZ"]->Fill(DY.M());
+  HisMap["GenZEt"]->Fill(DY.Et());
+  HisMap["GenMet"]->Fill(GenMet.Mod());
 
-  if (VLep.size() != 2) ZVeto = true;
+  if (VLep.size()>0)
+  {
+    if (sign > 0)
+    {
+      std::cout << "Same sign from DY? Fuck?" << std::endl;
+      HisMap["ZVeto"]->Fill(2);
+      ZVeto = true;
+    }
+  }
+
+  if (DY.M() < 60 || DY.M() > 120) 
+  {
+    HisMap["ZVeto"]->Fill(3);
+    ZVeto = true;
+    IgnoreDY = true;
+  }
+
   if (VLep.size() == 2) return VLep;
+
+  if (VLep.size() != 2) 
+  {
+      HisMap["ZVeto"]->Fill(4);
+    ZVeto = true;
+  }
 }       // -----  end of function DPhes::CheckZ  -----
 
 // ===  FUNCTION  ============================================================
@@ -900,7 +979,6 @@ TVector2 DPhes::FindZProduct(std::vector<GenParticle*> VPart, std::list<int> LFo
   for(std::vector<GenParticle*>::iterator lit=VPart.begin();
       lit!=VPart.end(); lit++)
   {
-
     // Lepton particle is referred as lit
     std::list<int>::iterator it=LFound.begin();
     while( it!=LFound.end() )
@@ -989,13 +1067,25 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
       {
         if (git->second == 1) continue;
         GenParticle* p = (GenParticle*)branchParticle->At(git->first);
-        std::cout << "Git first " << git->first << std::endl;
-        std::cout << " " << it->second->P4().Pt() << std::endl;
         if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
         {
           git->second += 1;
           Electron* ele = (Electron*) branchElectron->At(it->first);
-          addmet += TVector2(ele->P4().Px(), ele->P4().Py());
+          addmet += TVector2(ele->P4().Et()*cos(ele->Phi), ele->P4().Et()*sin(ele->Phi));
+        }
+      }
+    } else { // For High PU, no real Gen was referred 
+      Electron* ele = (Electron*) branchElectron->At(it->first);
+      for(std::map<int, int>::iterator git=GenStat.begin();
+          git!=GenStat.end(); git++)
+      {
+        if (git->second == 1) continue;
+        GenParticle* p = (GenParticle*)branchParticle->At(git->first);
+
+        if (ele->P4().DeltaR(p->P4()) < 0.4)
+        {
+          git->second += 1;
+          addmet += TVector2(ele->P4().Et()*cos(ele->Phi), ele->P4().Et()*sin(ele->Phi));
         }
       }
     }
@@ -1007,16 +1097,32 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
   for(std::map<int, GenParticle*>::iterator it=MuonGen.begin();
     it!=MuonGen.end(); it++)
   {
-    for(std::map<int, int>::iterator git=GenStat.begin();
-      git!=GenStat.end(); git++)
+    if (it->second != 0 ) //In case the ref to GenParticle is real 
     {
-      if (git->second == 1) continue;
-      GenParticle* p = (GenParticle*)branchParticle->At(git->first);
-      if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
+      for(std::map<int, int>::iterator git=GenStat.begin();
+          git!=GenStat.end(); git++)
       {
-        git->second += 1;
-        Muon* muon = (Muon*) branchMuon->At(it->first);
-        addmet += TVector2(muon->P4().Px(), muon->P4().Py());
+        if (git->second == 1) continue;
+        GenParticle* p = (GenParticle*)branchParticle->At(git->first);
+        if (it->second->P4() == p->P4() || it->second->P4().DeltaR(p->P4()) < 0.4)
+        {
+          git->second += 1;
+          Muon* muon = (Muon*) branchMuon->At(it->first);
+          addmet += TVector2(muon->P4().Et()*cos(muon->Phi), muon->P4().Et()*sin(muon->Phi));
+        }
+      }
+    } else { // For high PU, not all the ref are real 
+      Muon* muon = (Muon*) branchMuon->At(it->first);
+      for(std::map<int, int>::iterator git=GenStat.begin();
+          git!=GenStat.end(); git++)
+      {
+        if (git->second == 1) continue;
+        GenParticle* p = (GenParticle*)branchParticle->At(git->first);
+        if (muon->P4().DeltaR(p->P4()) < 0.4)
+        {
+          git->second += 1;
+          addmet += TVector2(muon->P4().Et()*cos(muon->Phi), muon->P4().Et()*sin(muon->Phi));
+        }
       }
     }
   }
@@ -1036,15 +1142,15 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
       {
         git->second +=1;
         if (jet->PT < p->PT)
-          addmet += TVector2(jet->P4().Px(), jet->P4().Py());
+          addmet += TVector2(jet->P4().Et()*cos(jet->Phi), jet->P4().Et()*sin(jet->Phi));
         else
-          addmet += TVector2(p->P4().Px(), p->P4().Py());
+          addmet += TVector2(p->P4().Et()*cos(p->Phi), p->P4().Et()*sin(p->Phi));
 
       }
     }
   }
 
-  /* **** Don't consider track and tower first, this could mess up things
+  /* 
 //----------------------------------------------------------------------------
 //  Matching to track in the event
 //----------------------------------------------------------------------------
@@ -1061,14 +1167,11 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
       {
         std::cout << "Two track? " << git->second<< std::endl;
         if (trk->PT < p->PT)
-          addmet += TVector2(trk->P4().Px(), trk->P4().Py());
-        else
-          addmet += TVector2(p->P4().Px(), p->P4().Py());
-
+          addmet += TVector2(trk->P4().Et()*cos(trk->Phi), trk->P4().Et()*sin(trk->Phi));
       }
     }
     // Allow multiple track and tower pointing at the same direction?
-    git->second +=1;
+    //git->second +=1;
   }
 
 //----------------------------------------------------------------------------
@@ -1087,9 +1190,10 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         std::cout << "Two tower? " << git->second<< std::endl;
         git->second +=1;
         if (tower->ET < p->PT)
-          addmet += TVector2(tower->P4().Px(), tower->P4().Py());
-        else
-          addmet += TVector2(p->P4().Px(), p->P4().Py());
+          //addmet += TVector2(tower->P4().Px(), tower->P4().Py());
+          addmet += TVector2(tower->P4().E()*cos(tower->Phi), tower->P4().E()*sin(tower->Phi));
+        //else
+          //addmet += TVector2(p->P4().Px(), p->P4().Py());
       }
     }
   }
@@ -1101,10 +1205,11 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
   for(std::map<int, int>::iterator git=GenStat.begin();
       git!=GenStat.end(); git++)
   {
+    GenParticle* p = (GenParticle*)branchParticle->At(git->first);
     if (git->second == 0)
     {
-      //Still no found? Taking the Gen Particle info or just veto them
-      ZVeto = true;
+      HisMap2D["LostGen"]->Fill(p->Eta, p->Phi);
+      HisMap["ZVeto"]->Fill(5);
     }
   }
   return addmet;

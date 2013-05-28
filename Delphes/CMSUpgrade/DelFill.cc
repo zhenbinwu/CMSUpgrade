@@ -1205,12 +1205,8 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
   for(std::map<int, int>::iterator git=GenStat.begin();
       git!=GenStat.end(); git++)
   {
-    GenParticle* p = (GenParticle*)branchParticle->At(git->first);
     if (git->second == 0)
-    {
-      HisMap2D["LostGen"]->Fill(p->Eta, p->Phi);
       HisMap["ZVeto"]->Fill(5);
-    }
   }
   return addmet;
 }       // -----  end of function DPhes::ZLL1Lep  -----

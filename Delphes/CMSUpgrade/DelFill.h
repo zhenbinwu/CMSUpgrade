@@ -136,6 +136,8 @@ class DPhes
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 
 
+    bool ZVeto; // Whether to Veto this Z event
+    TVector2 ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, std::map<int, GenParticle*> MuonGen);
 
 }; /* -----  end of class DPhes  ----- */
 

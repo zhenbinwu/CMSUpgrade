@@ -72,7 +72,7 @@ class DPhes
 
     /* ====================  OPERATORS     ======================================= */
     int OrderJet();
-    TVector2 ZLLMet();
+    TVector2 ZLLMet(std::list<int> LGen);
     int FillEvents();
     TVector2 PUCorrectedMet();
     TVector2 FindZProduct(std::vector<GenParticle*> VPart, std::list<int> LFound) const;

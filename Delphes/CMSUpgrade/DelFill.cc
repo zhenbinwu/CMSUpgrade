@@ -259,10 +259,11 @@ int DPhes::Looping()
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
     RelMet.Clear();
-    RelHT = 0.0;
+    RelHT    = 0.0;
     RelMHT.Clear();
     IgnoreDY = false;
-    CheckZ();
+    ZVeto    = false;
+    std::list<int> LGen = CheckZ();
 
     if (FakingZNN && IgnoreDY);
     else
@@ -304,8 +305,7 @@ int DPhes::Looping()
 //----------------------------------------------------------------------------
     if (FakingZNN)
     {
-      ZVeto = false;
-      RelMet = ZLLMet();
+      RelMet = ZLLMet(LGen);
       if (ZVeto)
       {
         HisMap["NEVTS"]->Fill(0);
@@ -501,7 +501,7 @@ int DPhes::FillPUCorMet()
 // ===========================================================================
 int DPhes::FillEle()
 {
-  if (FakingZNN) return 1;
+  //if (FakingZNN) return 1;
 
   // If event contains at least 1 jet
   int Eleentries = branchElectron->GetEntries();
@@ -519,7 +519,7 @@ int DPhes::FillEle()
 // ===========================================================================
 int DPhes::FillMuon()
 {
-  if (FakingZNN) return 1;
+  //if (FakingZNN) return 1;
 
   // If event contains at least 1 jet
   int Mentries = branchMuon->GetEntries();
@@ -657,7 +657,7 @@ int DPhes::SetCutBit(std::string inp)
 //         Name:  DPhes::ZLLMet
 //  Description:  Calculating the met from ZLL as the ZNN sample
 // ===========================================================================
-TVector2 DPhes::ZLLMet()
+TVector2 DPhes::ZLLMet(std::list<int> LGen)
 {
   // First get the PU corrected Met in the event
   TVector2 oldMet = RelMet;
@@ -668,7 +668,6 @@ TVector2 DPhes::ZLLMet()
   GenParticle *particle = 0;
   std::map<int, GenParticle*> EleGen; 
   std::map<int, GenParticle*> MuonGen; 
-  std::list<int> LGen = CheckZ();
   
   if (ZVeto) return oldMet;
 
@@ -940,9 +939,10 @@ std::list<int> DPhes::CheckZ()
   {
     if (sign > 0)
     {
-      std::cout << "Same sign from DY? Fuck?" << std::endl;
+      //std::cout << "Same sign from DY? Fuck?" << std::endl;
       HisMap["ZVeto"]->Fill(2);
       ZVeto = true;
+      IgnoreDY = true;
     }
   }
 

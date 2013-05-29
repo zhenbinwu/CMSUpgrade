@@ -203,7 +203,7 @@ int DPhes::BookHistogram()
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
   HisMap["GenMet"]  = new TH1F("GenMet", "MET from the Gen Particle", 200, 0, 200.0 );
   HisMap["GenZ"]    = new TH1F("GenZ", "Mll from Gen Particle", 200, 0, 200.0 );
-  HisMap["GenZEt"]  = new TH1F("GenZEt", "Et of Mll from Gen Particle", 200, 0, 200.0 );
+  HisMap["GenZPt"]  = new TH1F("GenZPt", "Pt of Mll from Gen Particle", 200, 0, 200.0 );
   HisMap["CMet"]    = new TH1F("CMet", "PU Corrected MET", 40, 0, 800.0 );
   HisMap["CMetx"]   = new TH1F("CMetx", "PU Corrected MET_X", 40, -400, 400.0 );
   HisMap["CMety"]   = new TH1F("CMety", "PU Corrected MET_Y", 40, -400, 400.0 );
@@ -261,13 +261,19 @@ int DPhes::Looping()
     RelMet.Clear();
     RelHT    = 0.0;
     RelMHT.Clear();
-    IgnoreDY = false;
-    ZVeto    = false;
-    std::list<int> LGen = CheckZ();
+    std::list<int> LGen;
+    if (FakingZNN)
+    {
+      IgnoreDY = false;
+      ZVeto    = false;
+      LGen = CheckZ();
+    }
 
-    if (FakingZNN && IgnoreDY);
+    if (FakingZNN && IgnoreDY)
+      continue;
     else
       HisMap["NEVT"]->Fill(1);
+
     if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
       HisMap["NEVT"]->Fill(0);
 
@@ -742,6 +748,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
 //----------------------------------------------------------------------------
   if (cutflag.test(1))
   {
+    if (FakingZNN) return true;
     if (branchElectron->GetEntries()>0) return false;
     if (branchMuon->GetEntries()>0) return false;
   }
@@ -874,12 +881,12 @@ std::list<int> DPhes::CheckZ()
     {
       GenParticle* p = (GenParticle*)branchParticle->At(*it);
       DY += p->P4();
-      metx += p->P4().Et()*cos(p->Phi);
-      mety +=  p->P4().Et()*sin(p->Phi);
+      metx += p->P4().Pt()*cos(p->Phi);
+      mety +=  p->P4().Pt()*sin(p->Phi);
     }
     TVector2 GenMet(metx, mety);
     HisMap["GenZ"]->Fill(DY.M());
-    HisMap["GenZEt"]->Fill(DY.Et());
+    HisMap["GenZPt"]->Fill(DY.Pt());
     HisMap["GenMet"]->Fill(GenMet.Mod());
     return VLep;
   }
@@ -925,14 +932,14 @@ std::list<int> DPhes::CheckZ()
   {
     GenParticle* p = (GenParticle*)branchParticle->At(*it);
     DY   += p->P4();
-    metx += p->P4().Et()*cos(p->Phi);
-    mety += p->P4().Et()*sin(p->Phi);
+    metx += p->P4().Pt()*cos(p->Phi);
+    mety += p->P4().Pt()*sin(p->Phi);
     sign *= p->PID;
   }
 
   TVector2 GenMet(metx, mety);
   HisMap["GenZ"]->Fill(DY.M());
-  HisMap["GenZEt"]->Fill(DY.Et());
+  HisMap["GenZPt"]->Fill(DY.Pt());
   HisMap["GenMet"]->Fill(GenMet.Mod());
 
   if (VLep.size()>0)
@@ -1071,7 +1078,7 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         {
           git->second += 1;
           Electron* ele = (Electron*) branchElectron->At(it->first);
-          addmet += TVector2(ele->P4().Et()*cos(ele->Phi), ele->P4().Et()*sin(ele->Phi));
+          addmet += TVector2(ele->P4().Pt()*cos(ele->Phi), ele->P4().Pt()*sin(ele->Phi));
         }
       }
     } else { // For High PU, no real Gen was referred 
@@ -1085,7 +1092,7 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         if (ele->P4().DeltaR(p->P4()) < 0.4)
         {
           git->second += 1;
-          addmet += TVector2(ele->P4().Et()*cos(ele->Phi), ele->P4().Et()*sin(ele->Phi));
+          addmet += TVector2(ele->P4().Pt()*cos(ele->Phi), ele->P4().Pt()*sin(ele->Phi));
         }
       }
     }
@@ -1108,7 +1115,7 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         {
           git->second += 1;
           Muon* muon = (Muon*) branchMuon->At(it->first);
-          addmet += TVector2(muon->P4().Et()*cos(muon->Phi), muon->P4().Et()*sin(muon->Phi));
+          addmet += TVector2(muon->P4().Pt()*cos(muon->Phi), muon->P4().Pt()*sin(muon->Phi));
         }
       }
     } else { // For high PU, not all the ref are real 
@@ -1121,7 +1128,7 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         if (muon->P4().DeltaR(p->P4()) < 0.4)
         {
           git->second += 1;
-          addmet += TVector2(muon->P4().Et()*cos(muon->Phi), muon->P4().Et()*sin(muon->Phi));
+          addmet += TVector2(muon->P4().Pt()*cos(muon->Phi), muon->P4().Pt()*sin(muon->Phi));
         }
       }
     }
@@ -1142,9 +1149,9 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
       {
         git->second +=1;
         if (jet->PT < p->PT)
-          addmet += TVector2(jet->P4().Et()*cos(jet->Phi), jet->P4().Et()*sin(jet->Phi));
+          addmet += TVector2(jet->P4().Pt()*cos(jet->Phi), jet->P4().Pt()*sin(jet->Phi));
         else
-          addmet += TVector2(p->P4().Et()*cos(p->Phi), p->P4().Et()*sin(p->Phi));
+          addmet += TVector2(p->P4().Pt()*cos(p->Phi), p->P4().Pt()*sin(p->Phi));
 
       }
     }

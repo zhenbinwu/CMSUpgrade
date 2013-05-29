@@ -55,7 +55,11 @@ class DPhes
 
     /* ====================  ACCESSORS     ======================================= */
     int InitDelPhes(std::string process, std::string pu);
+    // Test the input sample types from the name
+    // Set the output file name etc.
     int SetPreName(std::string process, std::string pu);
+    // Read in the Delphes interface
+    int LoopCutFill(int Ncut, std::string name, double value);
     int ReadDelPhes();
     int BookHistogram();
     int Looping();
@@ -82,6 +86,8 @@ class DPhes
     int FillMuon();
     int FillPUCorMet();
     int FillHT();
+    int PreLoopCut();
+    int LoopCut();
     int FillJets();
     
     TH1F *AddTH1F(const char *name, const char *title,
@@ -100,6 +106,7 @@ class DPhes
     // Delphes Classes
     ExRootTreeReader *treeReader;
     Long64_t NEntries;
+
     // Delphes branches
     TClonesArray *branchJet;
     TClonesArray *branchElectron;
@@ -110,7 +117,6 @@ class DPhes
     TClonesArray *branchParticle;
     TClonesArray *branchEFlowTrack;
     TClonesArray *branchEFlowTower;
-    //TClonesArray *branchGenParticle;
 
     // Setting flags for different analysis .....
     // PU corrected Met
@@ -139,12 +145,19 @@ class DPhes
     double ZPT; // Keep track of the Gen Z PT
     std::list< std::pair<double, int> > jet_map; //Sorting jet energy 
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
+    std::map<std::string, TH1F*> HisMapCL; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 
+    std::map<std::string, TH2D*> HisMap2DCL; //Saving the 2D Hist 
 
     bool ZVeto; // Whether to Veto this Z event
     bool IgnoreDY;
     TVector2 ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, std::map<int, GenParticle*> MuonGen);
 
+    int LCFillJets(int NCut);
+    int LCFillHT(int NCut);
+    int LCFillMuon(int NCut);
+    int LCFillEle(int NCut);
+    int LCFillPUCorMet(int NCut);
 }; /* -----  end of class DPhes  ----- */
 
 #endif /* __DPHES_H__ */

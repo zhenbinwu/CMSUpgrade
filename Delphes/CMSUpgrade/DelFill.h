@@ -135,6 +135,8 @@ class DPhes
     TVector2 RelMet; //Use the real Met instead of the met from delphes 
     TLorentzVector RelMHT;
     double RelHT;
+    std::vector<int> ZJet; // Jet that matched to the Z decay 
+    double ZPT; // Keep track of the Gen Z PT
     std::list< std::pair<double, int> > jet_map; //Sorting jet energy 
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 

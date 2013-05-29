@@ -194,17 +194,18 @@ int DPhes::BookHistogram()
   HisMap["ZVeto"]   = new TH1F("ZVeto", "Reason of Z Veto", 10, 0, 10.0 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
-  HisMap["Met"]     = new TH1F("Met", "MET", 40, 0, 800.0 );
+  HisMap["Met"]     = new TH1F("Met", "MET", 200, 0, 800.0 );
   HisMap["Metx"]    = new TH1F("Metx", "MET_X", 40, -400, 400.0 );
   HisMap["Mety"]    = new TH1F("Mety", "MET_Y", 40, -400, 400.0 );
   HisMap["MetPhi"]  = new TH1F("MetPhi", "#Phi_{MET}", 16, 0, 8 );
   HisMap["MetSgn"]  = new TH1F("MetSgn", "Met Sgnf.", 16, 0, 8 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
-  HisMap["GenMet"]  = new TH1F("GenMet", "MET from the Gen Particle", 200, 0, 200.0 );
+  HisMap["GenMet"]  = new TH1F("GenMet", "MET from the Gen Particle", 200, 0, 800.0 );
   HisMap["GenZ"]    = new TH1F("GenZ", "Mll from Gen Particle", 200, 0, 200.0 );
-  HisMap["GenZPt"]  = new TH1F("GenZPt", "Pt of Mll from Gen Particle", 200, 0, 200.0 );
-  HisMap["CMet"]    = new TH1F("CMet", "PU Corrected MET", 40, 0, 800.0 );
+  HisMap["GenZPt"]  = new TH1F("GenZPt", "Pt of Mll from Gen Particle", 200, 0, 800.0 );
+  HisMap["ZPt"]     = new TH1F("ZPt", "Pt of Mll from Gen Particle after cuts", 200, 0, 800.0 );
+  HisMap["CMet"]    = new TH1F("CMet", "PU Corrected MET", 200, 0, 800.0 );
   HisMap["CMetx"]   = new TH1F("CMetx", "PU Corrected MET_X", 40, -400, 400.0 );
   HisMap["CMety"]   = new TH1F("CMety", "PU Corrected MET_Y", 40, -400, 400.0 );
   HisMap["CMetPhi"] = new TH1F("CMetphi", "PU Corrected MET_Phi", 40, 0, 8 );
@@ -264,6 +265,8 @@ int DPhes::Looping()
     std::list<int> LGen;
     if (FakingZNN)
     {
+      ZPT  = 0.0;
+      ZJet.clear();
       IgnoreDY = false;
       ZVeto    = false;
       LGen = CheckZ();
@@ -334,6 +337,7 @@ int DPhes::Looping()
     FillHT();
     FillJets();
 
+    HisMap["ZPt"]->Fill(ZPT);
   }
 
   return 1;
@@ -364,9 +368,9 @@ int DPhes::DrawHistogram(std::string Dir)
     c1->cd();
     c1->Clear();
     i->second->Write();
-    i->second->Draw();
-    TString name = OutPicName +"_"+ i->first + ".png";
-    c1->Print(name);
+    //i->second->Draw();
+    //TString name = OutPicName +"_"+ i->first + ".png";
+    //c1->Print(name);
   }
   for(std::map<std::string, TH2D*>::iterator i=HisMap2D.begin();
     i!=HisMap2D.end(); i++)
@@ -566,8 +570,13 @@ int DPhes::OrderJet()
 
   for (int i = 0; i < branchJet->GetEntries(); ++i)
   {
-    double Et_corr = ((Jet*)branchJet->At(i))->PT;
-    jet_map.push_back(std::make_pair(Et_corr, i));
+    if (std::find(ZJet.begin(), ZJet.end(), i) == ZJet.end())
+    {
+      Jet* jet = (Jet*)branchJet->At(i);
+      if(std::fabs(jet->Eta) > PUCorJetEta || jet->PT < PUCorJetPt)
+        continue;
+      jet_map.push_back(std::make_pair(jet->PT, i));
+    }
   }
   jet_map.sort();
   jet_map.reverse();
@@ -581,7 +590,7 @@ int DPhes::OrderJet()
 int DPhes::FillJets()
 {
 
-  int jentries =  branchJet->GetEntries();
+  int jentries = jet_map.size();
   HisMap["Njet"]->Fill(jentries);
   // If event contains at least 1 jet
   if(jentries <= 0)
@@ -886,6 +895,7 @@ std::list<int> DPhes::CheckZ()
     }
     TVector2 GenMet(metx, mety);
     HisMap["GenZ"]->Fill(DY.M());
+    ZPT = DY.Pt();
     HisMap["GenZPt"]->Fill(DY.Pt());
     HisMap["GenMet"]->Fill(GenMet.Mod());
     return VLep;
@@ -939,6 +949,7 @@ std::list<int> DPhes::CheckZ()
 
   TVector2 GenMet(metx, mety);
   HisMap["GenZ"]->Fill(DY.M());
+  ZPT = DY.Pt();
   HisMap["GenZPt"]->Fill(DY.Pt());
   HisMap["GenMet"]->Fill(GenMet.Mod());
 
@@ -1044,10 +1055,7 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
   TVector2 addmet(0, 0);
   //Check the LGen length is 2 lepton
   if (LGen.size() != 2)
-  {
-    std::cout << " Shit happened!! " << std::endl;
     return addmet;
-  }
 
   // Create a map to check whether the lepton has been identified as Ele or
   // Muon
@@ -1145,14 +1153,17 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
     for (int i = 0; i < branchJet->GetEntries(); ++i)
     {
       Jet* jet = (Jet*) branchJet->At(i);
+      if(std::fabs(jet->Eta) > PUCorJetEta || jet->PT < PUCorJetPt)
+        continue;
       if (jet->P4().DeltaR(p->P4()) < 0.4)
       {
+        ZJet.push_back(i);
         git->second +=1;
         if (jet->PT < p->PT)
+
           addmet += TVector2(jet->P4().Pt()*cos(jet->Phi), jet->P4().Pt()*sin(jet->Phi));
         else
           addmet += TVector2(p->P4().Pt()*cos(p->Phi), p->P4().Pt()*sin(p->Phi));
-
       }
     }
   }

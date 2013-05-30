@@ -66,8 +66,9 @@ int main ( int argc, char *argv[] )
   const double TTBarMetThre = 100;
 
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", LeptonicTT?"Lep":"Had", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "DelPhes_Scan_", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
+  //const std::string Outdir  = "TEST_ZJET";
 
 //----------------------------------------------------------------------------
 //  Done with input variables
@@ -183,7 +184,7 @@ int Loop(TChain* chain, std::string Process, std::string PileUp )
 }
 
 int RunSys(TChain* chain, std::string Process, std::string PileUp, std::string sys, std::string outdir,
-    bool PUCorMet, double PUCorJetEta , double PUCorJetPt, bool LeptonicTT, double TTBarMetThre)
+    bool PUCorMet, double PUCorJetPt , double PUCorJetEta, bool LeptonicTT, double TTBarMetThre)
 {
   typedef  std::map<std::string, std::string>  maps;
   maps CutMap;

@@ -153,12 +153,6 @@ int DPhes::ReadDelPhes()
 
   // Create object of class ExRootTreeReader
   treeReader = new ExRootTreeReader(fChain);
-
-  if (fChain->GetEntries() != treeReader->GetEntries())
-  {
-    std::cout << "Shit happened!!" << std::endl;
-  }
-  else
     NEntries = fChain->GetEntries();
 
   // Get pointers to branches used in this analysis
@@ -188,10 +182,12 @@ int DPhes::BookHistogram()
   //----------------------------------------------------------------------------
   HisMap["NEVT"]    = new TH1F("NEVT", "Num. of Events", 2, 0, 2 );
   HisMap["NEVTS"]   = new TH1F("NEVTS", "Selected Num. of Events", 2, 0, 2 );
-  HisMap["Njet"]    = new TH1F("Njet", "Num. of Jets", 20, 0, 20.0 );
+  HisMap["NjetO"]    = new TH1F("NjetO", "Orignial Num. of Jets", 20, 0, 20.0 );
+  HisMap["NjetZ"]    = new TH1F("NjetZ", "Num. of Jets after Z Faking", 20, 0, 20.0 );
   HisMap["Nele"]    = new TH1F("Nele", "Num. of Eles", 10, 0, 10.0 );
   HisMap["Nmuon"]   = new TH1F("Nmuon", "Num. of Muons", 10, 0, 10.0 );
   HisMap["ZVeto"]   = new TH1F("ZVeto", "Reason of Z Veto", 10, 0, 10.0 );
+  HisMap["VBFCut"]   = new TH1F("VBFCut", "VBF Cut Status", 10, 0, 10.0 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
   HisMap["Met"]     = new TH1F("Met", "MET", 200, 0, 800.0 );
@@ -325,6 +321,9 @@ int DPhes::Looping()
 
     // Clear our the jet ordering list
     OrderJet();
+
+    HisMap["NjetO"]->Fill(branchJet->GetEntries());
+    HisMap["NjetZ"]->Fill(jet_map.size());
     //// Apply cuts before filling up the histogram
     if (Cut(cutbit) == false) continue;
     HisMap["NEVTS"]->Fill(1);
@@ -727,28 +726,36 @@ bool DPhes::Cut(std::bitset<10> cutflag)
     //
     // nJes
     //
-    if (jet_map.size()<2) return false;
+    HisMap["VBFCut"]->Fill(0);
+    //if (jet_map.size()<2) return false;
+    if (branchJet->GetEntries()<2) return false;
+    HisMap["VBFCut"]->Fill(1);
     //
     // Leading jet 
     //
     std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
     J1 = ((Jet*) branchJet->At(jit->second))->P4();
     if (J1.Pt() < 50) return false;
+    HisMap["VBFCut"]->Fill(2);
     //
     // Next-to-Leading jet 
     //
     jit++;
     J2 = ((Jet*) branchJet->At(jit->second))->P4();
     if (J2.Pt() < 50) return false;      
+    HisMap["VBFCut"]->Fill(3);
     //
     // Opposive eta and eta separation
     //
     if (J1.Eta() * J2.Eta() > 0) return false;      
+    HisMap["VBFCut"]->Fill(4);
     if ( fabs(J1.Eta() - J2.Eta()) < 4.2) return false;      
+    HisMap["VBFCut"]->Fill(5);
     //
     // Dijet mass cut
     //
     if ( (J1+J2).M()<700. ) return false;
+    HisMap["VBFCut"]->Fill(6);
 
   }   
 
@@ -757,9 +764,13 @@ bool DPhes::Cut(std::bitset<10> cutflag)
 //----------------------------------------------------------------------------
   if (cutflag.test(1))
   {
-    if (FakingZNN) return true;
-    if (branchElectron->GetEntries()>0) return false;
-    if (branchMuon->GetEntries()>0) return false;
+    if (FakingZNN) ;
+    else
+    {
+      if (branchElectron->GetEntries()>0) return false;
+      if (branchMuon->GetEntries()>0) return false;
+    }
+    HisMap["VBFCut"]->Fill(7);
   }
 
 //----------------------------------------------------------------------------
@@ -768,6 +779,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   if (cutflag.test(2))
   {
     if (MET < 50) return false;
+    HisMap["VBFCut"]->Fill(8);
   }
 
 
@@ -777,6 +789,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   if (cutflag.test(3))
   {
     if ( (J1+J2).M()< 1500 ) return false;
+    HisMap["VBFCut"]->Fill(9);
   }
 
 //----------------------------------------------------------------------------
@@ -785,6 +798,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   if (cutflag.test(4))
   {
     if (MET < 200) return false;
+    HisMap["VBFCut"]->Fill(10);
   }
 
   return true;
@@ -917,7 +931,7 @@ std::list<int> DPhes::CheckZ()
         GenParticle* p2 = (GenParticle*)branchParticle->At(j);
         if  (std::abs(p2->PID) == 11 || std::abs(p2->PID) == 13 || std::abs(p2->PID) == 15)
         {
-          if (p2->P4() != p->P4() && p2->P4().DeltaR(p->P4()) > 0.4 && p->PID * p2->PID < 0)
+          if (p2->P4() != p->P4() && p->PID * p2->PID < 0)
           {
             VLep.push_back(j);
             break;
@@ -1157,11 +1171,12 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
         continue;
       if (jet->P4().DeltaR(p->P4()) < 0.4)
       {
-        ZJet.push_back(i);
         git->second +=1;
         if (jet->PT < p->PT)
-
+        {
           addmet += TVector2(jet->P4().Pt()*cos(jet->Phi), jet->P4().Pt()*sin(jet->Phi));
+          ZJet.push_back(i);
+        }
         else
           addmet += TVector2(p->P4().Pt()*cos(p->Phi), p->P4().Pt()*sin(p->Phi));
       }

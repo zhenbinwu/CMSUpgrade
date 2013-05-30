@@ -152,12 +152,7 @@ int DPhes::ReadDelPhes()
   // Create object of class ExRootTreeReader
   treeReader = new ExRootTreeReader(fChain);
 
-  if (fChain->GetEntries() != treeReader->GetEntries())
-  {
-    std::cout << "Shit happened!!" << std::endl;
-  }
-  else
-    NEntries = fChain->GetEntries();
+  NEntries = fChain->GetEntriesFast();
 
   // Get pointers to branches used in this analysis
   branchJet         = treeReader->UseBranch("Jet");
@@ -179,8 +174,6 @@ int DPhes::ReadDelPhes()
 int DPhes::BookHistogram() 
 {
 
-  //HisMap["Test1"] =  new TH1F("jet_pt", "jet P_{T}", 100, 0.0, 100.0);
-  //HisMap["Test2"] = new TH1F("mass", "M_{inv}(e_{1}, e_{2})", 100, 40.0, 140.0);
   //----------------------------------------------------------------------------
   //  Define His
   //----------------------------------------------------------------------------

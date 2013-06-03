@@ -786,10 +786,13 @@ bool DPhes::Cut(std::bitset<10> cutflag)
     ////
     //// Dijet mass cut
     ////
-    //if ( (J1+J2).M()<700. ) return false;
-    //HisMap["VBFCut"]->Fill(6);
-    if (MET < 50) return false;
-    HisMap["VBFCut"]->Fill(7);
+    if ( (J1+J2).M()<700. ) return false;
+    HisMap["VBFCut"]->Fill(6);
+    
+
+    // For Mjj plots comparison
+    //if (MET < 50) return false;
+    //HisMap["VBFCut"]->Fill(7);
 
   }   
 
@@ -821,7 +824,6 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   //----------------------------------------------------------------------------
   if (cutflag.test(3))
   {
-    //if (jet_map.size() != 2) return false;
     for(std::list< std::pair<double, int> >::iterator jit=jet_map.begin();
         jit!=jet_map.end(); jit++)
     {

@@ -60,8 +60,8 @@ int main ( int argc, char *argv[] )
 
   char buf[100];
   sprintf(buf, "%s_%.0f_%.0f", "LoopCut", PUCorJetEta, PUCorJetPt );
-  //const std::string Outdir  = buf;
-  const std::string Outdir  = "MAKE_MJJ";
+  const std::string Outdir  = buf;
+  //const std::string Outdir  = "TEST";
 
 //----------------------------------------------------------------------------
 //  Done with input variables

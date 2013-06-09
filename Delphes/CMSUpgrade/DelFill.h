@@ -201,6 +201,12 @@ class DPhes
 
 
 
+    int CheckTT();
+    bool BGPreSelect();
+    bool FillMjj();
+    bool PhenoCut(std::bitset<10> cutflag);
+    bool SGPreSelect();
+    bool PreSelect();
 
 }; /* -----  end of class DPhes  ----- */
 

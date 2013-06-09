@@ -56,6 +56,11 @@ DPhes::~DPhes ()
   {
     delete it->second;
   }
+  for(std::map<std::string, TH1F*>::iterator it=HisMapCL.begin();
+      it!=HisMapCL.end(); it++)
+  {
+    delete it->second;
+  }
   for(std::map<std::string, TH2D*>::iterator it=HisMap2D.begin();
       it!=HisMap2D.end(); it++)
   {
@@ -116,28 +121,47 @@ int DPhes::InitDelPhes(std::string process, std::string pu)
   // Set the output name
   SetPreName(process, pu);
 
-  // The Cut flow
-  order.push_back("NoCut");
-  order.push_back("CTVBF");
-  order.push_back("CTLepV");
-  order.push_back("CTMet50");
-  order.push_back("CTBJet");
-  order.push_back("CTJ3");
-  order.push_back("CTMjj");
-  order.push_back("CTMet200");
-  order.push_back("AllCut");
+/*
+ *  // The Cut flow
+ *  order.push_back("NoCut");
+ *  order.push_back("CTVBF");
+ *  order.push_back("CTLepV");
+ *  order.push_back("CTMet50");
+ *  order.push_back("CTBJet");
+ *  order.push_back("CTJ3");
+ *  order.push_back("CTMjj");
+ *  order.push_back("CTMet200");
+ *  order.push_back("AllCut");
+ *
+ *
+ *  CutMap["NoCut"]    = "0000000000";
+ *  CutMap["CTVBF"]    = "0000000001";
+ *  CutMap["CTLepV"]   = "0000000011";
+ *  CutMap["CTMet50"]  = "0000000111";
+ *  CutMap["CTBJet"]   = "0000001111";
+ *  CutMap["CTJ3"]     = "0000011111";
+ *  CutMap["CTMjj"]    = "0000111111";
+ *  CutMap["CTMet200"] = "0001111111";
+ *  CutMap["AllCut"]   = "1111111111";
+ */
 
-
-  CutMap["NoCut"]    = "0000000000";
-  CutMap["CTVBF"]    = "0000000001";
-  CutMap["CTLepV"]   = "0000000011";
-  CutMap["CTMet50"]  = "0000000111";
-  CutMap["CTBJet"]   = "0000001111";
-  CutMap["CTJ3"]     = "0000011111";
-  CutMap["CTMjj"]    = "0000111111";
-  CutMap["CTMet200"] = "0001111111";
-  CutMap["AllCut"]   = "1111111111";
-
+   // The Cut flow
+   order.push_back("NoCut");
+   order.push_back("CTJ1");
+   order.push_back("CTJ2");
+   order.push_back("CTMjj");
+   order.push_back("CTJ3BL");
+   order.push_back("CTMet200");
+   order.push_back("AllCut");
+ 
+ 
+   CutMap["NoCut"]    = "0000000000";
+   CutMap["CTJ1"]     = "0000000001";
+   CutMap["CTJ2"]     = "0000000011";
+   CutMap["CTMjj"]    = "0000000111";
+   CutMap["CTJ3BL"]   = "0000001111";
+   CutMap["CTMet200"] = "0000011111";
+   CutMap["AllCut"]   = "1111111111";
   return 1;
 }       // -----  end of function DPhes::InitDelPhes  -----
 
@@ -151,7 +175,10 @@ int DPhes::SetPreName(std::string process, std::string pu)
   {
     FakingZNN = true;
   }
-  TTBARSam = false; // Alway set false for TTBar 
+  if (process.find("TTBAR") != std::string::npos)
+  {
+    TTBARSam = true; // Alway set false for TTBar 
+  }
   TString name = process+"_"+pu;
   OutPicName = name.Data();
   name += ".root";
@@ -233,6 +260,9 @@ int DPhes::BookHistogram()
   HisMap["MhtSgn"]  = new TH1F("MhtSgn", "MHT Sgnf.", 8, -4, 4 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
+  HisMap["JetEta"]   = new TH1F("JetEta", "#eta_{all Jets}", 14, -7, 7 );
+  HisMap["JetPhi"]   = new TH1F("JetPhi", "#Phi_{all Jets}", 14, -7, 7 );
+  HisMap["JetPt"]   = new TH1F("JetPt", "Pt_{all Jets}", 14, -7, 7 );
   HisMap["J1Pt"]    = new TH1F("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
   HisMap["J1Eta"]   = new TH1F("J1Eta", "#eta_{J1}", 14, -7, 7 );
   HisMap["J1Phi"]   = new TH1F("J1Phi", "#phi_{J1}", 14, -7, 7);
@@ -242,7 +272,6 @@ int DPhes::BookHistogram()
   HisMap["J3Pt"]    = new TH1F("J3Pt", "Pt_{J3}", 40, 0, 800.0 );
   HisMap["J3Eta"]   = new TH1F("J3Eta", "#eta_{J3}", 14, -7, 7 );
   HisMap["J3Phi"]   = new TH1F("J3Phi", "#phi_{J3}", 14, -7, 7);
-
   HisMap["MJJ"]     = new TH1F("MJJ", "M_{J1, J2}", 4000, 0, 8000.0 );
   HisMap["dPtJJ"]   = new TH1F("dPtJJ", "#Delta Pt_{J1, J2}", 40, 0, 1200 );
   HisMap["dPhiJJ"]  = new TH1F("dPhiJJ", "#Delta #phi_{J1, J2}", 14, -7, 7 );
@@ -250,6 +279,12 @@ int DPhes::BookHistogram()
   HisMap["dRJJ"]    = new TH1F("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
+  HisMap2D["J1PtEta"]  = new TH2D("J1PtEta", "J1 Pt Vs. Eta", 40, 0, 1200, 20, -7, 7);
+  HisMap2D["J2PtEta"]  = new TH2D("J2PtEta", "J2 Pt Vs. Eta", 40, 0, 1200, 20, -7, 7);
+  HisMap2D["J3PtEta"]  = new TH2D("J3PtEta", "J2 Pt Vs. Eta", 40, 0, 1200, 20, -7, 7);
+  HisMap2D["J1PtPhi"]  = new TH2D("J1PtPhi", "J1 Pt Vs. Phi", 40, 0, 1200, 20, -7, 7);
+  HisMap2D["J2PtPhi"]  = new TH2D("J2PtPhi", "J2 Pt Vs. Phi", 40, 0, 1200, 20, -7, 7);
+  HisMap2D["J3PtPhi"]  = new TH2D("J3PtPhi", "J2 Pt Vs. Phi", 40, 0, 1200, 20, -7, 7);
   HisMap2D["J12D"]  = new TH2D("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   HisMap2D["J22D"]  = new TH2D("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   HisMap2D["J32D"]  = new TH2D("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
@@ -271,8 +306,10 @@ int DPhes::Looping()
   // Loop over all events
   for(Int_t entry = 0; entry < NEntries ; ++entry)
   {
+    //if (entry > 5000 ) continue;
     if (entry % 2000 == 0)
       std::cout << "--------------------" << entry << std::endl;
+
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
 
@@ -288,13 +325,6 @@ int DPhes::Looping()
     if (FakingZNN)
       LGen = CheckZ();
 
-    if (FakingZNN && IgnoreDY)
-      continue;
-    else
-      HisMap["NEVT"]->Fill(1);
-
-    if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
-      HisMap["NEVT"]->Fill(0);
 
 
     //----------------------------------------------------------------------------
@@ -313,15 +343,12 @@ int DPhes::Looping()
     //----------------------------------------------------------------------------
     if (TTBARSam)
     {
+      int NLep = CheckTT();
       if (LeptonicTT)
       {
-        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
-          continue;
-        if (RelMet.Mod() < TTBarMetThre )
-          continue;
+        if (NLep != 2) continue;
       } else {
-        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) != 0)
-          continue;
+        if (NLep != 1) continue;
       }
     }
 
@@ -342,9 +369,16 @@ int DPhes::Looping()
     // Clear our the jet ordering list
     OrderJet();
 
-    HisMap["NjetO"]->Fill(branchJet->GetEntries());
-    HisMap["NjetZ"]->Fill(jet_map.size());
 
+    if (FakingZNN && IgnoreDY)
+      continue;
+
+    if (PreSelect())
+      HisMap["NEVT"]->Fill(1);
+    else
+      continue;
+
+    FillJets();
     LoopCut();
 /*
  *    //// Apply cuts before filling up the histogram
@@ -408,12 +442,12 @@ int DPhes::DrawHistogram(std::string Dir)
   for(std::map<std::string, TH2D*>::iterator i=HisMap2D.begin();
       i!=HisMap2D.end(); i++)
   {
-    //c1->cd();
-    //c1->Clear();
-    //i->second->Write();
-    //i->second->Draw();
-    //TString name = OutPicName +"_"+ i->first + ".png";
-    //c1->Print(name);
+    c1->cd();
+    c1->Clear();
+    i->second->Write();
+    i->second->Draw("colz");
+    TString name = OutPicName +"_"+ i->first + ".eps";
+    c1->Print(name);
   }
   delete c1;
   f.Close();
@@ -624,10 +658,21 @@ int DPhes::FillJets()
 {
 
   int jentries = jet_map.size();
-  HisMap["Njet"]->Fill(jentries);
+  HisMap["NjetO"]->Fill(branchJet->GetEntries());
+  HisMap["NjetZ"]->Fill(jentries);
   // If event contains at least 1 jet
   if(jentries <= 0)
     return 0;
+
+
+  for( std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
+      jit != jet_map.end(); jit++ )
+  {
+    Jet *jet = (Jet*) branchJet->At(jit->second);
+    HisMap["JetEta"]->Fill(jet->Eta);
+    HisMap["JetPhi"]->Fill(jet->Phi);
+    HisMap["JetPt"]->Fill(jet->PT);
+  }
 
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1 ~~~~~
@@ -638,6 +683,8 @@ int DPhes::FillJets()
   HisMap["J1Eta"]->Fill(J1->Eta);
   HisMap["J1Phi"]->Fill(J1->Phi);
   HisMap2D["J12D"]->Fill(J1->Eta, J1->Phi);
+  HisMap2D["J1PtEta"]->Fill(J1->PT, J1->Eta);
+  HisMap2D["J1PtPhi"]->Fill(J1->PT, J1->Phi);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J2 ~~~~~
   if (jet_map.size() >= 2)
@@ -650,7 +697,8 @@ int DPhes::FillJets()
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1J2 ~~~~~
 
     HisMap2D["J22D"]->Fill(J2->Eta, J2->Phi);
-    HisMap["MJJ"]->Fill((J1->P4()+J2->P4()).M());
+    HisMap2D["J2PtEta"]->Fill(J2->PT, J2->Eta);
+    HisMap2D["J2PtPhi"]->Fill(J2->PT, J2->Phi);
     HisMap["dPtJJ"]->Fill(J1->PT-J2->PT);
     HisMap["dPhiJJ"]->Fill(J1->P4().DeltaPhi(J2->P4()));
     HisMap["dEtaJJ"]->Fill(J1->Eta - J2->Eta);
@@ -669,6 +717,8 @@ int DPhes::FillJets()
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1J2 ~~~~~
 
     HisMap2D["J32D"]->Fill(J3->Eta, J3->Phi);
+    HisMap2D["J3PtEta"]->Fill(J3->PT, J3->Eta);
+    HisMap2D["J3PtPhi"]->Fill(J3->PT, J3->Phi);
     //HisMap["MJJ"]->Fill((J1+J2).M());
     //HisMap["dPtJJ"]->Fill(J1.Pt()-J2.Pt());
     //HisMap["dPhiJJ"]->Fill(J1.DeltaPhi(J2));
@@ -676,6 +726,8 @@ int DPhes::FillJets()
     //HisMap["dRJJ"]->Fill(J1.DeltaR(J2));
 
   }
+
+  FillMjj();
   return 1;
 
 }       // -----  end of function DPhes::FillJets  -----
@@ -759,7 +811,7 @@ bool DPhes::Cut(std::bitset<10> cutflag)
     //
     // nJes
     //
-    if (jet_map.size()<2) return false;
+    if (jet_map.size()!=2) return false;
     HisMap["VBFCut"]->Fill(1);
     //
     // Leading jet 
@@ -783,16 +835,16 @@ bool DPhes::Cut(std::bitset<10> cutflag)
 
     if ( fabs(J1.Eta() - J2.Eta()) < 4.2) return false;      
     HisMap["VBFCut"]->Fill(5);
-    ////
-    //// Dijet mass cut
-    ////
-    if ( (J1+J2).M()<700. ) return false;
-    HisMap["VBFCut"]->Fill(6);
+    //
+    // Dijet mass cut
+    //
+    //if ( (J1+J2).M()<700. ) return false;
+    //HisMap["VBFCut"]->Fill(6);
     
 
-    // For Mjj plots comparison
-    //if (MET < 50) return false;
-    //HisMap["VBFCut"]->Fill(7);
+     //For Mjj plots comparison
+    if (MET < 50) return false;
+    HisMap["VBFCut"]->Fill(7);
 
   }   
 
@@ -881,6 +933,92 @@ bool DPhes::Cut(std::bitset<10> cutflag)
   return true;
 }
 
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::PhenoCut
+//  Description:  
+// ===========================================================================
+bool DPhes::PhenoCut(std::bitset<10> cutflag)
+{
+  if (!BGPreSelect()) return false;
+  // This function may be called from Loop.
+  // returns  1 if entry is accepted.
+  // returns -1 otherwise.
+  TLorentzVector J1(0, 0, 0, 0);
+  TLorentzVector J2(0, 0, 0, 0);
+  double MET = RelMet.Mod();
+
+  std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
+  J1 = ((Jet*) branchJet->At(jit->second))->P4();
+  jit++;
+  J2 = ((Jet*) branchJet->At(jit->second))->P4();
+//----------------------------------------------------------------------------
+//  Leading jet cut
+//----------------------------------------------------------------------------
+  if (cutflag.test(0)) 
+  {
+    if (J1.Pt() < 50) return false;
+  }
+
+  if (cutflag.test(1)) 
+  {
+    if (J2.Pt() < 50) return false;
+  }
+
+  if (cutflag.test(2)) 
+  {
+    if ( (J1+J2).M()<1500. ) return false;
+  }
+
+  if (cutflag.test(3)) 
+  {
+    //Thrid jet veto
+    if (jet_map.size() >= 3)
+    {
+      std::list< std::pair<double, int> >::iterator jit=jet_map.begin(); //first jet
+      Jet *jet1 = (Jet*) branchJet->At(jit->second);
+      jit++; // second jet
+      Jet *jet2 = (Jet*) branchJet->At(jit->second);
+      jit++; // third jet
+      Jet *jet3 = (Jet*) branchJet->At(jit->second);
+
+      // Jet3 is within jet1 and jet2 
+      if ( (jet3->Eta > jet1->Eta && jet3->Eta < jet2->Eta) || 
+         (jet3->Eta > jet2->Eta && jet3->Eta < jet1->Eta))
+      {
+        // Only reject hard jets 
+        if (jet3->PT > 50) return false;
+      }
+
+    }
+
+    // b veto
+    for(std::list< std::pair<double, int> >::iterator jit=jet_map.begin();
+        jit!=jet_map.end(); jit++)
+    {
+      Jet *jet = (Jet*) branchJet->At(jit->second);
+      if (jet->BTag) return false;
+      if (jet->TauTag) return false;
+    }
+
+    // Lepton veto
+    if (FakingZNN) ;
+    else
+    {
+      if (branchElectron->GetEntries()>0) return false;
+      if (branchMuon->GetEntries()>0) return false;
+    }
+
+  }
+
+
+  if (cutflag.test(4)) 
+  {
+    if (MET < 200) return false;
+  }
+  return true;
+
+
+}       // -----  end of function DPhes::PhenoCut  -----
 // ===  FUNCTION  ============================================================
 //         Name:  DPhes::CheckZ
 //  Description:  This is a function to check the Z decay productions
@@ -1225,10 +1363,11 @@ TVector2 DPhes::ZLLLep(std::list<int> LGen, std::map<int, GenParticle*> EleGen, 
 // ===========================================================================
 int DPhes::LoopCut()
 {
-    for (int i = 0; i < order.size(); ++i)
+  for (int i = 0; i < order.size(); ++i)
   {
     std::bitset<10> locbit(CutMap[order.at(i)]);
-    if (Cut(locbit) == false) continue;
+    if (PhenoCut(locbit) == false) continue;
+    //if (Cut(locbit) == false) continue;
     HisMap["CutFlow"]->Fill(i);
 
     LoopCutFill(i, "ZPt", ZPT);
@@ -1429,3 +1568,146 @@ int DPhes::LCFillJets(int NCut)
   return 1;
 
 }       // -----  end of function DPhes::LCFillJets  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::CheckTT
+//  Description:  i
+// ===========================================================================
+int DPhes::CheckTT()
+{
+  std::list<int> VLep;
+
+  for (int i = 0; i < branchParticle->GetEntries(); ++i)
+  {
+    GenParticle* p = (GenParticle*)branchParticle->At(i);
+
+    if  (std::abs(p->PID) == 11 || std::abs(p->PID) == 13 || std::abs(p->PID) == 15)
+    {
+      VLep.push_back(i);
+      // Search another lepton afterward
+      for (int j = i; j < branchParticle->GetEntries(); ++j)
+      {
+        GenParticle* p2 = (GenParticle*)branchParticle->At(j);
+        if  (std::abs(p2->PID) == 11 || std::abs(p2->PID) == 13 || std::abs(p2->PID) == 15)
+        {
+          if (p2->P4() != p->P4() && p->P4().DeltaR(p2->P4()) > 0.8)
+          {
+            VLep.push_back(j);
+            break;
+          }
+        }
+      }
+      break;
+    }
+  }
+
+  return VLep.size();
+}       // -----  end of function DPhes::CheckTT  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::PreSelect
+//  Description:  
+// ===========================================================================
+bool DPhes::BGPreSelect()
+{
+
+  if (jet_map.size() < 2) return false;
+  // This function may be called from Loop.
+  // returns  1 if entry is accepted.
+  // returns -1 otherwise.
+  TLorentzVector J1(0, 0, 0, 0);
+  TLorentzVector J2(0, 0, 0, 0);
+  double MET = RelMet.Mod();
+
+  if (MET < 50) return false;
+
+  std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
+  J1 = ((Jet*) branchJet->At(jit->second))->P4();
+  if (J1.Pt() < 30 || std::fabs(J1.Eta()) > 5) return false;
+
+  jit++;
+  J2 = ((Jet*) branchJet->At(jit->second))->P4();
+  if (J2.Pt() < 30 || std::fabs(J2.Eta()) > 5) return false;
+
+  //
+  // Opposive eta and eta separation
+  //
+  if (J1.Eta() * J2.Eta() > 0) return false;      
+
+  if ( fabs(J1.Eta() - J2.Eta()) < 4.2) return false;      
+
+  return true;
+}       // -----  end of function DPhes::PreSelect  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::SGPreSelect
+//  Description:  
+// ===========================================================================
+bool DPhes::SGPreSelect()
+{
+  // This function may be called from Loop.
+  // returns  1 if entry is accepted.
+  // returns -1 otherwise.
+  TLorentzVector J1(0, 0, 0, 0);
+  TLorentzVector J2(0, 0, 0, 0);
+
+  if (jet_map.size() < 2) return false;
+  
+  std::list< std::pair<double, int> >::iterator jit = jet_map.begin();
+  J1 = ((Jet*) branchJet->At(jit->second))->P4();
+  jit++;
+  J2 = ((Jet*) branchJet->At(jit->second))->P4();
+
+  if ( fabs(J1.Eta() - J2.Eta()) < 4.2) return false;      
+  return true;
+
+}       // -----  end of function DPhes::SGPreSelect  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::PreSelect
+//  Description:  
+// ===========================================================================
+bool DPhes::PreSelect()
+{
+  if (OutPicName.find("Wino") != std::string::npos)
+    return SGPreSelect();
+  else
+    return BGPreSelect();
+
+}       // -----  end of function DPhes::PreSelect  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::FillMjj
+//  Description:  
+// ===========================================================================
+bool DPhes::FillMjj()
+{
+    std::vector<int> jets;/* cursor */
+    
+    for(std::list<std::pair<double, int> >::iterator it=jet_map.begin();
+      it!=jet_map.end(); it++)
+    {
+      Jet* jet = (Jet*)branchJet->At(it->second);
+      if (jet->BTag || jet->TauTag )
+        continue;
+      if (jet->PT < 50)
+        continue;
+      jets.push_back(it->second);
+    }
+
+    if (jets.size() < 2) return false;
+
+      std::vector<int>::iterator jit = jets.begin();
+    Jet *J1 = (Jet*) branchJet->At(*jit);
+    jit++;
+    Jet *J2 = (Jet*) branchJet->At(*jit);
+    HisMap["MJJ"]->Fill((J1->P4()+J2->P4()).M());
+    if ((J1->P4()+J2->P4()).M() > 2000)
+    {
+    std::cout << " Jet 1 " << J1->PT << " Jet 2 " << J2->PT  << " DeltaR " << J1->P4().DeltaR(J2->P4())<< std::endl;
+    }
+
+    return true;
+
+}       // -----  end of function DPhes::FillMjj  -----

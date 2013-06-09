@@ -59,7 +59,7 @@ int main ( int argc, char *argv[] )
   const double TTBarMetThre = 100;
 
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "LoopCut", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "MJJ_", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
   //const std::string Outdir  = "TEST";
 
@@ -86,21 +86,50 @@ int main ( int argc, char *argv[] )
   else
     chain.Add(TreeList);
 
+
   //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
-  //chain.Add("test/ZJETS_13TEV_NoPileUp_9850.root");
+  //chain.Add("test/ZJETS_13TEV_NoPileUp_62128.root");
   //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
 
-  DPhes DP(&chain);
-  DP.InitDelPhes(Process, Pileup);
-  DP.ReadDelPhes();
-  DP.SetCutBit("0"); //No Cut applied 
-  //DP.SetCutBit("-1"); //All Cuts applied
+  // Quick and dirty way
+  {
+
+    DPhes DP(&chain);
+    if (Process.find("TTBAR") != std::string::npos)
+    {
+      TString ProSLep = Process + (LeptonicTT ? "_FLep " : "_SLep");
+      DP.InitDelPhes(ProSLep.Data(), Pileup);
+    }
+    else
+      DP.InitDelPhes(Process, Pileup);
+
+    DP.ReadDelPhes();
+    DP.SetCutBit("0"); //No Cut applied 
+    //DP.SetCutBit("-1"); //All Cuts applied
+    if (Process.find("TTBAR") != std::string::npos)
+      DP.SetTTBar(LeptonicTT, TTBarMetThre);
+    DP.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
+    DP.BookHistogram();
+    DP.Looping();
+    DP.DrawHistogram(Outdir);
+  }
+
   if (Process.find("TTBAR") != std::string::npos)
-    DP.SetTTBar(LeptonicTT, TTBarMetThre);
-  DP.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
-  DP.BookHistogram();
-  DP.Looping();
-  DP.DrawHistogram(Outdir);
+  {
+    DPhes DP2(&chain);
+    TString ProSLep = Process + (LeptonicTT ? "_SLep " : "_FLep");
+    DP2.InitDelPhes(ProSLep.Data(), Pileup);
+    DP2.ReadDelPhes();
+    DP2.SetCutBit("0"); //No Cut applied 
+    //DP2.SetCutBit("-1"); //All Cuts applied
+    if (Process.find("TTBAR") != std::string::npos)
+      DP2.SetTTBar(!LeptonicTT, TTBarMetThre);
+    DP2.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
+    DP2.BookHistogram();
+    DP2.Looping();
+    DP2.DrawHistogram(Outdir);
+
+  }
 
   return EXIT_SUCCESS;
 }				// ----------  end of function main  ----------

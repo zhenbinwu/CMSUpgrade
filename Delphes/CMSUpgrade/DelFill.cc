@@ -1529,11 +1529,11 @@ bool DPhes::DiMuonMet()
   //std::cout << " U parallel " << MetP / Qt2D.Mag()<< std::endl;
 
   // Testing rotation:
-  std::cout << " Angle " << Ut2D.Angle(Qt2D) << std::endl;
-  double MetT = Ut2D.Pt() * std::sin(Ut2D.Angle(Qt2D));
-  std::cout <<  " Test transe " << Ut2D.Pt() * std::sin(Ut2D.Angle(Qt2D)) << std::endl;
-  double MetP = Ut2D.Pt() * std::cos(Ut2D.Angle(Qt2D));
-  std::cout <<  " Test parla " << Ut2D.Pt() * std::cos(Ut2D.Angle(Qt2D)) << std::endl;
+  double Dphi =  Ut2D.DeltaPhi(Qt2D);
+  double MetT = Ut2D.Pt() * std::sin(Dphi);
+  std::cout <<  " Test transe " << Ut2D.Pt() * std::sin(Dphi) << std::endl;
+  double MetP = Ut2D.Pt() * std::cos(Dphi);
+  std::cout <<  " Test parla " << Ut2D.Pt() * std::cos(Dphi) << std::endl;
   double Scale = -1 * MetP / Qt.Pt();
   std::cout << " Met T "  << MetT << " MetP " << MetP << " Scale " << Scale << std::endl;
   HisMap["UPQT"]->Fill(MetP+Qt.Pt());

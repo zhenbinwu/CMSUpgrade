@@ -15,6 +15,7 @@
 // ===========================================================================
 
 #include "DelFill.h"
+#include "DelEvent.h"
 #include "TRefArray.h"
 #include <sys/stat.h>
 /*
@@ -56,6 +57,11 @@ DPhes::~DPhes ()
   {
     delete it->second;
   }
+  for(std::map<std::string, TProfile*>::iterator it=HisMapP.begin();
+      it!=HisMapP.end(); it++)
+  {
+    delete it->second;
+  }
   for(std::map<std::string, TH2D*>::iterator it=HisMap2D.begin();
       it!=HisMap2D.end(); it++)
   {
@@ -85,6 +91,7 @@ DPhes::operator = ( const DPhes &other )
 int DPhes::InitDelPhes(std::string process, std::string pu)
 {
   treeReader       = 0;
+  branchEvent      = 0;
   branchJet        = 0;
   branchElectron   = 0;
   branchMuon       = 0;
@@ -173,6 +180,7 @@ int DPhes::ReadDelPhes()
   NEntries = fChain->GetEntries();
 
   // Get pointers to branches used in this analysis
+  branchEvent       = treeReader->UseBranch("Event");
   branchJet         = treeReader->UseBranch("Jet");
   branchElectron    = treeReader->UseBranch("Electron");
   branchMuon        = treeReader->UseBranch("Muon");
@@ -211,6 +219,15 @@ int DPhes::BookHistogram()
   HisMap["Mety"]    = new TH1F("Mety", "MET_Y", 40, -400, 400.0 );
   HisMap["MetPhi"]  = new TH1F("MetPhi", "#Phi_{MET}", 16, 0, 8 );
   HisMap["MetSgn"]  = new TH1F("MetSgn", "Met Sgnf.", 16, 0, 8 );
+
+//----------------------------------------------------------------------------
+//  For Met Resolution study
+//----------------------------------------------------------------------------
+  HisMap["UPQT"] = new TH1F("UPQT", "#u_{#parallel}+q_{T}", 400, -200, 200);
+  HisMap["UT"] = new TH1F("UT", "#u_{#perp}", 400, -200, 200);
+  HisMapP["MetScale"] = new TProfile("MetS", "-<#u_{#parallel}>/q_{T}", 200, 0, 400);
+  HisMapP["MetRes"] = new TProfile("MetR", "Met Resolution", 200, 0, 400, "s");
+  
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Ben Defined Variable ~~~~~
   HisMap["GenMet"]  = new TH1F("GenMet", "MET from the Gen Particle", 200, 0, 800.0 );
@@ -263,7 +280,7 @@ int DPhes::BookHistogram()
 int DPhes::Looping()
 {
 
-    PreLoopCut();
+    //PreLoopCut();
 //----------------------------------------------------------------------------
 //  Too many messy stuff dump in here for the Desy. Need to clean up afterward
 //----------------------------------------------------------------------------
@@ -275,26 +292,33 @@ int DPhes::Looping()
       std::cout << "--------------------" << entry << std::endl;
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
+  
+    //DelEvent DEV;
+    //if (!DEV.LoadEvent(branchEvent, branchJet, branchElectron, branchMuon, branchPhoton, branchMet, branchHt, branchParticle))
+      //continue;
+    //else
+      //std::cout <<  DEV.PUCorMet.Mod() << std::endl;
 
-    // Setting some variables clean for the event
+    //break;
+    //// Setting some variables clean for the event
     RelMet.Clear();
     RelMHT.Clear();
-      ZJet.clear();
+      //ZJet.clear();
     RelHT    = 0.0;
-    ZPT      = 0.0;
-    IgnoreDY = false;
-    ZVeto    = false;
-    std::list<int> LGen;
-    if (FakingZNN)
-      LGen = CheckZ();
+    //ZPT      = 0.0;
+    //IgnoreDY = false;
+    //ZVeto    = false;
+    //std::list<int> LGen;
+    //if (FakingZNN)
+      //LGen = CheckZ();
 
-    if (FakingZNN && IgnoreDY)
-      continue;
-    else
-      HisMap["NEVT"]->Fill(1);
+    //if (FakingZNN && IgnoreDY)
+      //continue;
+    //else
+      //HisMap["NEVT"]->Fill(1);
 
-    if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
-      HisMap["NEVT"]->Fill(0);
+    //if ((branchJet->GetEntries()+branchElectron->GetEntries()+branchMuon->GetEntries()+branchPhoton->GetEntries()) == 0)
+      //HisMap["NEVT"]->Fill(0);
 
 
     //----------------------------------------------------------------------------
@@ -308,44 +332,47 @@ int DPhes::Looping()
       RelMet.SetMagPhi(met->MET, met->Phi);
     }
 
-    //----------------------------------------------------------------------------
-    //  Whether to do the TTBAR
-    //----------------------------------------------------------------------------
-    if (TTBARSam)
-    {
-      if (LeptonicTT)
-      {
-        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
-          continue;
-        if (RelMet.Mod() < TTBarMetThre )
-          continue;
-      } else {
-        if ((branchElectron->GetEntries() + branchMuon->GetEntries()) != 0)
-          continue;
-      }
-    }
+    DiMuonMet();
+    continue;
 
-    //----------------------------------------------------------------------------
-    //  For Z->ll samples , faking it as Z->vv
-    //----------------------------------------------------------------------------
-    if (FakingZNN)
-    {
-      RelMet = ZLLMet(LGen);
-      if (ZVeto)
-      {
-        HisMap["NEVTS"]->Fill(0);
-        continue;
-      }
-    }
+    ////----------------------------------------------------------------------------
+    ////  Whether to do the TTBAR
+    ////----------------------------------------------------------------------------
+    //if (TTBARSam)
+    //{
+      //if (LeptonicTT)
+      //{
+        //if ((branchElectron->GetEntries() + branchMuon->GetEntries()) == 0)
+          //continue;
+        //if (RelMet.Mod() < TTBarMetThre )
+          //continue;
+      //} else {
+        //if ((branchElectron->GetEntries() + branchMuon->GetEntries()) != 0)
+          //continue;
+      //}
+    //}
+
+    ////----------------------------------------------------------------------------
+    ////  For Z->ll samples , faking it as Z->vv
+    ////----------------------------------------------------------------------------
+    //if (FakingZNN)
+    //{
+      //RelMet = ZLLMet(LGen);
+      //if (ZVeto)
+      //{
+        //HisMap["NEVTS"]->Fill(0);
+        //continue;
+      //}
+    //}
 
 
-    // Clear our the jet ordering list
-    OrderJet();
+    //// Clear our the jet ordering list
+    //OrderJet();
 
-    HisMap["NjetO"]->Fill(branchJet->GetEntries());
-    HisMap["NjetZ"]->Fill(jet_map.size());
+    //HisMap["NjetO"]->Fill(branchJet->GetEntries());
+    //HisMap["NjetZ"]->Fill(jet_map.size());
 
-    LoopCut();
+    //LoopCut();
 /*
  *    //// Apply cuts before filling up the histogram
  *    if (Cut(cutbit) == false) continue;
@@ -387,6 +414,16 @@ int DPhes::DrawHistogram(std::string Dir)
   TCanvas *c1 = new TCanvas("fd", "fdj", 600, 500);
   for(std::map<std::string, TH1F*>::iterator i=HisMap.begin();
       i!=HisMap.end(); i++)
+  {
+    c1->cd();
+    c1->Clear();
+    i->second->Write();
+    //i->second->Draw();
+    //TString name = OutPicName +"_"+ i->first + ".png";
+    //c1->Print(name);
+  }
+  for(std::map<std::string, TProfile*>::iterator i=HisMapP.begin();
+      i!=HisMapP.end(); i++)
   {
     c1->cd();
     c1->Clear();
@@ -1429,3 +1466,81 @@ int DPhes::LCFillJets(int NCut)
   return 1;
 
 }       // -----  end of function DPhes::LCFillJets  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::DiMuonMet
+//  Description:  
+// ===========================================================================
+bool DPhes::DiMuonMet()
+{
+  if (branchMuon->GetEntries() != 2) return false;
+  if (branchElectron->GetEntries() > 0) return false;
+
+
+  // The Qt of Z/gramma*
+  TLorentzVector Qt(0, 0, 0, 0);
+
+  for (int i = 0; i < branchMuon->GetEntries(); ++i)
+  {
+    Qt += ((Muon*)branchMuon->At(i))->P4();
+  }
+
+  // Ut , sum of other objects 
+  TLorentzVector Ut(0, 0, 0, 0);
+
+  //Loop over the jet correction
+  if (branchJet->GetEntries() > 0)
+    for (int i = 0; i < branchJet->GetEntries(); ++i)
+    {
+      Jet* jet = (Jet*)branchJet->At(i);
+      if(std::fabs(jet->Eta) > PUCorJetEta || jet->PT < PUCorJetPt)
+        continue;
+      Ut += jet->P4();
+    }
+
+  //Loop over the photon correction
+  if (branchPhoton->GetEntries() > 0)
+    for (int i = 0; i < branchPhoton->GetEntries(); ++i)
+    {
+      Ut += ((Photon*)branchPhoton->At(i))->P4();
+    }
+
+  //Double check the Ut
+  TVector3 MHT(0, 0, 0);
+  TVector3 MET(RelMet.Px(), RelMet.Py(), 0);
+  TVector3 ZDir(0, 0, 1);
+  std::cout << "MHT " <<MHT.Perp() << std::endl;
+  if (Ut.Pt() == 0.0) return false;
+  std::cout << " Qt " << Qt.Pt() << std::endl;
+  std::cout << " Ut " << Ut.Pt() << std::endl;
+  std::cout << " Met " << RelMet.Mod() << std::endl;
+
+  MHT = Qt.Vect() + Ut.Vect() + MET;
+  std::cout << "MHT " <<MHT.Perp() << std::endl;
+
+  TVector3 Qt2D(Qt.Px(), Qt.Py(), 0);
+  TVector3 Ut2D(Ut.Px(), Ut.Py(), 0);
+
+  //// Root don't return negative Perp. So do this by angle
+  //double MetT = Ut2D.Perp(Qt2D);
+  //std::cout << " U tranverse " << MetT << std::endl;
+  //double MetP = Ut2D.Dot(Qt2D);
+  //std::cout << " U parallel " << MetP / Qt2D.Mag()<< std::endl;
+
+  // Testing rotation:
+  std::cout << " Angle " << Ut2D.Angle(Qt2D) << std::endl;
+  double MetT = Ut2D.Pt() * std::sin(Ut2D.Angle(Qt2D));
+  std::cout <<  " Test transe " << Ut2D.Pt() * std::sin(Ut2D.Angle(Qt2D)) << std::endl;
+  double MetP = Ut2D.Pt() * std::cos(Ut2D.Angle(Qt2D));
+  std::cout <<  " Test parla " << Ut2D.Pt() * std::cos(Ut2D.Angle(Qt2D)) << std::endl;
+  double Scale = -1 * MetP / Qt.Pt();
+  std::cout << " Met T "  << MetT << " MetP " << MetP << " Scale " << Scale << std::endl;
+  HisMap["UPQT"]->Fill(MetP+Qt.Pt());
+  HisMap["UT"]->Fill(MetT);
+  HisMapP["MetScale"]->Fill(Qt.Pt(), Scale);
+  HisMapP["MetRes"]->Fill(Qt.Pt(), MetP);
+  return true;
+
+
+}       // -----  end of function DPhes::DiMuonMet  -----

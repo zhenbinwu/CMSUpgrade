@@ -30,6 +30,7 @@
 #include "TH2D.h"
 #include "TFile.h"
 #include "TCanvas.h"
+#include "TProfile.h"
 
 #include "ExRootAnalysis/ExRootConfReader.h"
 #include "ExRootAnalysis/ExRootTreeReader.h"
@@ -135,6 +136,7 @@ class DPhes
     ExRootTreeReader *treeReader;
 
     // Delphes branches
+    TClonesArray *branchEvent;
     TClonesArray *branchJet;
     TClonesArray *branchElectron;
     TClonesArray *branchMuon;
@@ -181,9 +183,11 @@ class DPhes
  *  Hist tools
  *-----------------------------------------------------------------------------*/
     std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
+    std::map<std::string, TProfile*> HisMapP; //Saving the 1D Hist 
     std::map<std::string, TH1F*> HisMapCL; //Saving the 1D Hist 
     std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 
     std::map<std::string, TH2D*> HisMap2DCL; //Saving the 2D Hist 
+    
 
 /*-----------------------------------------------------------------------------
  *  Cut Flow variables
@@ -202,6 +206,7 @@ class DPhes
 
 
 
+    bool DiMuonMet();
 }; /* -----  end of class DPhes  ----- */
 
 #endif /* __DPHES_H__ */

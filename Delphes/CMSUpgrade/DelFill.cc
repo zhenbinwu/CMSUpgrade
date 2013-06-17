@@ -150,6 +150,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     tempname = name;
     tempname.ReplaceAll(process.c_str(), "MetDiEle");
     MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+
     return 1;
   }
 

@@ -75,6 +75,7 @@ DelAna::operator = ( const DelAna &other )
 // ===========================================================================
 bool DelAna::CheckFlag(std::string name)
 {
+  CurrentTag = name;
   return DEV->CheckFlag(name);
 }       // -----  end of function DelAna::CheckFlag  -----
 
@@ -105,3 +106,70 @@ int DelAna::GetBasic()
   if (vJet->size() > 2) J3 = &vJet->at(2);
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::DiLepton
+//  Description:  
+// ===========================================================================
+int DelAna::MetDiLepton() 
+{
+
+  if (CurrentTag != "MetDiMuon" && CurrentTag != "MetDiEle")
+    return 0;
+  // Initial values
+  // The Qt of Z/gramma*
+  TLorentzVector Qt(0, 0, 0, 0);
+  // Ut , sum of other objects 
+  TLorentzVector Ut(0, 0, 0, 0);
+
+  Mll = -999.;
+  UParallel = -999.;
+  UTransverse = -999.;
+  QT = -999.;
+  MetScale = -999.;
+
+  if (vMuon->size() == 2 && vElectron->size() == 0)
+  {
+    for (int i = 0; i < vMuon->size(); ++i)
+    {
+      Qt += vMuon->at(i).P4();
+    }
+  } else if (vMuon->size() == 0 && vElectron->size() == 2) {
+    
+    for (int i = 0; i < vElectron->size(); ++i)
+    {
+      Qt += vElectron->at(i).P4();
+    }
+
+  }
+  Mll = Qt.M();
+
+
+  //Loop over the jet correction
+  if (vJet->size()> 0)
+    for (int i = 0; i < vJet->size(); ++i)
+    {
+      Ut += vJet->at(i).P4();
+    }
+
+  //Loop over the photon correction
+  if (vPhoton->size() > 0)
+    for (int i = 0; i < vPhoton->size(); ++i)
+    {
+      Ut += vPhoton->at(i).P4();
+    }
+
+  //Double check the system : Ut+Qt+Met = 0
+  TVector3 MHT(0, 0, 0);
+  TVector3 MET(PUCorMet->Px(), PUCorMet->Py(), 0);
+  MHT = Qt.Vect() + Ut.Vect() + MET;
+  assert(MHT.Pt() < 0.0003);
+
+  // Testing rotation:
+  double Dphi =  Ut.DeltaPhi(Qt);
+  UTransverse = Ut.Pt() * std::sin(Dphi);
+  UParallel = Ut.Pt() * std::cos(Dphi);
+  QT = Qt.Pt();
+  MetScale = -1 * UParallel / Qt.Pt();
+  return true;
+}       // -----  end of function DelAna::DiLepton  -----

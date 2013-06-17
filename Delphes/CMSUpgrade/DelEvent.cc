@@ -545,66 +545,7 @@ bool DelEvent::DiMuonMet()
 {
   if (vMuon.size() != 2) return false;
   if (vElectron.size()> 0) return false;
-
-  // Initial values
-  // The Qt of Z/gramma*
-  TLorentzVector Qt(0, 0, 0, 0);
-  UParallel = -999.;
-  UTransverse = -999.;
-  QT = -999.;
-  MetScale = -999.;
-
-  for (int i = 0; i < vMuon.size(); ++i)
-  {
-    Qt += vMuon.at(i).P4();
-  }
-
-  // Ut , sum of other objects 
-  TLorentzVector Ut(0, 0, 0, 0);
-
-  //Loop over the jet correction
-  if (vJet.size()> 0)
-    for (int i = 0; i < vJet.size(); ++i)
-    {
-      Jet* jet = &vJet.at(i);
-      if(std::fabs(jet->Eta) > JetEtaCut || jet->PT < JetPtCut)
-        continue;
-      Ut += jet->P4();
-    }
-
-  //Loop over the photon correction
-  if (vPhoton.size() > 0)
-    for (int i = 0; i < vPhoton.size(); ++i)
-    {
-      Ut += vPhoton.at(i).P4();
-    }
-
-  //Double check the Ut
-  TVector3 MHT(0, 0, 0);
-  TVector3 MET(PUCorMet.Px(), PUCorMet.Py(), 0);
-  TVector3 ZDir(0, 0, 1);
-  if (Ut.Pt() == 0.0) return false;
-
-  MHT = Qt.Vect() + Ut.Vect() + MET;
-
-  TVector3 Qt2D(Qt.Px(), Qt.Py(), 0);
-  TVector3 Ut2D(Ut.Px(), Ut.Py(), 0);
-
-  //// Root don't return negative Perp. So do this by angle
-  //double MetT = Ut2D.Perp(Qt2D);
-  //std::cout << " U tranverse " << MetT << std::endl;
-  //double MetP = Ut2D.Dot(Qt2D);
-  //std::cout << " U parallel " << MetP / Qt2D.Mag()<< std::endl;
-
-  // Testing rotation:
-  double Dphi =  Ut2D.DeltaPhi(Qt2D);
-  UTransverse = Ut2D.Pt() * std::sin(Dphi);
-  UParallel = Ut2D.Pt() * std::cos(Dphi);
-  QT = Qt.Pt();
-  MetScale = -1 * UParallel / Qt.Pt();
   return true;
-
-
 }       // -----  end of function DelEvent::DiMuonMet  -----
  
 // ===  FUNCTION  ============================================================
@@ -616,64 +557,8 @@ bool DelEvent::DiEleMet()
   if (vElectron.size() != 2) return false;
   if (vMuon.size()> 0) return false;
 
-  // Initial values
-  // The Qt of Z/gramma*
-  TLorentzVector Qt(0, 0, 0, 0);
-  UParallel = -999.;
-  UTransverse = -999.;
-  QT = -999.;
-  MetScale = -999.;
-
-  for (int i = 0; i < vElectron.size(); ++i)
-  {
-    Qt += vElectron.at(i).P4();
-  }
-
-  // Ut , sum of other objects 
-  TLorentzVector Ut(0, 0, 0, 0);
-
-  //Loop over the jet correction
-  if (vJet.size()> 0)
-    for (int i = 0; i < vJet.size(); ++i)
-    {
-      Jet* jet = &vJet.at(i);
-      if(std::fabs(jet->Eta) > JetEtaCut || jet->PT < JetPtCut)
-        continue;
-      Ut += jet->P4();
-    }
-
-  //Loop over the photon correction
-  if (vPhoton.size() > 0)
-    for (int i = 0; i < vPhoton.size(); ++i)
-    {
-      Ut += vPhoton.at(i).P4();
-    }
-
-  //Double check the Ut
-  TVector3 MHT(0, 0, 0);
-  TVector3 MET(PUCorMet.Px(), PUCorMet.Py(), 0);
-  TVector3 ZDir(0, 0, 1);
-  if (Ut.Pt() == 0.0) return false;
-
-  MHT = Qt.Vect() + Ut.Vect() + MET;
-
-  TVector3 Qt2D(Qt.Px(), Qt.Py(), 0);
-  TVector3 Ut2D(Ut.Px(), Ut.Py(), 0);
-
-  //// Root don't return negative Perp. So do this by angle
-  //double MetT = Ut2D.Perp(Qt2D);
-  //std::cout << " U tranverse " << MetT << std::endl;
-  //double MetP = Ut2D.Dot(Qt2D);
-  //std::cout << " U parallel " << MetP / Qt2D.Mag()<< std::endl;
-
-  // Testing rotation:
-  double Dphi =  Ut2D.DeltaPhi(Qt2D);
-  UTransverse = Ut2D.Pt() * std::sin(Dphi);
-  UParallel = Ut2D.Pt() * std::cos(Dphi);
-  QT = Qt.Pt();
-  MetScale = -1 * UParallel / Qt.Pt();
   return true;
-
+  
 }       // -----  end of function DelEvent::DiEleMet  -----
 
 // ===  FUNCTION  ============================================================

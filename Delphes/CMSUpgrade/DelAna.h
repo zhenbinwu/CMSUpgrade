@@ -16,11 +16,12 @@
  *
  * ===========================================================================
  */
-
-#include "DelEvent.h"
-
 #ifndef  __DELANA_INC__
 #define  __DELANA_INC__
+
+
+#include <assert.h>
+#include "DelEvent.h"
 
 /*
  * ===========================================================================
@@ -43,6 +44,7 @@ class DelAna
     bool CheckFlag(std::string name);
     bool Clear();
     int GetBasic();
+    int MetDiLepton();
 
     /* ====================  MUTATORS      ======================================= */
 
@@ -70,6 +72,7 @@ class DelAna
     double Met;
 
     // For Met Study
+    double Mll;
     double UParallel;
     double UTransverse;
     double QT;
@@ -81,6 +84,7 @@ class DelAna
     /* ====================  DATA MEMBERS  ======================================= */
 
   private:
+    std::string CurrentTag;
 
 }; /* -----  end of class DelAna  ----- */
 

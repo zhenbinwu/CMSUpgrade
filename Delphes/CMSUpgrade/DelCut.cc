@@ -73,8 +73,29 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
-  His->AddTH1("Met", "Met" ,  800, 0 , 800 );
-  His->AddTH1("QT", "QT" ,  800, 0 , 800 );
+  // Met study
+  His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", 
+      "Events/ 4 GeV",  50, 0, 200, 0, 1);
+  His->AddTH1("MLL", "M_{ll}", "M_{ll} [GeV]", 
+      "Events/ 1 GeV", 60, 60, 120, 0, 1);
+  His->AddTH1("QT", "Qt", "q_{T} [GeV]", 
+      "Events/ 8 GeV",  50, 0, 400, 0, 1);
+  His->AddTH1("UPQT", "UPQT", "u_{#parallel}+q_{T} [GeV]", 
+      "Events/ 8 GeV",  50, -200, 200, 0, 1);
+  His->AddTH1("UParal", "UParal", "u_{#parallel} [GeV]", 
+      "Events/ 8 GeV",  50, -200, 200, 0, 1);
+  His->AddTH1("UPerp", "UPerp", "u_{#perp} [GeV]", 
+      "Events/ 8 GeV",  50, -200, 200, 0, 1);
+  His->AddTPro("MetScale", "MetScale", "Z/#gramma q_{T} [GeV]", 
+      "-<u_{#parallel}>/q_{T}",  50, 0, 400);
+  His->AddTPro("MetResP", "MetResP", "Z/#gramma q_{T} [GeV]", 
+      "#sigma(u_{#parallel}) [GeV]",  50, 0, 400);
+  His->AddTPro("MetResT", "MetResT", "Z/#gramma q_{T} [GeV]", 
+      "#sigma(u_{#perp}) [GeV]",  50, 0, 400);
+  His->AddTPro("MetResX", "MetResX", "HT [GeV]", 
+      "#sigma(#slash{E}_{x}) [GeV]",  50, 0, 400);
+  His->AddTPro("MetResY", "MetResY", "HT [GeV]", 
+      "#sigma(#slash{E}_{y}) [GeV]",  50, 0, 400);
 
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
@@ -156,15 +177,27 @@ int DelCut::FillCut()
   Ana->GetBasic();
 
   His->FillTH1("NEVT", 1);
+
+  // Met Study
+  Ana->MetDiLepton();
+
   His->FillTH1("Met", Ana->PUCorMet->Mod());
-  His->FillTH1("QT", Ana->DEV->QT);
+  His->FillTH1("MLL", Ana->Mll);
+  His->FillTH1("QT", Ana->QT);
+  His->FillTH1("UPQT", Ana->UParallel + Ana->QT);
+  His->FillTH1("UPerp", Ana->UTransverse);
+  His->FillTH1("UParal", Ana->UParallel);
+  His->FillTPro("MetScale", Ana->QT, Ana->MetScale);
+  His->FillTPro("MetResP", Ana->QT, Ana->UParallel);
+  His->FillTPro("MetResT", Ana->QT, Ana->UTransverse);
+  //His->FillTPro("MetResX", Ana->HT, Ana->PUCorMet->Px());
+  //His->FillTPro("MetResY", Ana->HT, Ana->PUCorMet->Py());
 
   for (int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<10> locbit(CutMap[CutOrder.at(i)]);
     if (CheckCut(locbit) == false) continue;
     His->FillTH1("CutFlow", i);
-
     // Filling by functions
     FillJets(i);
   }
@@ -178,7 +211,8 @@ int DelCut::FillCut()
 // ===========================================================================
 bool DelCut::CheckCut(std::bitset<10> cutflag)
 {
-  return true;
+  return CheckPhenoCut(cutflag);
+  //return true;
 }       // -----  end of function DelCut::CheckCut  -----
 
 // ===  FUNCTION  ============================================================

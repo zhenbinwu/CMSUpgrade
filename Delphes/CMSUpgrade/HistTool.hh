@@ -61,7 +61,7 @@ class HistTool
     // Book the His TH1
     int AddTH1 (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, 
-        Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx, Int_t logy);
+        Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
     int AddTH1 (const std::string name, const std::string title, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax);
     int AddTH1C (const std::string name, const std::string title, 
@@ -87,7 +87,7 @@ class HistTool
     // Book the His TPro
     int AddTPro (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, 
-        Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx, Int_t logy);
+        Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
     int AddTPro (const std::string name, const std::string title, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax);
     int AddTProC (const std::string name, const std::string title, 
@@ -98,10 +98,10 @@ class HistTool
         Int_t logx=0, Int_t logy=0);
 
     // Filling the his TPro
-    int FillTPro(int Ncut, std::string HisName, int value, double weight=1);
-    int FillTPro(int Ncut, std::string HisName, double value, double weight=1);
-    int FillTPro(std::string HisName, double value, double weight=1);
-    int FillTPro(std::string HisName, int value, double weight=1);
+    int FillTPro(int Ncut, std::string HisName, int xvalue, double yvalue, double weight=1);
+    int FillTPro(int Ncut, std::string HisName, double xvalue, double yvalue, double weight=1);
+    int FillTPro(std::string HisName, double xvalue, double yvalue, double weight=1);
+    int FillTPro(std::string HisName, int xvalue, double yvalue, double weight=1);
 
     // Output the His TPro
     int WriteTPro();

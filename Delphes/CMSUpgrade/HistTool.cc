@@ -115,9 +115,8 @@ int HistTool::AddTH1C (const std::string name, const std::string title,
   for (Long_t i = 0; i < CutSize; ++i)
   {
     TString mapname = name+"_"+i;
-    TString maptitle = title+" ("+order.at(i)+")" + ":" + xlabel + ":" + ylabel;
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
-    HisMap[mapname.Data()] = new TH1F(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
+    TString maptitle = title+" ("+order.at(i)+")";
+    AddTH1(mapname.Data(), maptitle.Data(), xlabel, ylabel, nxbins, xmin, xmax, logx, logy);
   }
 
   return 1;
@@ -134,12 +133,7 @@ int HistTool::AddTH1C (const std::string name, const std::string title,
   {
     TString mapname = name+"_"+i;
     TString maptitle = title+" ("+order.at(i)+")";
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
-
-
-    HisMap[mapname.Data()] = new TH1F(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
-    //HisMap[mapname.Data()] = result.AddHist1D(mapname.Data(), 
-        //maptitle.Data(), xlabel.c_str(), ylabel.c_str(), nxbins, xmin, xmax);
+    AddTH1(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
   }
 
   return 1;
@@ -154,8 +148,13 @@ int HistTool::AddTH1 (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax,
     Int_t logx, Int_t logy)
 {
-
-  HisMap[name.c_str()] = new TH1F(name.c_str(), title.c_str(), nxbins, xmin, xmax);
+  TString xlb, ylb;
+  if (logx) xlb = "log_"+xlabel;
+  else xlb = xlabel;
+  if (logy) ylb = "log_"+ylabel;
+  else ylb = ylabel;
+  TString Title = title +";"+xlb+";"+ylb;
+  HisMap[name.c_str()] = new TH1F(name.c_str(), Title, nxbins, xmin, xmax);
   return 1;
 }       // -----  end of function HistTool::AddTH1C  -----
 
@@ -168,7 +167,6 @@ int HistTool::AddTH1 (const std::string name, const std::string title,
 {
   
   HisMap[name.c_str()] = new TH1F(name.c_str(), title.c_str(), nxbins, xmin, xmax);
-
   return 1;
 }       // -----  end of function HistTool::AddTH1  -----
 
@@ -296,8 +294,13 @@ int HistTool::AddTPro (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax,
     Int_t logx, Int_t logy)
 {
-
-  ProMap[name.c_str()] = new TProfile(name.c_str(), title.c_str(), nxbins, xmin, xmax);
+  TString xlb, ylb;
+  if (logx) xlb = "log_"+xlabel;
+  else xlb = xlabel;
+  if (logy) ylb = "log_"+ylabel;
+  else ylb = ylabel;
+  TString Title = title +";"+xlb+";"+ylb;
+  ProMap[name.c_str()] = new TProfile(name.c_str(), Title, nxbins, xmin, xmax);
   return 1;
 }       // -----  end of function HistTool::AddTProC  -----
 
@@ -318,39 +321,40 @@ int HistTool::AddTPro (const std::string name, const std::string title,
 //         Name:  HistTool::::FillTPro
 //  Description:  
 // ===========================================================================
-int HistTool::FillTPro(int Ncut, std::string HisName, double value, double weight)
+int HistTool::FillTPro(int Ncut, std::string HisName, double xvalue, double yvalue, double weight)
 {
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (ProMap.find(mapname.Data()) == ProMap.end())
     return 0;
-  ProMap[mapname.Data()]->Fill(value, weight);
+  ProMap[mapname.Data()]->Fill(xvalue, yvalue,  weight);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
-int HistTool::FillTPro(int Ncut, std::string HisName, int value, double weight)
+int HistTool::FillTPro(int Ncut, std::string HisName, int xvalue, double yvalue,  double weight)
 {
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (ProMap.find(mapname.Data()) == ProMap.end())
     return 0;
-  ProMap[mapname.Data()]->Fill(value, weight);
+  ProMap[mapname.Data()]->Fill(xvalue, yvalue, weight);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
-int HistTool::FillTPro(std::string HisName, int value, double weight)
+int HistTool::FillTPro(std::string HisName, double xvalue, double yvalue, double weight)
 {
   if (ProMap.find(HisName) == ProMap.end())
     return 0;
-  ProMap[HisName]->Fill(value, weight);
+  ProMap[HisName]->Fill(xvalue, yvalue, weight);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
-int HistTool::FillTPro(std::string HisName, double value, double weight)
+int HistTool::FillTPro(std::string HisName, int xvalue, double yvalue, double weight)
 {
   if (ProMap.find(HisName) == ProMap.end())
     return 0;
-  ProMap[HisName]->Fill(value, weight);
+  ProMap[HisName]->Fill(xvalue, yvalue, weight);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
+
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::WriteTPro

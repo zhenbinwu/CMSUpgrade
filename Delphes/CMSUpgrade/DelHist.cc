@@ -48,18 +48,13 @@ int main ( int argc, char *argv[] )
 
 
   // PU corrected Met
-  const bool PUCorMet        = true;
   //const double PUCorJetEta = 5;
   //const double PUCorJetPt  = 30;
   const double PUCorJetEta   = atof(argv[3]);
   const double PUCorJetPt    = atof(argv[4]);
 
-  // Intrisic Vs Leptonic Met
-  const bool LeptonicTT     = false;
-  const double TTBarMetThre = 100;
-
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "LoopCut", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "Test", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
   //const std::string Outdir  = "TEST";
 
@@ -91,16 +86,12 @@ int main ( int argc, char *argv[] )
   //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
 
   DPhes DP(&chain);
-  DP.InitDelPhes(Process, Pileup);
+  DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);
+  DP.InitDelPhes(Process, Pileup, Outdir);
   DP.ReadDelPhes();
-  DP.SetCutBit("0"); //No Cut applied 
-  //DP.SetCutBit("-1"); //All Cuts applied
-  if (Process.find("TTBAR") != std::string::npos)
-    DP.SetTTBar(LeptonicTT, TTBarMetThre);
-  DP.SetPUCorMet(PUCorMet, PUCorJetPt, PUCorJetEta);
-  DP.BookHistogram();
+  DP.PreLooping();
   DP.Looping();
-  DP.DrawHistogram(Outdir);
+  DP.PostLooping();
 
   return EXIT_SUCCESS;
 }				// ----------  end of function main  ----------

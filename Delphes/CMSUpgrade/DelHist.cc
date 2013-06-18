@@ -54,7 +54,7 @@ int main ( int argc, char *argv[] )
   const double PUCorJetPt    = atof(argv[4]);
 
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "Test", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "LoopCut", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
   //const std::string Outdir  = "TEST";
 

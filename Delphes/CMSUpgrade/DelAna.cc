@@ -76,6 +76,7 @@ DelAna::operator = ( const DelAna &other )
 bool DelAna::CheckFlag(std::string name)
 {
   CurrentTag = name;
+  if (name == "Default") return true;
   return DEV->CheckFlag(name);
 }       // -----  end of function DelAna::CheckFlag  -----
 
@@ -173,3 +174,39 @@ int DelAna::MetDiLepton()
   MetScale = -1 * UParallel / Qt.Pt();
   return true;
 }       // -----  end of function DelAna::DiLepton  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::GenLeps
+//  Description:  
+// ===========================================================================
+int DelAna::GenLeps() const
+{
+  
+  std::list<int> VLep;
+
+  for (int i = 0; i < vGenParticle->size(); ++i)
+  {
+    GenParticle p = vGenParticle->at(i);
+
+    if  (std::abs(p.PID) == 11 || std::abs(p.PID) == 13 || std::abs(p.PID) == 15)
+    {
+      VLep.push_back(i);
+      // Search another lepton afterward
+      for (int j = i; j < vGenParticle->size(); ++j)
+      {
+        GenParticle p2 = vGenParticle->at(j);
+        if  (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15)
+        {
+          if (p2.P4() != p.P4() && p.P4().DeltaR(p2.P4()) > 1.0)
+          {
+            VLep.push_back(j);
+            break;
+          }
+        }
+      }
+      break;
+    }
+  }
+
+  return VLep.size();
+}       // -----  end of function DelAna::GenLeps  -----

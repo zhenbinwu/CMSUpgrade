@@ -45,6 +45,7 @@ class DelAna
     bool Clear();
     int GetBasic();
     int MetDiLepton();
+    int GenLeps() const;
 
     /* ====================  MUTATORS      ======================================= */
 

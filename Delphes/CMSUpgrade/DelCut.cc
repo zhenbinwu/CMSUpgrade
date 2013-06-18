@@ -73,6 +73,7 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
+  His->AddTH1("NLep", "NLep " ,  10, 0 , 10 );
   // Met study
   His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", 
       "Events/ 4 GeV",  50, 0, 200, 0, 1);
@@ -100,6 +101,8 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
 //----------------------------------------------------------------------------
+  His->AddTH1C("CMet", "CMet", "PU Corrected #slash{E}_{T} [GeV]", 
+      "Events/ 20 GeV", 30, 0, 600, 0, 1);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
   His->AddTH1C("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
   His->AddTH1C("J1Eta", "#eta_{J1}", 14, -7, 7 );
@@ -177,6 +180,9 @@ int DelCut::FillCut()
   Ana->GetBasic();
 
   His->FillTH1("NEVT", 1);
+  //std::cout << " VLeptons "<<Ana->GenLeps() << std::endl;
+  His->FillTH1("NLep", Ana->GenLeps());
+
 
   // Met Study
   Ana->MetDiLepton();
@@ -200,6 +206,7 @@ int DelCut::FillCut()
     His->FillTH1("CutFlow", i);
     // Filling by functions
     FillJets(i);
+    FillMet(i);
   }
 
   return 1;
@@ -251,7 +258,7 @@ bool DelCut::CheckPhenoCut(std::bitset<10> cutflag)
          (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
       {
         // Only reject hard jets 
-        if (Ana->J3->PT > 50) return false;
+        if (Ana->J3->PT > 30) return false;
       }
 
     }
@@ -359,7 +366,6 @@ int DelCut::FillEle(int NCut)
 // ===========================================================================
 int DelCut::FillMet(int NCut)
 {
-  His->FillTH1("QT", Ana->DEV->QT);
-  
+  His->FillTH1(NCut, "CMet", Ana->PUCorMet->Mod());
   return 1;
 }       // -----  end of function DelCut::FillEle  -----

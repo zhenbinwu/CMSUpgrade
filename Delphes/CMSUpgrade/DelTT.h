@@ -53,7 +53,7 @@ class DelTT : public DelEvent
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     int GenLeps() const;
-    bool CheckFlag(std::string flag) const;
+    bool CheckFlag(std::string flag);
 
 
 }; /* -----  end of class DelTT  ----- */

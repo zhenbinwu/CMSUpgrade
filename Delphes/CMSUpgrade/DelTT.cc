@@ -96,7 +96,7 @@ int DelTT::GenLeps() const
 //         Name:  DelTT::CheckFlag
 //  Description:  /* cursor */
 // ===========================================================================
-bool DelTT::CheckFlag(std::string flag) const
+bool DelTT::CheckFlag(std::string flag)
 {
   if (flag == "TTFL") return GenLeps() == 2;
   if (flag == "TTSL") return GenLeps() == 1;

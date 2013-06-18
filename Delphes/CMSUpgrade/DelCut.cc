@@ -180,7 +180,6 @@ int DelCut::FillCut()
   Ana->GetBasic();
 
   His->FillTH1("NEVT", 1);
-  //std::cout << " VLeptons "<<Ana->GenLeps() << std::endl;
   His->FillTH1("NLep", Ana->GenLeps());
 
 

@@ -181,24 +181,29 @@ int DelAna::MetDiLepton()
 // ===========================================================================
 int DelAna::GenLeps() const
 {
-  
+
   std::list<int> VLep;
 
   for (int i = 0; i < vGenParticle->size(); ++i)
   {
     GenParticle p = vGenParticle->at(i);
 
-    if  (std::abs(p.PID) == 11 || std::abs(p.PID) == 13 || std::abs(p.PID) == 15)
+    if  ( (std::abs(p.PID) == 11 || std::abs(p.PID) == 13
+          || std::abs(p.PID) == 15) && FromW(p))
     {
       VLep.push_back(i);
       // Search another lepton afterward
-      for (int j = i; j < vGenParticle->size(); ++j)
+      for (int j = i+1; j < vGenParticle->size(); ++j)
       {
         GenParticle p2 = vGenParticle->at(j);
-        if  (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15)
+        if  ((std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 
+              || std::abs(p2.PID) == 15) && FromW(p2))
         {
           if (p2.P4() != p.P4() && p.P4().DeltaR(p2.P4()) > 1.0)
           {
+            if (p.M1 * p.M2 == p2.M1 * p2.M2)
+              std::cout << " P Mother : " << p.M1 << " " <<p.M2
+                << " P2 Mother : " << p2.M1 << " " <<p2.M2 << std::endl;
             VLep.push_back(j);
             break;
           }
@@ -207,6 +212,29 @@ int DelAna::GenLeps() const
       break;
     }
   }
-
   return VLep.size();
 }       // -----  end of function DelAna::GenLeps  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::FromWTop
+//  Description:  
+// ===========================================================================
+bool DelAna::FromWTop(GenParticle p) const
+{
+  std::cout << "p M1 " << p.M1 << " M2 " << p.M2 << std::endl;
+  if (p.M1 != -1 && p.M1 < vGenParticle->size())
+  {
+    int PID = std::fabs(vGenParticle->at(p.M1).PID);
+    std::cout << " Mother " << PID << std::endl;
+    if (PID == 6 || PID == 24)
+    return true;
+  }
+  if (p.M2 != -1 && p.M2 < vGenParticle->size())
+  {
+    int PID = std::fabs(vGenParticle->at(p.M2).PID);
+    std::cout << " Mother " << PID << std::endl;
+    if (PID == 6 || PID == 24)
+    return true;
+  }
+  return false;
+}       // -----  end of function DelAna::FromWTop  -----

@@ -46,6 +46,7 @@ class DelAna
     int GetBasic();
     int MetDiLepton();
     int GenLeps() const;
+    bool FromWTop(GenParticle p) const;
 
     /* ====================  MUTATORS      ======================================= */
 

@@ -533,6 +533,7 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   CalPUCorMet(branchJet, branchElectron, branchMuon, branchPhoton);
   //Whether this event is preselected?
   return PreSelected();
+  //return true;
   
 }       // -----  end of function DelEvent::LoadEvent  -----
 

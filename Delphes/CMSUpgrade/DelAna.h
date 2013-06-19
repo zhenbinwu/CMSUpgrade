@@ -44,7 +44,7 @@ class DelAna
     bool CheckFlag(std::string name);
     bool Clear();
     int GetBasic();
-    int MetDiLepton();
+    bool MetDiLepton();
     int GenLeps() const;
 
     /* ====================  MUTATORS      ======================================= */

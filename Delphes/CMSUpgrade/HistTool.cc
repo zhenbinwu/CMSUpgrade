@@ -255,9 +255,9 @@ int HistTool::AddTProC (const std::string name, const std::string title,
   for (Long_t i = 0; i < CutSize; ++i)
   {
     TString mapname = name+"_"+i;
-    TString maptitle = title+" ("+order.at(i)+")" + ":" + xlabel + ":" + ylabel;
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
-    ProMap[mapname.Data()] = new TProfile(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
+    TString maptitle = title+" ("+order.at(i)+")";
+
+    AddTPro(mapname, maptitle, xlabel, ylabel, nxbins, xmin, xmax, logx, logy);
   }
 
   return 1;
@@ -274,12 +274,8 @@ int HistTool::AddTProC (const std::string name, const std::string title,
   {
     TString mapname = name+"_"+i;
     TString maptitle = title+" ("+order.at(i)+")";
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
 
-
-    ProMap[mapname.Data()] = new TProfile(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
-    //ProMap[mapname.Data()] = result.AddHist1D(mapname.Data(), 
-        //maptitle.Data(), xlabel.c_str(), ylabel.c_str(), nxbins, xmin, xmax);
+    AddTPro(mapname, maptitle, nxbins, xmin, xmax);
   }
 
   return 1;
@@ -300,7 +296,7 @@ int HistTool::AddTPro (const std::string name, const std::string title,
   if (logy) ylb = "log_"+ylabel;
   else ylb = ylabel;
   TString Title = title +";"+xlb+";"+ylb;
-  ProMap[name.c_str()] = new TProfile(name.c_str(), Title, nxbins, xmin, xmax);
+  ProMap[name.c_str()] = new TProfile(name.c_str(), Title, nxbins, xmin, xmax, "s");
   return 1;
 }       // -----  end of function HistTool::AddTProC  -----
 
@@ -312,7 +308,7 @@ int HistTool::AddTPro (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax)
 {
   
-  ProMap[name.c_str()] = new TProfile(name.c_str(), title.c_str(), nxbins, xmin, xmax);
+  ProMap[name.c_str()] = new TProfile(name.c_str(), title.c_str(), nxbins, xmin, xmax, "s");
 
   return 1;
 }       // -----  end of function HistTool::AddTPro  -----

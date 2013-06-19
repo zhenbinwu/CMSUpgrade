@@ -77,10 +77,13 @@ class DelEvent
     double QT;
     double MetScale;
 
+    // Virtual preselected for the signal sample, which is generated with the
+    // preselection
+    int CleanEvent();
+    virtual bool PreSelected();
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
-    int CleanEvent();
     bool CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron, 
                 TClonesArray *branchMuon, TClonesArray *branchPhoton);
     int LoadEvent(TClonesArray *branchEvent);
@@ -114,9 +117,6 @@ class DelEvent
     /*---------------------------------------------------------------------------
      *  Virtual functions
      *--------------------------------------------------------------------------*/
-    // Virtual preselected for the signal sample, which is generated with the
-    // preselection
-    virtual bool PreSelected();
     // Public access to check the flag of selection in the event, usually
     // separated out for different DelCut in the filling
     virtual bool CheckFlag(std::string flag);

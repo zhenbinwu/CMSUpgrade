@@ -112,7 +112,7 @@ int DelAna::GetBasic()
 //         Name:  DelAna::DiLepton
 //  Description:  
 // ===========================================================================
-int DelAna::MetDiLepton() 
+bool DelAna::MetDiLepton() 
 {
 
   if (CurrentTag != "MetDiMuon" && CurrentTag != "MetDiEle")
@@ -143,8 +143,8 @@ int DelAna::MetDiLepton()
     }
 
   }
-  Mll = Qt.M();
 
+  if (Qt.Pt() < 50) return false;
 
   //Loop over the jet correction
   if (vJet->size()> 0)
@@ -171,6 +171,7 @@ int DelAna::MetDiLepton()
   UTransverse = Ut.Pt() * std::sin(Dphi);
   UParallel = Ut.Pt() * std::cos(Dphi);
   QT = Qt.Pt();
+  Mll = Qt.M();
   MetScale = -1 * UParallel / Qt.Pt();
   return true;
 }       // -----  end of function DelAna::DiLepton  -----
@@ -201,7 +202,7 @@ int DelAna::GenLeps() const
       for (int j = i+1; j < vGenParticle->size(); ++j)
       {
         GenParticle p2 = vGenParticle->at(j);
-        std::cout << "-- " << i << " ID " << p2.PID <<" M1 " << p2.M1 << " M2 " << p2.M2 << std::endl;
+        //std::cout << "-- " << i << " ID " << p2.PID <<" M1 " << p2.M1 << " M2 " << p2.M2 << std::endl;
         if  (p2.M1 < VSize && p2.M2 < VSize  &&
             (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15))
         {

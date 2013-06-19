@@ -64,18 +64,21 @@ int DelTT::GenLeps() const
 {
   std::list<int> VLep;
 
-  for (int i = 0; i < vGenParticle.size(); ++i)
+  int GenSize = vGenParticle.size();
+  for (int i = 0; i < GenSize; ++i)
   {
     GenParticle p = vGenParticle.at(i);
 
-    if  (std::abs(p.PID) == 11 || std::abs(p.PID) == 13 || std::abs(p.PID) == 15)
+    if  ( p.M1 < GenSize && p.M2 < GenSize &&
+        (std::abs(p.PID) == 11 || std::abs(p.PID) == 13 || std::abs(p.PID) == 15))
     {
       VLep.push_back(i);
       // Search another lepton afterward
       for (int j = i; j < vGenParticle.size(); ++j)
       {
         GenParticle p2 = vGenParticle.at(j);
-        if  (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15)
+        if  ( p2.M1 < GenSize && p2.M2 < GenSize &&
+            (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15))
         {
           if (p2.P4() != p.P4() && p.P4().DeltaR(p2.P4()) > 0.8)
           {

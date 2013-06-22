@@ -339,6 +339,7 @@ int DelEvent::LoadGenParticle(TClonesArray *branchGenParticle)
 bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron, 
     TClonesArray *branchMuon, TClonesArray *branchPhoton) 
 {
+  HT = 0.0;
 
   //Calculate the MHT and Met in the event
 
@@ -388,7 +389,6 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
       HT += pho->P4().Mag();
     }
 
-  //std::cout << " HT " << HT << std::endl;
   if (MHT == TLorentzVector(0, 0, 0,0))
     return false;
 
@@ -497,11 +497,6 @@ int DelEvent::CleanEvent()
   CRJet.clear();
   
 
-  // For Met Study
-  UParallel   = -999.;
-  UTransverse = -999.;
-  QT          = -999.;
-  MetScale    = -999.;
 }       // -----  end of function DelEvent::CleanEvent  -----
 
 
@@ -532,8 +527,8 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
 
   CalPUCorMet(branchJet, branchElectron, branchMuon, branchPhoton);
   //Whether this event is preselected?
-  return PreSelected();
-  //return true;
+  //return PreSelected();
+  return true;
   
 }       // -----  end of function DelEvent::LoadEvent  -----
 

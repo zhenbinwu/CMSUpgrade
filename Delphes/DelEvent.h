@@ -71,12 +71,6 @@ class DelEvent
     TLorentzVector MHT;
     double HT;
 
-    // For Met Study
-    double UParallel;
-    double UTransverse;
-    double QT;
-    double MetScale;
-
     // Virtual preselected for the signal sample, which is generated with the
     // preselection
     int CleanEvent();

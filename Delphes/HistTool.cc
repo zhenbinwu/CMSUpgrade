@@ -257,7 +257,7 @@ int HistTool::AddTProC (const std::string name, const std::string title,
     TString mapname = name+"_"+i;
     TString maptitle = title+" ("+order.at(i)+")";
 
-    AddTPro(mapname, maptitle, xlabel, ylabel, nxbins, xmin, xmax, logx, logy);
+    AddTPro(mapname.Data(), maptitle.Data(), xlabel, ylabel, nxbins, xmin, xmax, logx, logy);
   }
 
   return 1;
@@ -275,7 +275,7 @@ int HistTool::AddTProC (const std::string name, const std::string title,
     TString mapname = name+"_"+i;
     TString maptitle = title+" ("+order.at(i)+")";
 
-    AddTPro(mapname, maptitle, nxbins, xmin, xmax);
+    AddTPro(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
   }
 
   return 1;
@@ -299,6 +299,15 @@ int HistTool::AddTPro (const std::string name, const std::string title,
   ProMap[name.c_str()] = new TProfile(name.c_str(), Title, nxbins, xmin, xmax, "s");
   return 1;
 }       // -----  end of function HistTool::AddTProC  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HistTool::AddTPro
+//  Description:  
+// ===========================================================================
+int HistTool::AddTPro(TProfile* pro)
+{
+  ProMap[pro->GetName()] = pro;
+}       // -----  end of function HistTool::AddTPro  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTPro

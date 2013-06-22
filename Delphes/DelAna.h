@@ -45,7 +45,6 @@ class DelAna
     bool Clear();
     int GetBasic();
     bool MetDiLepton();
-    int GenLeps() const;
 
     /* ====================  MUTATORS      ======================================= */
 
@@ -77,6 +76,7 @@ class DelAna
     double UParallel;
     double UTransverse;
     double QT;
+    double UT;
     double MetScale;
 
     /* ====================  DATA MEMBERS  ======================================= */

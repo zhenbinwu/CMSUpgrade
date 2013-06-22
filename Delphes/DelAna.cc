@@ -171,54 +171,9 @@ bool DelAna::MetDiLepton()
   UTransverse = Ut.Pt() * std::sin(Dphi);
   UParallel = Ut.Pt() * std::cos(Dphi);
   QT = Qt.Pt();
+  UT = Ut.Pt();
   Mll = Qt.M();
   MetScale = -1 * UParallel / Qt.Pt();
   return true;
 }       // -----  end of function DelAna::DiLepton  -----
 
-// ===  FUNCTION  ============================================================
-//         Name:  DelAna::GenLeps
-//  Description:  
-// ===========================================================================
-int DelAna::GenLeps() const
-{
-
-  //std::cout << "=========================================================" << std::endl;
-  std::list<int> VLep;
-
-  int VSize =  vGenParticle->size();
-
-  for (int i = 0; i <VSize; ++i)
-  {
-    GenParticle p = vGenParticle->at(i);
-
-    //std::cout << "-- " << i << " ID " << p.PID <<" M1 " << p.M1 << " M2 " << p.M2 << std::endl;
-    if  ( p.M1 < VSize && p.M2 < VSize &&
-        (std::abs(p.PID) == 11 || std::abs(p.PID) == 13 || std::abs(p.PID) == 15) )
-    {
-      VLep.push_back(i);
-      //std::cout << "First " << i << " ID " << p.PID <<" M1 " << p.M1 << " M2 " << p.M2 << std::endl;
-      // Search another lepton afterward
-      for (int j = i+1; j < vGenParticle->size(); ++j)
-      {
-        GenParticle p2 = vGenParticle->at(j);
-        //std::cout << "-- " << i << " ID " << p2.PID <<" M1 " << p2.M1 << " M2 " << p2.M2 << std::endl;
-        if  (p2.M1 < VSize && p2.M2 < VSize  &&
-            (std::abs(p2.PID) == 11 || std::abs(p2.PID) == 13 || std::abs(p2.PID) == 15))
-        {
-          if (p2.P4() != p.P4() && p.P4().DeltaR(p2.P4()) > 1.0)
-          {
-            if (p.M1 * p.M2 == p2.M1 * p2.M2)
-              std::cout << " P Mother : " << p.M1 << " " <<p.M2
-                << " P2 Mother : " << p2.M1 << " " <<p2.M2 << std::endl;
-            VLep.push_back(j);
-            break;
-          }
-        }
-      }
-      break;
-    }
-  }
-  //std::cout << "========================================================= " << VLep.size()<< std::endl;
-  return VLep.size();
-}       // -----  end of function DelAna::GenLeps  -----

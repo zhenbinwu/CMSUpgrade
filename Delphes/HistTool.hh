@@ -85,6 +85,7 @@ class HistTool
 //  TProfile
 //----------------------------------------------------------------------------
     // Book the His TPro
+    int AddTPro(TProfile* pro);
     int AddTPro (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
@@ -142,6 +143,7 @@ class HistTool
   private:
     // ====================  DATA MEMBERS  ===============================
     int CutSize; // The size of the cutbit
+    double Weight; // The weight of current event
     TFile* OutFile;
     std::string prefix;
 

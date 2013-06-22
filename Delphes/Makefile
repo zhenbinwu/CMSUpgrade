@@ -1,4 +1,4 @@
-DEL           = Delphes-3.0.7
+DEL           = $(shell echo $(DELPHES))
 CXX           = g++
 CXXFLAGS      = -Wno-deprecated $(shell root-config --cflags) -I../$(DEL)/external/ -I../$(DEL) -std=c++0x 
 LDFLAGS       = 

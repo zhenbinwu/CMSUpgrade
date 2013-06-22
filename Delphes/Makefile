@@ -1,10 +1,11 @@
+DEL           = Delphes-3.0.7
 CXX           = g++
-CXXFLAGS      = -Wno-deprecated $(shell root-config --cflags) -I../external/ -I../classes/  -I.. -std=c++0x 
+CXXFLAGS      = -Wno-deprecated $(shell root-config --cflags) -I../$(DEL)/external/ -I../$(DEL) -std=c++0x 
 LDFLAGS       = 
 LD            = g++
 
 LIBS = $(shell root-config --glibs)
-LIBS += -L../ -lDelphes
+LIBS += -L../$(DEL) -lDelphes
 
 
 OBJS          = DelFill.o DelHist.o DelEvent.o DelWino.o DelTT.o DelZJJ.o DelAna.o DelCut.o HistTool.o

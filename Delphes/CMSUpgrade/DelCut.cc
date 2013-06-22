@@ -73,26 +73,22 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
-  His->AddTH1("NLep", "NLep " ,  10, 0 , 10 );
   // Met study
-  His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", 
-      "Events/ 4 GeV",  50, 0, 200, 0, 1);
-  His->AddTH1("MLL", "M_{ll}", "M_{ll} [GeV]", 
-      "Events/ 1 GeV", 60, 60, 120, 0, 1);
-  His->AddTH1("QT", "Qt", "q_{T} [GeV]", 
-      "Events/ 8 GeV",  50, 0, 400, 0, 1);
-  His->AddTH1("UPQT", "UPQT", "u_{#parallel}+q_{T} [GeV]", 
-      "Events/ 8 GeV",  50, -200, 200, 0, 1);
-  His->AddTH1("UParal", "UParal", "u_{#parallel} [GeV]", 
-      "Events/ 8 GeV",  50, -200, 200, 0, 1);
-  His->AddTH1("UPerp", "UPerp", "u_{#perp} [GeV]", 
-      "Events/ 8 GeV",  50, -200, 200, 0, 1);
-  His->AddTPro("MetScale", "MetScale", "Z/#gramma q_{T} [GeV]", 
-      "-<u_{#parallel}>/q_{T}",  50, 0, 400);
-  His->AddTPro("MetResP", "MetResP", "Z/#gramma q_{T} [GeV]", 
-      "#sigma(u_{#parallel}) [GeV]",  50, 0, 400);
-  His->AddTPro("MetResT", "MetResT", "Z/#gramma q_{T} [GeV]", 
-      "#sigma(u_{#perp}) [GeV]",  50, 0, 400);
+  His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
+  His->AddTH1("MLL", "M_{ll}", "M_{ll} [GeV]", "Events / 1 GeV", 60, 60, 120, 0, 1);
+  His->AddTH1("QT", "Qt", "q_{T} [GeV]", "Events / 8 GeV",  50, 0, 400, 0, 1);
+  His->AddTH1("UT", "Ut", "u_{T} [GeV]", "Events / 8 GeV",  50, 0, 400, 0, 1);
+  His->AddTH1("UPQT", "UPQT", "u_{#parallel}+q_{T} [GeV]", "Events / 6 GeV",  100, -300, 300, 0, 1);
+  His->AddTH1("UParal", "UParal", "u_{#parallel} [GeV]", "Events / 6 GeV",  100, -300, 300, 0, 1);
+  His->AddTH1("UPerp", "UPerp", "u_{#perp}  [GeV]", "Events / 6 GeV",  100, -300, 300, 0, 1);
+  His->AddTH1("MetX", "MetX", "#slash{E}_{x} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
+  His->AddTH1("MetY", "MetY", "#slash{E}_{y} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
+  His->AddTPro("MetScale", "MetScale", "Z/#gamma q_{T} [GeV]", "-<u_{#parallel}>/q_{T}",  50, 0, 400);
+  double xbin[12] = {0, 40 , 60, 80, 100, 120, 140, 160, 200, 240, 300, 400};
+  TProfile* pro1 = new TProfile( "MetResP", "MetResP;Z/#gamma q_{T} [GeV];#sigma(u_{#parallel}) [GeV]",  11, xbin, "s");
+  His->AddTPro(pro1);
+  TProfile* pro2 = new TProfile( "MetResT", "MetResT;Z/#gamma q_{T} [GeV];#sigma(u_{#perp}) [GeV]",  11, xbin, "s");
+  His->AddTPro(pro2);
   His->AddTPro("MetResX", "MetResX", "HT [GeV]", 
       "#sigma(#slash{E}_{x}) [GeV]",  50, 0, 400);
   His->AddTPro("MetResY", "MetResY", "HT [GeV]", 
@@ -180,23 +176,24 @@ int DelCut::FillCut()
   Ana->GetBasic();
 
   His->FillTH1("NEVT", 1);
-  His->FillTH1("NLep", Ana->GenLeps());
-
 
   // Met Study
   Ana->MetDiLepton();
 
   His->FillTH1("Met", Ana->PUCorMet->Mod());
   His->FillTH1("MLL", Ana->Mll);
+  His->FillTH1("UT", Ana->QT);
   His->FillTH1("QT", Ana->QT);
   His->FillTH1("UPQT", Ana->UParallel + Ana->QT);
   His->FillTH1("UPerp", Ana->UTransverse);
   His->FillTH1("UParal", Ana->UParallel);
+  His->FillTH1("MetX", Ana->PUCorMet->Px());
+  His->FillTH1("MetY", Ana->PUCorMet->Py());
   His->FillTPro("MetScale", Ana->QT, Ana->MetScale);
   His->FillTPro("MetResP", Ana->QT, Ana->UParallel);
   His->FillTPro("MetResT", Ana->QT, Ana->UTransverse);
-  //His->FillTPro("MetResX", Ana->HT, Ana->PUCorMet->Px());
-  //His->FillTPro("MetResY", Ana->HT, Ana->PUCorMet->Py());
+  His->FillTPro("MetResX", *Ana->HT, Ana->PUCorMet->Px());
+  His->FillTPro("MetResY", *Ana->HT, Ana->PUCorMet->Py());
 
   for (int i = 0; i < CutOrder.size(); ++i)
   {

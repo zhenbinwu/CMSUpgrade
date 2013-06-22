@@ -18,3 +18,15 @@
 ## Ignore picture
 *.png
 *.eps
+
+## Ignore Delphes executable
+DelphesHepMC
+DelphesLHEF
+DelphesSTDHEP
+hepmc2pileup
+lhco2root
+pileup2root
+root2lhco
+root2pileup
+stdhep2pileup
+tmp/

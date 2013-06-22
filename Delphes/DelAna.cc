@@ -10,7 +10,7 @@
 //       Compiler:  g++
 // 
 //         Author:  Zhenbin Wu (benwu), benwu@fnal.gov
-//        Company:  Baylor University, CDF@FNAL
+//        Company:  Baylor University, CMS@FNAL
 // 
 // ===========================================================================
 

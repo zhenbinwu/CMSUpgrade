@@ -10,7 +10,7 @@
 //       Compiler:  g++
 // 
 //         Author:  Zhenbin Wu (benwu), benwu@fnal.gov
-//        Company:  Baylor University, CDF@FNAL
+//        Company:  Baylor University, CMS@FNAL
 // 
 // ===========================================================================
 
@@ -29,32 +29,34 @@ const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.
 int main ( int argc, char *argv[] )
 {
 
-  if (argc < 3)
-  {
-    std::cout << "Please enter the pileup and process name, Jet Eta and PT for PU correction to be run on ! " <<  std::endl;
-    return EXIT_FAILURE;
-  }
+  /*
+   *if (argc < 3)
+   *{
+   *  std::cout << "Please enter the pileup and process name, Jet Eta and PT for PU correction to be run on ! " <<  std::endl;
+   *  return EXIT_FAILURE;
+   *}
+   */
 
 
 //----------------------------------------------------------------------------
 //  Define all the variables here
 //----------------------------------------------------------------------------
-  //std::string Pileup  = "TEST";
-  //std::string Process = "TTBAR";
+  std::string Pileup  = "TEST";
+  std::string Process = "TTBAR";
   //std::string Process = "ZJETS";
 
-  std::string Pileup    = argv[1];
-  std::string Process   = argv[2];
+  //std::string Pileup    = argv[1];
+  //std::string Process   = argv[2];
 
 
   // PU corrected Met
-  //const double PUCorJetEta = 5;
-  //const double PUCorJetPt  = 30;
-  const double PUCorJetEta   = atof(argv[3]);
-  const double PUCorJetPt    = atof(argv[4]);
+  const double PUCorJetEta = 5;
+  const double PUCorJetPt  = 30;
+  //const double PUCorJetEta   = atof(argv[3]);
+  //const double PUCorJetPt    = atof(argv[4]);
 
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "LoopCut", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "Test", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
   //const std::string Outdir  = "TEST";
 
@@ -69,19 +71,19 @@ int main ( int argc, char *argv[] )
   std::cout << "Files to be run on : " << TreeList  << std::endl;
   TChain chain("Delphes");
 
-  if(TreeList.Contains("FileList"))
-  {
-    std::fstream input(TreeList.Data());
-    for(std::string line; getline(input, line);)
-    {
-      std::cout << "Add File: " << line << std::endl;
-      chain.Add(line.c_str());
-    }
-  }
-  else
-    chain.Add(TreeList);
+  //if(TreeList.Contains("FileList"))
+  //{
+    //std::fstream input(TreeList.Data());
+    //for(std::string line; getline(input, line);)
+    //{
+      //std::cout << "Add File: " << line << std::endl;
+      //chain.Add(line.c_str());
+    //}
+  //}
+  //else
+    //chain.Add(TreeList);
 
-  //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
+  chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
   //chain.Add("test/ZJETS_13TEV_NoPileUp_9850.root");
   //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
 

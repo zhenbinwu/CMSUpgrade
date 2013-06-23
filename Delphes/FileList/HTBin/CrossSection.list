@@ -1,0 +1,48 @@
+B_14TEV_HT1              205000             #Boson (photon, W, Z) + Jets
+BJ_14TEV_HT1             34400              #Boson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
+BJ_14TEV_HT2             2640               #Boson (photon, W, Z) + Jets, 300 < HT (GeV) < 600
+BJ_14TEV_HT3             294                #Boson (photon, W, Z) + Jets, 600 < HT (GeV) < 1100
+BJ_14TEV_HT4             25.9               #Boson (photon, W, Z) + Jets, 1100 < HT (GeV) < 1800
+BJ_14TEV_HT5             2.42               #Boson (photon, W, Z) + Jets, 1800 < HT (GeV) < 2700
+BJ_14TEV_HT6             0.227              #Boson (photon, W, Z) + Jets, 2700 < HT (GeV) < 3700
+BJ_14TEV_HT7             0.0276             #Boson (photon, W, Z) + Jets, 3700 < HT (GeV) < 100000
+BJJ_14TEV_HT1            86.5               #Boson (photon, W, Z, h) + >= 2Jets, 0 < HT (GeV) < 700
+BJJ_14TEV_HT2            4.35               #Boson (photon, W, Z, h) + >= 2Jets, 700 < HT (GeV) < 14000
+BJJ_14TEV_HT3            0.325              #Boson (photon, W, Z, h) + >= 2Jets, 1400 < HT (GeV) < 2300
+BJJ_14TEV_HT4            0.0303             #Boson (photon, W, Z, h) + >= 2Jets, 2300 < HT (GeV) < 3400
+BB_14TEV_HT1             250                #Diboson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
+BB_14TEV_HT2             35.2               #Diboson (photon, W, Z) + Jets, 300 < HT (GeV) < 700
+BB_14TEV_HT3             4.14               #Diboson (photon, W, Z) + Jets, 700 < HT (GeV) < 1300
+BB_14TEV_HT4             0.417              #Diboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 2100
+BB_14TEV_HT5             0.0477             #Diboson (photon, W, Z) + Jets, 2100 GeV < HT (GeV) < 100000
+BBB_14TEV_HT1            2.57               #Triboson (photon, W, Z) + Jets, 0 < HT (GeV) < 600
+BBB_14TEV_HT2            0.149              #Triboson (photon, W, Z) + Jets, 600 < HT (GeV) < 1300
+BBB_14TEV_HT3            0.0127             #Triboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 100000
+H_14TEV_HT1              21.6               #Higgs + Jets, 0 < HT (GeV) < 300
+H_14TEV_HT2              1.11               #Higgs + Jets, 300 < HT (GeV) < 800
+H_14TEV_HT3              0.0919             #Higgs + Jets, 800 < HT (GeV) < 1500
+H_14TEV_HT4              0.0101             #Higgs + Jets, 1500 < HT (GeV) < 100000
+LL_14TEV_HT1             1340               #dileptons + jets, mll > 20 GeV, 0 < HT (GeV) < 100
+LL_14TEV_HT2             156                #dileptons + jets, mll > 20 GeV, 100 < HT (GeV) < 200
+LL_14TEV_HT3             42.4               #dileptons + jets, mll > 20 GeV, 200 < HT (GeV) < 500
+LL_14TEV_HT4             2.85               #dileptons + jets, mll > 20 GeV, 500 < HT (GeV) < 900
+LL_14TEV_HT5             0.209              #dileptons + jets, mll > 20 GeV, 900 < HT (GeV) < 1400
+LL_14TEV_HT6             0.0289             #dileptons + jets, mll > 20 GeV, 1400 < HT (GeV) < 100000
+LLB_14TEV_HT1            2.97               #dileptons + boson + jets, mll > 20 GeV, 0 < HT (GeV) < 400
+LLB_14TEV_HT2            0.229              #dileptons + boson + jets, mll > 20 GeV, 400 < HT (GeV) < 900
+LLB_14TEV_HT3            0.0208             #dileptons + boson + jets, mll > 20 GeV, 900 < HT (GeV) < 100000
+TB_14TEV_HT1             63.9               #single top + boson + jets, 0 < HT (GeV) < 500
+TB_14TEV_HT2             7.12               #single top + boson + jets, 500 < HT (GeV) < 900
+TB_14TEV_HT3             0.98               #single top + boson + jets, 900 < HT (GeV) < 1500
+TB_14TEV_HT4             0.0839             #single top + boson + jets, 1500 < HT (GeV) < 2200
+TB_14TEV_HT5             0.00953            #single top + boson + jets, 2200 < HT (GeV) < 100000
+TJ_14TEV_HT1             110                #single top + jets, 0 < HT (GeV) < 500
+TJ_14TEV_HT2             5.99               #single top + jets, 500 < HT (GeV) < 1000
+TJ_14TEV_HT3             0.377              #single top + jets, 1000 < HT (GeV) < 1600
+TJ_14TEV_HT4             0.0346             #single top + jets, 1600 < HT (GeV) < 2400
+TJ_14TEV_HT5             0.00312            #single top + jets, 2400 < HT (GeV) < 100000
+TT_14TEV_HT1             531                #ttbar + jets, 0 < HT (GeV) < 600
+TT_14TEV_HT2             42.5               #ttbar + jets, 600 < HT (GeV) < 1100
+TT_14TEV_HT3             4.48               #ttbar + jets, 1100 < HT (GeV) < 1700
+TT_14TEV_HT4             0.528              #ttbar + jets, 1700 < HT (GeV) < 2500
+TT_14TEV_HT5             0.0545             #ttbar + jets, 2500 < HT (GeV) < 100000

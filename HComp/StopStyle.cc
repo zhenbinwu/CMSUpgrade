@@ -10,7 +10,7 @@
 //       Compiler:  g++
 // 
 //         Author:  Zhenbin Wu (), benwu@fnal.gov
-//        Company:  Baylor University, CDF@FNAL
+//        Company:  Baylor University, CMS@FNAL
 // 
 // ===========================================================================
 
@@ -65,9 +65,10 @@ void StopStyle()
   //Pad
   SStyle->SetPadColor(0);
   SStyle->SetPadBorderMode(0);
-  SStyle->SetPadLeftMargin(0.08);
+  SStyle->SetPadLeftMargin(0.10);
   SStyle->SetPadRightMargin(0.08);
   SStyle->SetPadTopMargin(0.10);//(0.05);          
+  //SStyle->SetPadTopMargin(0.06);//(0.05);          
   SStyle->SetPadBottomMargin(0.10);      
   SStyle->SetPadTickX(0); //1:ticks on upper,2: ticks+labels on upper xaxis
   SStyle->SetPadTickY(0); //1:ticks on right side
@@ -98,7 +99,7 @@ void StopStyle()
   SStyle->SetTitleSize  ( 0.07,"X");
   SStyle->SetNdivisions ( 505 ,"X");
   SStyle->SetLabelSize  ( 0.07,"X");
-  SStyle->SetTitleOffset( 1.1,"X");
+  SStyle->SetTitleOffset( 0.8,"X");
   //SStyle->SetTitleColor ( 1    ,"X");
   //SStyle->SetLabelOffset( 0.01,"X");
   //SStyle->SetLabelFont  ( 42   ,"X");
@@ -106,7 +107,7 @@ void StopStyle()
   SStyle->SetTickLength ( 0.015,"Y");
   SStyle->SetTitleSize  ( 0.07,"Y");
   SStyle->SetLabelSize  ( 0.07,"Y");
-  SStyle->SetTitleOffset( 1.3,"Y");
+  SStyle->SetTitleOffset( 0.8,"Y");
   SStyle->SetNdivisions ( 505   ,"Y");
   //SStyle->SetLabelOffset( 0.01,"Y");
   //SStyle->SetLabelFont  ( 42   ,"Y");

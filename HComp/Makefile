@@ -1,20 +1,23 @@
 ifeq ($(debug),1)
-ROOTBUILD=debug
-CPPFLAGS=-g
+  ROOTBUILD=debug
+  CPPFLAGS=-g
 endif
 
-LD            = g++
-LDFLAGS       = -g -O -m32
+LD        = g++
+LDFLAGS   = -g -O 
 OutPutOpt = -o
-CPPFLAGS= -g -O2 -pipe -Wall -W -Woverloaded-virtual -fPIC \
-        -D__REGEXP -DG__UNIX -DG__SHAREDLIB -DG__ROOT -DG__REDIRECTIO \
-        -DG__OSFDLL -D__NO_CDFSOFT__ $(shell root-config --cflags)
+CPPFLAGS  = -g -O2 -pipe -Wall -W -Woverloaded-virtual -fPIC \
+			-D__REGEXP -DG__UNIX -DG__SHAREDLIB -DG__ROOT -DG__REDIRECTIO \
+			-DG__OSFDLL -D__NO_CDFSOFT__ $(shell root-config --cflags)
 
-LIBS = $(shell root-config --glibs)
+LIBS      = $(shell root-config --glibs)
 
-HEADERS = $(shell ls *.h *.hh) Makefile
-HEADERS = Makefile
+HEADERS   = $(shell ls *.h *.hh) Makefile
+HEADERS   = Makefile
 
+ifneq (, $(findstring cmslpc, $(shell hostname)))
+  CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
+endif
 
 all: HistComp
 
@@ -24,27 +27,11 @@ all: HistComp
 %.o : %.cc $(HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
-
-PlotMCLimit : PlotMCLimit.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) -lMinuit $(OutPutOpt)$@
-	@echo "$@ done"
-
-XSDraw: XSDraw.o StopStyle.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
-
-XTDraw: XTDraw.o StopStyle.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
-
-HistComp: HistComp.o StopStyle.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
-fit2d: fit2d.o
+HistComp: HistComp.o StopStyle.o ComHis.o Compare.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"
 
-
-try: try.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 
 clean :
-	rm -f *.o cyclic tcbayes tccls tcclsobs tcclsexp tcclspx nk_bayes cdf.root
+	rm -f *.o HistComp
 

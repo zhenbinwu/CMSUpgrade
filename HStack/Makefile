@@ -25,27 +25,17 @@ all: HistStack
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 
-PlotMCLimit : PlotMCLimit.o
+CutTable : CutTable.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) -lMinuit $(OutPutOpt)$@
 	@echo "$@ done"
-
-XSDraw: XSDraw.o StopStyle.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
-
-XTDraw: XTDraw.o StopStyle.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 
 HistStack: HistStack.o StopStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"
 
-fit2d: fit2d.o
-	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
-	@echo "$@ done"
-
-
 try: try.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
 
 clean :
 	rm -f *.o cyclic tcbayes tccls tcclsobs tcclsexp tcclspx nk_bayes cdf.root

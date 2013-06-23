@@ -11,7 +11,7 @@
 //       Compiler:  g++
 // 
 //         Author:  Zhenbin Wu (benwu), benwu@fnal.gov
-//        Company:  Baylor University, CDF@FNAL
+//        Company:  Baylor University, CMS@FNAL
 // 
 // ===========================================================================
 
@@ -29,11 +29,15 @@
 #include "TStyle.h"
 #include "THStack.h"
 #include "TPaveText.h"
+#include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <iterator>
 #include <cmath>
 #include <map>
 #include <vector>
 #include <string>
+#include <cstdio>
 
 using namespace std;
 typedef std::map<std::string, std::string> Tmaps;
@@ -58,40 +62,153 @@ struct MCsample
       Nevents(nevents), Scale(scale), NSel(NSel), File(file){}
 };
 
+// Functions 
 std::vector<string> GetAllHis (std::vector<MCsample> ProList);
+int Plot (std::string PU, std::string Cut);
+
+
+//----------------------------------------------------------------------------
+//  Global Variables 
+//----------------------------------------------------------------------------
+double InitLumifb = 500; // in the unit of pb
+//const double InitLumifb = 500000; // in the unit of pb
+std::string Dir="./LoopCut_5_30/";
+std::string TitleLable="5_30";
+
 
 int main ( int argc, char *argv[] )
 {
+
+  //TRint *theApp = new TRint("plot interactively", &argc, argv);
+
+  InitLumifb = InitLumifb * 1000;
+
+  if (argc == 2)
+  {
+    TitleLable = argv[1];
+    //std::stringstream sstream;
+    //sstream <<" ./MJJ__";
+    //sstream << TitleLable;
+    //Dir = sstream.str();
+  }
+
+//----------------------------------------------------------------------------
+//  PU Vector
+//----------------------------------------------------------------------------
+  std::vector<std::string> VPU;
+  VPU.push_back("NoPileUp");
+  //VPU.push_back("50PileUp");
+  //VPU.push_back("140PileUp");
+
+//----------------------------------------------------------------------------
+//  Cut to check
+//----------------------------------------------------------------------------
+  std::vector<std::string> VCut;
+  //VCut.push_back("NoCut");
+  //VCut.push_back("CTJ1");
+  //VCut.push_back("CTJ2");
+  //VCut.push_back("CTMjj");
+  VCut.push_back("CTJ3BL");
+  //VCut.push_back("CTMet200");
+  VCut.push_back("AllCut");
+
+//----------------------------------------------------------------------------
+//  Start to loop over the PU and Cut
+//----------------------------------------------------------------------------
+  for(std::vector<std::string>::iterator it=VPU.begin();
+    it!=VPU.end(); it++)
+  {
+    for(std::vector<std::string>::iterator cit=VCut.begin();
+        cit!=VCut.end(); cit++)
+    {
+      Plot(*it, *cit);
+    }
+  }
+  //theApp->Run();
+  return 1;
+}
+
+int Plot (std::string PU, std::string Cut)
+{
   //TopStyle();
   StopStyle();
-  TRint *theApp = new TRint("plot interactively", &argc, argv);
 
-  const double InitLumifb = 500000; // in the unit of pb
+  std::cout <<  "  ======================  PileUp : " << PU << std::endl;
+  std::vector<std::string> order; // Order of the cut  
+  //// The Cut flow
+  //order.push_back("NoCut");
+  //order.push_back("CTVBF");
+  //order.push_back("CTLepV");
+  //order.push_back("CTMet50");
+  //order.push_back("CTBJet");
+  //order.push_back("CTJ3");
+  //order.push_back("CTMjj");
+  //order.push_back("CTMet200");
+  //order.push_back("AllCut");
+  // The index of the Cut on the order 
+  // The Cut flow
+  // The Cut flow
+  order.push_back("NoCut");
+  order.push_back("CTJ1");
+  order.push_back("CTJ2");
+  order.push_back("CTMjj");
+  order.push_back("CTJ3BL");
+  order.push_back("CTMet200");
+  order.push_back("AllCut");
+  int hisIdx = -1;
+  
+  std::vector<std::string>::iterator cit =std::find(order.begin(), order.end(), Cut.c_str());
+  if (cit == order.end())
+  {
+    //std::cout << " Can't find this Cut !! Exiting... " << std::endl;
+    return 0;
+  }
+  else
+  hisIdx = static_cast<int>(std::distance(order.begin(), cit));
 
- //const std::string Label = "14TEV_50PileUp_AllCut";
- ////Signal
- //MCsample Wino200("HH/Wino200PU0_AllCut.root", "Wino200", true,  0.02, 100); //14TeV XS 
- //// Background
- //MCsample ZJJ("HH/DYNN_AllCut.root", "DYNN", false,  12930, 38); //14TeV XS for Z/gamma
- //MCsample TT("HH/TAll_AllCut.root", "TTBAR",  false, 882.29, 93); //14TeV XS for ttbar
- //MCsample WJJ("HH/WJETS_AllCut.root", "WJJ",  false, 63066, 8); //14TeV XS for W
+  if (hisIdx == -1) return 0;
+  //std::cout << " hisIdx " << hisIdx << std::endl;
+  //return 1;
+ 
+  TString Label = "14TEV_" + PU + "_" + TitleLable;
+  //TString Label = "14TEV_" + PU + "_" + Cut;
 
- const std::string Label = "14TEV_50PileUp_CTMjj";
- //Signal
- MCsample Wino200("HH/Wino200PU0_CTMjj.root", "Wino200", true,  0.02, 100); //14TeV XS 
- // Background
- MCsample ZJJ("HH/DYNN_CTMjj.root", "DYNN", false,  12930, 38); //14TeV XS for Z/gamma
- MCsample TT("HH/TAll_CTMjj.root", "TTBAR",  false, 882.29, 93); //14TeV XS for ttbar
- MCsample WJJ("HH/WJETS_CTMjj.root", "WJJ",  false, 63066, 8); //14TeV XS for W
+  //=====================================  Signal
+  TString samplename = Dir + "/Wino200_14TeV_"+PU+".root";
+  //MCsample Wino200(samplename.Data(), "Wino200", true,  0.02, 7); //14TeV XS 12fb for Wino200
+  //MCsample Wino200(samplename.Data(), "Wino200", true,  0.012, 7); //14TeV XS 12fb for Wino200
+  MCsample Wino200(samplename.Data(), "Wino200", true,  0.01147, 7); //14TeV Preselected
+  samplename = Dir + "/Wino500_14TeV_"+PU+".root";
+  //MCsample Wino500(samplename.Data(), "Wino500", true,  0.0005, 3); //14TeV XS 12fb for Wino200
+  MCsample Wino500(samplename.Data(), "Wino500", true,  0.00045, 3); //14TeV Preselected
+  // Background
+  samplename = Dir + "/ZJETS_13TEV_"+PU+".root";
+  //MCsample ZJJ(samplename.Data(), "DYNN", false,  12930, 38); //14TeV XS for Z/gamma
+  MCsample ZJJ(samplename.Data(), "DYNN", false,  15.08, 38); //14TeV XS for Z/gamma
+  samplename = Dir + "/TTBAR_13TEV_FLep_"+PU+".root";
+  MCsample TTFL(samplename.Data(), "TTBAR_FL",  false, 0.0278, 93); //14TeV XS for ttbar
+  samplename = Dir + "/TTBAR_13TEV_SLep_"+PU+".root";
+  MCsample TTSL(samplename.Data(), "TTBAR_SL",  false, 0.0294, 93); //14TeV XS for ttbar
+  //MCsample TT(samplename.Data(), "TTBAR",  false, 882.29, 93); //14TeV XS for ttbar
+  samplename = Dir + "/WJETS_13TEV_"+PU+".root";
+  MCsample WJJ(samplename.Data(), "WJETS",  false, 55.2, 8); //14TeV XS for W
+  //MCsample WJJ(samplename.Data(), "WJETS",  false, 63066, 8); //14TeV XS for W
 
-  std::vector<MCsample> ProList; //List of process to be stacked
-  ProList.push_back(WJJ);
-  ProList.push_back(TT);
-  ProList.push_back(ZJJ);
+  //========================== List of process to be stacked
+  std::vector<MCsample> ProList;
   ProList.push_back(Wino200);
+  ProList.push_back(Wino500);
+  ProList.push_back(TTFL);
+  ProList.push_back(TTSL);
+  ProList.push_back(WJJ);
+  ProList.push_back(ZJJ);
 
+//----------------------------------------------------------------------------
+//  Getting the sample number of events
+//----------------------------------------------------------------------------
   std::vector<double> NSignal; //Number of signal
   std::vector<double> NBackg; //Number of signal
+
   // First load all the needed information into the structure
   for(std::vector<MCsample>::iterator it=ProList.begin();
       it!=ProList.end(); it++)
@@ -127,9 +244,22 @@ int main ( int argc, char *argv[] )
 
       if (it->NSel == 0)
       {
-        TH1F *SEvt = (TH1F*)it->File->Get("NEVTS");
-        double bvale = SEvt->GetBinContent(SEvt->FindBin(1)); 
-        if (bvale != 0 && it->Nevents != 0)
+        double bvale = -1;
+        TH1F *SEvt = (TH1F*)it->File->Get("CutFlow");
+        bvale = SEvt->GetBinContent(SEvt->FindBin(hisIdx)); 
+        std::cout << " bvale " << bvale << std::endl;
+
+        //Different way to do it, count up to 300 MEt
+        //
+        //std::stringstream sstream;
+        //sstream <<"CMet_"<< hisIdx;
+        //std::string plotname = sstream.str();
+        //TH1F *SEvt = (TH1F*)it->File->Get(plotname.c_str());
+        //double binl = SEvt->FindBin(300);
+        //double binh = SEvt->GetNbinsX();
+        //bvale = SEvt->Integral(binl, binh);
+
+        if (bvale != -1 && it->Nevents != 0)
         {
           it->NSel = bvale;
           delete SEvt;
@@ -137,44 +267,62 @@ int main ( int argc, char *argv[] )
         else
           std::cout << "Some thing is wrong! " << std::endl;
       }
+
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Now let do the calculation! ~~~~~
       double SampleLumi = it->Nevents / it->Xsec;
       double SampleScale = InitLumifb / SampleLumi;
       it->Scale = SampleScale;
+
       if (it->IsSignal)
         NSignal.push_back(it->Scale * it->NSel);
       else
         NBackg.push_back(it->Scale * it->NSel);
 
       std::string cat =  it->IsSignal ? " Signal " : " Background ";
+
       std::cout << cat << " Sample  : \033[0;31m" << it->Sname 
         <<  "\033[0m  Cross Section : \033[1;36m" << it->Xsec 
         <<  "\033[0m  Inital Nevent : \033[0;34m" << it->Nevents
-        << "\033[0m Selected : \033[0;34m" << it->NSel << "\033[0m" << std::endl;
+        << "\033[0m Selected : \033[0;34m" << it->NSel << "\033[0m" 
+        <<  "\033[0m Sample Lumi : \033[0;34m" << SampleLumi << "\033[0m" 
+        <<  "\033[0m Sample Scale : \033[0;34m" << SampleScale << "\033[0m" 
+        << " scale to sample event : "  << it->Scale * it->NSel<< std::endl;
     }
   }
 
 //----------------------------------------------------------------------------
-//  Now let us calculate the S/sqrt(S+B)
+//  Now let us calculate the S/sqrt(S+B) for each signal and bk
 //----------------------------------------------------------------------------
   double sgl=0.0;
   double bkg=0.0;
-  for(std::vector<double>::iterator it=NSignal.begin();
-    it!=NSignal.end(); it++)
+  double sb = 0.0;
+  for(std::vector<MCsample>::iterator it=ProList.begin();
+      it!=ProList.end(); it++)
   {
-    sgl += *it;
+    sgl = 0.0;
+    sb = 0.0;
+    if (!it->IsSignal) continue;
+    //----------------------------------------------------------------------------
+    sgl = it->Scale * it->NSel;
+
+    for(std::vector<double>::iterator bit=NBackg.begin();
+        bit!=NBackg.end(); bit++)
+    {
+      bkg += *bit;
+    }
+
+    sb = sgl / sqrt(sgl+bkg);
+    std::cout<< " For signal : \033[0;36m" << it->Sname 
+      << "\033[0m At Cut : \033[0;33m" << Cut 
+      << "\033[0m S/sqrt(S+B) = \033[0;31m"<<sb<<"\033[0m"<< std::endl;
   }
-  for(std::vector<double>::iterator it=NBackg.begin();
-    it!=NBackg.end(); it++)
-  {
-    bkg += *it;
-  }
-  double sb = sgl / sqrt(sgl+bkg);
-  std::cout<<" S/sqrt(S+B) = \033[0;31m"<<sb<<"\033[0m"<< std::endl; 
+
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
 
   //----------------------------------------------------------------------------
   //  Now get all the input variable to draw..
   //----------------------------------------------------------------------------
+ 
   //----------------------------------------------------------------------------
   //  Get the list of containing Hist
   //----------------------------------------------------------------------------
@@ -185,20 +333,28 @@ int main ( int argc, char *argv[] )
   //----------------------------------------------------------------------------
   //  Looping over each hist
   //----------------------------------------------------------------------------
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   for (std::vector<std::string>::iterator hit = passive_var.begin();
       hit != passive_var.end(); hit++ )
   {
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+    std::cout << " Drawing His : " << *hit << std::endl;
+    if (*hit != "CMet") continue;
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
     //Preparing for making this plot
-    std::cout << "Ploting " << *hit << std::endl;
+    //std::cout << "Ploting " << *hit << std::endl;
+
     c1->cd();
     c1->Clear();
     c1->SetLogy();
-    std::vector<TH1F*> Stackh; //Keep all the stack histograms in this loop
-    THStack *Hstack = new THStack(hit->c_str(), hit->c_str());
 
-    double maxy = 0;
-    double miny = 0;
-    TAxis* yaix = 0;
+    std::vector<TH1F*> Stackh; //Keep all the stack histograms in this loop
+    THStack *BGstack = new THStack(hit->c_str(), hit->c_str());
+    THStack *SNstack = new THStack(hit->c_str(), hit->c_str());
+
+    //double maxy = 0;
+    //double miny = 0;
+    //TAxis* yaix = 0;
     // Add Legend?? Need a better handling of this
     TLegend *f = new TLegend(0.6862416,0.5995763,0.9228188,0.8940678,NULL,"brNDC");
     f->SetBorderSize(0);
@@ -207,49 +363,74 @@ int main ( int argc, char *argv[] )
     f->SetTextSize(0.045);
 
     // Add to the plot the S/B ratio
-    TPaveText *pt = new TPaveText(0.7080537,0.9194915,0.9077181,0.9745763,"brNDC");
-    pt->SetFillColor(0);
-    pt->SetBorderSize(0);
-    pt->SetTextSize(0.05);
-    TString Tsb =  Form( "S/#sqrt{S+B} = %.1f", sb);
-    pt->AddText(Tsb);
+    TPaveText *pt = 0;
+    if (NSignal.size() == 1)
+    {
+      pt = new TPaveText(0.7080537,0.9194915,0.9077181,0.9745763,"brNDC");
+      pt->SetFillColor(0);
+      pt->SetBorderSize(0);
+      pt->SetTextSize(0.05);
+      TString Tsb =  Form( "S/#sqrt{S+B} = %.1f", sb);
+      pt->AddText(Tsb);
+    }
 
     std::string Xlabel;
     for(std::vector<MCsample>::iterator it=ProList.begin();
         it!=ProList.end(); it++)
     {
-      TH1F* h = (TH1F*)it->File->Get(hit->c_str());
-      std::cout << "NA : " << h->GetTitle() << " from : " << it->Fname<< std::endl;
+      char hisname[100];
+      sprintf(hisname, "%s_%d", hit->c_str(), hisIdx);
+      TH1F* h = (TH1F*)it->File->Get(hisname);
+
+      //std::cout << "NA : " << h->GetTitle() << " from : " << it->Fname<< std::endl;
       f->AddEntry(h, it->Sname.c_str(), "fl");
       Xlabel = h->GetTitle();
-      h->SetTitle(Label.c_str());
-      h->SetFillColor(it->Color);
+      h->SetTitle(Label.Data());
+      if (it->IsSignal)
+      {
+        h->SetLineWidth(3);
+        h->SetLineStyle(it->Color);
+      }
+      else
+        h->SetFillColor(it->Color);
+
       h->SetLineColor(1);
       //h->SetLineColor(it->Color);
       // Now let us rescale it 
-      if (h->Integral() <= 0)
-        continue;
-      h->Scale(it->Scale/ h->Integral());
+      //if (*hit == "CMet") h->Rebin(5);
+
+      //if (h->Integral() <= 0)
+        //continue;
+
+      h->Scale(it->Scale * it->NSel / h->Integral());
 
       Stackh.push_back(h);
-      Hstack->Add(h);
-      std::cout << "Title : " << h->GetTitle() << std::endl;
-      Hstack->SetTitle(h->GetTitle());
+      if (it->IsSignal) SNstack->Add(h);
+      else BGstack->Add(h);
+      //std::cout << "Title : " << h->GetTitle() << std::endl;
+      BGstack->SetTitle(h->GetTitle());
     }
 
-    if (Stackh.size() == 0)
-    {
-      delete Hstack;
-      continue;
-    }
+    //if (Stackh.size() == 0)
+    //{
+      //delete BGstack;
+      //delete SNstack;
+      //continue;
+    //}
 
-    Hstack->Draw();
-    Hstack->GetXaxis()->SetTitle(Xlabel.c_str());
-    pt->Draw();
+    BGstack->SetMinimum(1);
+    BGstack->Draw();
+    BGstack->GetXaxis()->SetTitle(Xlabel.c_str());
+    if (*hit == "CMet") BGstack->GetXaxis()->SetLimits(0, 600);
+    SNstack->Draw("noStacksame");
+    if (pt != 0) pt->Draw();
     f->Draw();
 
     //Print out the plots
-    TString outname = Label+"_"+*hit + ".png";
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+    TString outname = Label+"_"+*hit +"_"+Cut+ ".png";
+    c1->Print(outname);
+    outname = Label+"_"+*hit +"_"+Cut+ ".eps";
     c1->Print(outname);
 
     for(std::vector<TH1F*>::iterator it=Stackh.begin();
@@ -257,15 +438,14 @@ int main ( int argc, char *argv[] )
     {
       delete *it;
     }
-    delete Hstack;
+    delete BGstack;
+    delete SNstack;
     delete pt;
     delete f;
   }
-  //delete c1;
-  theApp->Run();
+  delete c1;
   return EXIT_SUCCESS;
 }				// ----------  end of function main  ----------
-
 
 std::vector<string> GetAllHis (std::vector<MCsample> ProList)
 {
@@ -290,11 +470,16 @@ std::vector<string> GetAllHis (std::vector<MCsample> ProList)
     std::string stdname=key->GetName();
     variable.insert(std::pair<std::string, int>(stdname, 1));
   }
+
   for (std::map<std::string, int>::iterator it = variable.begin(); 
       it != variable.end(); ++it)
   {
-    varVec.push_back(it->first);
+    if (it->first.find_last_of("_") == std::string::npos)
+    {
+      varVec.push_back(it->first);
+      //std::cout << " it->first" << it->first  << std::endl;
+    }
   }
+      varVec.push_back("CMet");
   return varVec;
 }		// -----  end of method MethodIICalc::GetAllHisFromM2Info  -----
-

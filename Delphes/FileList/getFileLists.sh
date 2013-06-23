@@ -11,7 +11,7 @@ for PU in No 50 140
     do
     for file in `ls ${baseDir}/${PU}PileUp/${background}/*root`
       do
-      dcachePath=dcap://cmsgridftp.fnal.gov:24125/pnfs/fnal.gov/usr/`echo ${baseDir}/${PU}PileUp/${background} | cut -d '/' -f 3-`/${file}
+      dcachePath=dcap://cmsgridftp.fnal.gov:24125/pnfs/fnal.gov/usr/`echo ${file} | cut -d '/' -f 3-`
       echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
     done
   done

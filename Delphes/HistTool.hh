@@ -54,6 +54,7 @@ class HistTool
     int Cutorder(std::vector<std::string> order);
     std::vector<std::string> Cutorder();
     int CreateFile(std::string filname);
+    bool SetWeight(double weight);
 
 //----------------------------------------------------------------------------
 //  TH1
@@ -72,10 +73,10 @@ class HistTool
         Int_t logx=0, Int_t logy=0);
 
     // Filling the his TH1
-    int FillTH1(int Ncut, std::string HisName, int value, double weight=1);
-    int FillTH1(int Ncut, std::string HisName, double value, double weight=1);
-    int FillTH1(std::string HisName, double value, double weight=1);
-    int FillTH1(std::string HisName, int value, double weight=1);
+    int FillTH1(int Ncut, std::string HisName, int value, double weight=-999.);
+    int FillTH1(int Ncut, std::string HisName, double value, double weight=-999.);
+    int FillTH1(std::string HisName, double value, double weight=-999.);
+    int FillTH1(std::string HisName, int value, double weight=-999.);
 
     // Output the His TH1
     int WriteTH1();
@@ -99,10 +100,10 @@ class HistTool
         Int_t logx=0, Int_t logy=0);
 
     // Filling the his TPro
-    int FillTPro(int Ncut, std::string HisName, int xvalue, double yvalue, double weight=1);
-    int FillTPro(int Ncut, std::string HisName, double xvalue, double yvalue, double weight=1);
-    int FillTPro(std::string HisName, double xvalue, double yvalue, double weight=1);
-    int FillTPro(std::string HisName, int xvalue, double yvalue, double weight=1);
+    int FillTPro(int Ncut, std::string HisName, int xvalue, double yvalue, double weight=-999.);
+    int FillTPro(int Ncut, std::string HisName, double xvalue, double yvalue, double weight=-999.);
+    int FillTPro(std::string HisName, double xvalue, double yvalue, double weight=-999.);
+    int FillTPro(std::string HisName, int xvalue, double yvalue, double weight=-999.);
 
     // Output the His TPro
     int WriteTPro();
@@ -128,10 +129,10 @@ class HistTool
         Axis_t xmin, Axis_t xmax, Int_t nybins, Axis_t ymin, Axis_t ymax);
 
     // Filling the his TH2
-    int FillTH2(int Ncut, std::string HisName, double xvalue, double yvalue);
-    int FillTH2(int Ncut, std::string HisName, int xvalue, double yvalue);
-    int FillTH2(std::string HisName, int xvalue, double yvalue);
-    int FillTH2(std::string HisName, double xvalue, double yvalue);
+    int FillTH2(int Ncut, std::string HisName, double xvalue, double yvalue, double weight=-999.);
+    int FillTH2(int Ncut, std::string HisName, int xvalue, double yvalue, double weight=-999.);
+    int FillTH2(std::string HisName, int xvalue, double yvalue, double weight=-999.);
+    int FillTH2(std::string HisName, double xvalue, double yvalue, double weight=-999.);
 
     // Output the His TH2
     int WriteTH2();
@@ -143,7 +144,7 @@ class HistTool
   private:
     // ====================  DATA MEMBERS  ===============================
     int CutSize; // The size of the cutbit
-    double Weight; // The weight of current event
+    double HWeight; // The weight of current event
     TFile* OutFile;
     std::string prefix;
 

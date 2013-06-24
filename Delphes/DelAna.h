@@ -53,7 +53,7 @@ class DelAna
     DelAna& operator = ( const DelAna &other ); /* assignment operator */
 
     // To store the event information
-    std::vector<Event> *vEvent;
+    std::vector<LHEFEvent> *vEvent;
     std::vector<GenParticle> *vGenParticle;
     std::vector<Photon> *vPhoton;
     std::vector<Electron> *vElectron;
@@ -70,6 +70,7 @@ class DelAna
     Jet *J3;
     double Mjj;
     double Met;
+    double Weight;
 
     // For Met Study
     double Mll;

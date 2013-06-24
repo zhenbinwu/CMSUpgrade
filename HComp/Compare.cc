@@ -203,13 +203,12 @@ bool Compare::CompHistTH1(std::string prefix, std::string Hname)
 //  Get the vector of ComHis class
 //----------------------------------------------------------------------------
 
-   //if (Hname.find("MetRes") != std::string::npos)
-   //{
-    //FillMetResVHis(VHis, prefix, Hname);
-   //}
-   //else FillVHis(VHis, prefix, Hname);
-   
-   FillVHis(VHis, prefix, Hname);
+   if (Hname.find("MetRes") != std::string::npos)
+   {
+    FillMetResVHis(VHis, prefix, Hname);
+   }
+   else FillVHis(VHis, prefix, Hname);
+
   if (Hname == "MetX" || Hname == "MetY")
     GetRMSDiff(VHis, prefix);
 
@@ -376,10 +375,13 @@ TLegend* Compare::PlotComp(TCanvas* c1, std::vector<ComHis*> &VHis,
     //yaxis->SetRangeUser(0.1*ymin, 5*ymax);
   }
 
-  yaxis->SetTitleOffset(0.8);
+  yaxis->SetTitleOffset(1.0);
   xaxis->SetTitleOffset(0.8);
-  c1->SetGridx();
-  c1->SetGridy();
+  if (hname == "MetScale")
+  {
+    c1->SetGridx();
+    c1->SetGridy();
+  }
   if (LogX) c1->SetLogx();
   if (LogY) c1->SetLogy();
   lg->Draw();
@@ -397,10 +399,13 @@ bool Compare::UserLegend()
   //LgLoc["MetScale"] = {{0.1, 0.4, 0.8, 0.9}};
   double lt[4] = {0.1241611,0.6398305,0.3842282,0.8983051};
   double rb[4] = {0.6526846,0.1588983,0.9127517,0.4173729};
+  double lb[4] = {0.1409396,0.1377119,0.3775168,0.4322034};
 
   LgLoc["MetScale"].assign(rb, rb+4);
   LgLoc["MetResP"].assign(lt, lt+4);
   LgLoc["MetResT"].assign(lt, lt+4);
+  LgLoc["MetResX"].assign(lt, lt+4);
+  LgLoc["MetResY"].assign(lt, lt+4);
 
   return true;
 

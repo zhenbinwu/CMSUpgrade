@@ -21,6 +21,8 @@
   
 #include <iostream>
 #include <list>
+#include <fstream>
+#include <sstream>
 #include <bitset>
 #include <sys/stat.h>
 #include "TChain.h"
@@ -69,6 +71,7 @@ class DPhes
     int PreLooping();
     int Looping();
     int PostLooping();
+    bool GetCrossSection(std::string process);
 
     /* ====================  MUTATORS      ======================================= */
 
@@ -109,6 +112,9 @@ class DPhes
     // Define event
     double PUCorJetEta; // The Eta range of the jet into the Met correction
     double PUCorJetPt; // The Pt of the jet into the Met correction
+
+    // Cross Section
+    double CrossSection; // For HTBin sample, store the cross section according to the process
 }; /* -----  end of class DPhes  ----- */
 
 #endif /* __DPHES_H__ */

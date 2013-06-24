@@ -25,6 +25,7 @@
 DPhes::DPhes (TChain* chain)
 {
   fChain = chain;
+  CrossSection = -999.;
 }  /* -----  end of method DPhes::DPhes  (constructor)  ----- */
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,6 +101,9 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   branchEFlowTrack = 0;
   branchEFlowTower = 0;
   NEntries         = 0;
+
+  // Double check the filename and get the cross section
+  GetCrossSection(process);
 
   // Set the output name
   SetPreName(process, pu, outdir);
@@ -226,12 +230,12 @@ int DPhes::ReadDelPhes()
 // ===========================================================================
 int DPhes::PreLooping()
 {
-  
     for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
         it!=MDelCut.end(); it++)
     {
       it->second->InitCutOrder();
       it->second->BookHistogram();
+      it->second->FillSampleXS(CrossSection);
     } 
     return 1;
 
@@ -294,3 +298,47 @@ int DPhes::PostLooping()
   } 
   return 1;
 }       // -----  end of function DPhes::PostLooping  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DPhes::GetCrossSection
+//  Description:  This function will get the cross section from
+//  FileList/HTBin/CrossSection.list file. For the Delphes-3.0.7, use the
+//  default value so far.
+// ===========================================================================
+bool DPhes::GetCrossSection(std::string process)
+{
+  std::fstream file;
+  file.open("FileList/CrossSection.list", std::fstream::in);
+  if (!file.is_open())
+  {
+    std::cout << " Error to open the Cross Section file!" << std::endl;
+    return false;
+  }
+  
+  std::string line;
+  while (!file.eof())
+  {
+    getline(file, line);
+    if (line.empty()) continue;
+    if (line[0] == '#') continue;
+
+    std::string pro;
+    float xs;
+
+    std::stringstream(line) >>  pro >> xs;
+    if (pro == process)
+    {
+      CrossSection = xs;
+      break;
+    }
+  }
+  file.close();
+
+  if (CrossSection == -999.)
+  {
+    std::cerr << "Unable to find the process and its cross section!" << std::endl;
+    exit(1);
+  }
+
+  return EXIT_SUCCESS;
+}       // -----  end of function DPhes::GetCrossSection  -----

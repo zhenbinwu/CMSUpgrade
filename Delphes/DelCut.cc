@@ -72,6 +72,7 @@ bool DelCut::BookHistogram()
 //  Booking global histogram
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
+  His->AddTH1("Weight", "Weight", 100, 0, 10 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
   // Met study
   His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
@@ -175,11 +176,13 @@ int DelCut::FillCut()
   Ana->Clear();
   Ana->GetBasic();
 
-  His->FillTH1("NEVT", 1);
+  His->SetWeight(Ana->Weight);
+  His->FillTH1("NEVT", 1, 1);
 
   // Met Study
   Ana->MetDiLepton();
 
+  His->FillTH1("Weight", Ana->Weight);
   His->FillTH1("Met", Ana->PUCorMet->Mod());
   His->FillTH1("MLL", Ana->Mll);
   His->FillTH1("UT", Ana->QT);
@@ -365,3 +368,13 @@ int DelCut::FillMet(int NCut)
   His->FillTH1(NCut, "CMet", Ana->PUCorMet->Mod());
   return 1;
 }       // -----  end of function DelCut::FillEle  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillSampleXS
+//  Description:  Save the cross section in bin 1 in histogram XS
+// ===========================================================================
+bool DelCut::FillSampleXS(double xs)
+{
+  His->AddTH1("CrossSection", "Cross Section", 2, 0, 2);
+  His->FillTH1("CrossSection", 1, xs);
+}       // -----  end of function DelCut::FillSampleXS  -----

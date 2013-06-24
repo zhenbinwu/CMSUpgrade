@@ -307,7 +307,7 @@ int DelEvent::LoadEvent(TClonesArray *branchEvent)
   
   for (int i = 0; i < branchEvent->GetEntries(); ++i)
   {
-    Event* evt = (Event*)branchEvent->At(i);
+    LHEFEvent* evt = (LHEFEvent*)branchEvent->At(i);
     vEvent.push_back(*evt);
   }
 

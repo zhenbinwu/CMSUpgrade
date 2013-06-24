@@ -36,6 +36,7 @@ DelAna::DelAna (DelEvent *DE)
   MHT = &DE->MHT;
   HT = &DE->HT;
 
+  Weight = 1.0;
 }  // ~~~~~  end of method DelAna::DelAna  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,6 +90,7 @@ bool DelAna::Clear()
   J1 = 0;
   J2 = 0;
   J3 = 0;
+  Weight = 1.0;
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -105,6 +107,7 @@ int DelAna::GetBasic()
     Mjj = (J1->P4() + J2->P4()).M();
   }
   if (vJet->size() > 2) J3 = &vJet->at(2);
+  Weight = vEvent->at(0).Weight;
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 

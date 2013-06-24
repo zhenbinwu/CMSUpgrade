@@ -31,6 +31,7 @@ HistTool::HistTool (std::string name)
     OutFileName = name;
   std::cout << "outfile name " << OutFileName << std::endl;
   OutFile = new TFile(OutFileName, "RECREATE");
+  HWeight = -999.;
 }  // ~~~~~  end of method HistTool::HistTool  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,7 +180,12 @@ int HistTool::FillTH1(int Ncut, std::string HisName, double value, double weight
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (HisMap.find(mapname.Data()) == HisMap.end())
     return 0;
-  HisMap[mapname.Data()]->Fill(value, weight);
+  if (weight != -999.)
+    HisMap[mapname.Data()]->Fill(value, weight);
+  else if (HWeight != -999.)
+    HisMap[mapname.Data()]->Fill(value, HWeight);
+  else
+    HisMap[mapname.Data()]->Fill(value);
   return 1;
 }       // -----  end of function HistTool::::FillTH1  -----
 
@@ -188,7 +194,12 @@ int HistTool::FillTH1(int Ncut, std::string HisName, int value, double weight)
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (HisMap.find(mapname.Data()) == HisMap.end())
     return 0;
-  HisMap[mapname.Data()]->Fill(value, weight);
+  if (weight != -999.)
+    HisMap[mapname.Data()]->Fill(value, weight);
+  else if (HWeight != -999.)
+    HisMap[mapname.Data()]->Fill(value, HWeight);
+  else
+    HisMap[mapname.Data()]->Fill(value);
   return 1;
 }       // -----  end of function HistTool::::FillTH1  -----
 
@@ -196,7 +207,12 @@ int HistTool::FillTH1(std::string HisName, int value, double weight)
 {
   if (HisMap.find(HisName) == HisMap.end())
     return 0;
-  HisMap[HisName]->Fill(value, weight);
+  if (weight != -999.)
+    HisMap[HisName]->Fill(value, weight);
+  else if (HWeight != -999.)
+    HisMap[HisName]->Fill(value, HWeight);
+  else
+    HisMap[HisName]->Fill(value);
   return 1;
 }       // -----  end of function HistTool::::FillTH1  -----
 
@@ -204,7 +220,12 @@ int HistTool::FillTH1(std::string HisName, double value, double weight)
 {
   if (HisMap.find(HisName) == HisMap.end())
     return 0;
-  HisMap[HisName]->Fill(value, weight);
+  if (weight != -999.)
+    HisMap[HisName]->Fill(value, weight);
+  else if (HWeight != -999.)
+    HisMap[HisName]->Fill(value, HWeight);
+  else
+    HisMap[HisName]->Fill(value);
   return 1;
 }       // -----  end of function HistTool::::FillTH1  -----
 
@@ -331,7 +352,12 @@ int HistTool::FillTPro(int Ncut, std::string HisName, double xvalue, double yval
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (ProMap.find(mapname.Data()) == ProMap.end())
     return 0;
-  ProMap[mapname.Data()]->Fill(xvalue, yvalue,  weight);
+  if (weight != -999.)
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue,  HWeight);
+  else
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
@@ -340,7 +366,12 @@ int HistTool::FillTPro(int Ncut, std::string HisName, int xvalue, double yvalue,
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (ProMap.find(mapname.Data()) == ProMap.end())
     return 0;
-  ProMap[mapname.Data()]->Fill(xvalue, yvalue, weight);
+  if (weight != -999.)
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue,  HWeight);
+  else
+    ProMap[mapname.Data()]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
@@ -348,7 +379,12 @@ int HistTool::FillTPro(std::string HisName, double xvalue, double yvalue, double
 {
   if (ProMap.find(HisName) == ProMap.end())
     return 0;
-  ProMap[HisName]->Fill(xvalue, yvalue, weight);
+  if (weight != -999.)
+    ProMap[HisName]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    ProMap[HisName]->Fill(xvalue, yvalue,  HWeight);
+  else
+    ProMap[HisName]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
@@ -356,7 +392,12 @@ int HistTool::FillTPro(std::string HisName, int xvalue, double yvalue, double we
 {
   if (ProMap.find(HisName) == ProMap.end())
     return 0;
-  ProMap[HisName]->Fill(xvalue, yvalue, weight);
+  if (weight != -999.)
+    ProMap[HisName]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    ProMap[HisName]->Fill(xvalue, yvalue,  HWeight);
+  else
+    ProMap[HisName]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTPro  -----
 
@@ -475,37 +516,57 @@ int HistTool::AddTH2 (const std::string name, const std::string title,
 //         Name:  HistTool::::FillTH2
 //  Description:  
 // ===========================================================================
-int HistTool::FillTH2(int Ncut, std::string HisName, double xvalue, double yvalue)
+int HistTool::FillTH2(int Ncut, std::string HisName, double xvalue, double yvalue, double weight)
 {
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (HisMap2D.find(mapname.Data()) == HisMap2D.end())
     return 0;
-  HisMap2D[mapname.Data()]->Fill(xvalue, yvalue);
+  if (weight != -999.)
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue,  HWeight);
+  else
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTH2  -----
 
-int HistTool::FillTH2(int Ncut, std::string HisName, int xvalue, double yvalue)
+int HistTool::FillTH2(int Ncut, std::string HisName, int xvalue, double yvalue, double weight)
 {
   TString mapname = HisName+"_"+static_cast<Long_t>(Ncut);
   if (HisMap2D.find(mapname.Data()) == HisMap2D.end())
     return 0;
-  HisMap2D[mapname.Data()]->Fill(xvalue, yvalue);
+  if (weight != -999.)
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue,  HWeight);
+  else
+    HisMap2D[mapname.Data()]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTH2  -----
 
-int HistTool::FillTH2(std::string HisName, int xvalue, double yvalue)
+int HistTool::FillTH2(std::string HisName, int xvalue, double yvalue, double weight)
 {
   if (HisMap2D.find(HisName) == HisMap2D.end())
     return 0;
-  HisMap2D[HisName]->Fill(xvalue, yvalue);
+  if (weight != -999.)
+    HisMap2D[HisName]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    HisMap2D[HisName]->Fill(xvalue, yvalue,  HWeight);
+  else
+    HisMap2D[HisName]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTH2  -----
 
-int HistTool::FillTH2(std::string HisName, double xvalue, double yvalue)
+int HistTool::FillTH2(std::string HisName, double xvalue, double yvalue, double weight)
 {
   if (HisMap2D.find(HisName) == HisMap2D.end())
     return 0;
-  HisMap2D[HisName]->Fill(xvalue, yvalue);
+  if (weight != -999.)
+    HisMap2D[HisName]->Fill(xvalue, yvalue,  weight);
+  else if (HWeight != -999.)
+    HisMap2D[HisName]->Fill(xvalue, yvalue,  HWeight);
+  else
+    HisMap2D[HisName]->Fill(xvalue, yvalue);
   return 1;
 }       // -----  end of function HistTool::::FillTH2  -----
 
@@ -543,3 +604,12 @@ int HistTool::DrawTH2()
   return 1;
 }       // -----  end of function HistTool::DrawTH2  -----
 
+
+// ===  FUNCTION  ============================================================
+//         Name:  HistTool::SetWeight
+//  Description:  
+// ===========================================================================
+bool HistTool::SetWeight(double weight)
+{
+  HWeight = weight;
+}       // -----  end of function HistTool::SetWeight  -----

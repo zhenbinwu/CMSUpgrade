@@ -60,7 +60,7 @@ class DelEvent
         TClonesArray *branchHt, TClonesArray *branchParticle);
 
     // To store the event information
-    std::vector<Event> vEvent;
+    std::vector<LHEFEvent> vEvent;
     std::vector<GenParticle> vGenParticle;
     std::vector<Photon> vPhoton;
     std::vector<Electron> vElectron;

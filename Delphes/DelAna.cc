@@ -179,6 +179,9 @@ bool DelAna::MetDiLepton()
   if (vJet->size()> 0)
     for (int i = 0; i < vJet->size(); ++i)
     {
+      if(std::fabs(vJet->at(i).Eta) > DEV->JetEtaCut 
+          || vJet->at(i).PT < DEV->JetPtCut)
+        continue;
       Ut += vJet->at(i).P4();
     }
 

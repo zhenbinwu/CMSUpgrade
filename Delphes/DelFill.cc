@@ -165,15 +165,20 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   {
     DEV = new DelTT(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV);
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    //MDelCut["Default"] = new DelCut(ANA, name.Data());
 
-    //TString tempname = name;
-    //tempname.ReplaceAll(process.c_str(), process+"_FLep");
-    //MDelCut["TTFL"] = new DelCut(ANA, tempname.Data());
+    TString tempname = name;
+    tempname.ReplaceAll(process.c_str(), process+"_FLep");
+    MDelCut["TTFL"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = name;
-    //tempname.ReplaceAll(process.c_str(), process+"_SLep");
-    //MDelCut["TTSL"] = new DelCut(ANA, tempname.Data());
+    tempname = name;
+    tempname.ReplaceAll(process.c_str(), process+"_SLep");
+    MDelCut["TTSL"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll(process.c_str(), process+"_Had");
+    MDelCut["TTHD"] = new DelCut(ANA, tempname.Data());
+
     return 1;
   }
 

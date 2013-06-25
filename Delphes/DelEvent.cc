@@ -359,8 +359,8 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
     for (int i = 0; i < branchElectron->GetEntries(); ++i)
     {
       Electron *ele = (Electron*)branchElectron->At(i);
-      if (std::fabs(ele->Eta) > JetEtaCut)
-        continue;
+      //if (std::fabs(ele->Eta) > JetEtaCut)
+        //continue;
       MHT += ele->P4();
       HT += ele->P4().Mag();
     }
@@ -370,8 +370,8 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
     for (int i = 0; i < branchMuon->GetEntries(); ++i)
     {
       Muon *muon = (Muon*)branchMuon->At(i);
-      if (std::fabs(muon->Eta) > JetEtaCut)
-        continue;
+      //if (std::fabs(muon->Eta) > JetEtaCut)
+        //continue;
       MHT += muon->P4();
       HT += muon->P4().Mag();
     }
@@ -382,8 +382,8 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
     {
 
       Photon* pho = (Photon*)branchPhoton->At(i);
-      if (std::fabs(pho->Eta) > JetEtaCut)
-        continue;
+      //if (std::fabs(pho->Eta) > JetEtaCut)
+        //continue;
       MHT += pho->P4();
       HT += pho->P4().Mag();
     }

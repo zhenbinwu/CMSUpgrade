@@ -103,6 +103,7 @@ bool DelTT::CheckFlag(std::string flag)
 {
   if (flag == "TTFL") return GenLeps() == 2;
   if (flag == "TTSL") return GenLeps() == 1;
+  if (flag == "TTHD") return GenLeps() == 0;
 }       // -----  end of function DelTT::CheckFlag  -----
 
 

@@ -139,21 +139,21 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   {
       
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
-    DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV);
+    //DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
+    //ANA = new DelAna(DEV);
 
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    //MDelCut["Default"] = new DelCut(ANA, name.Data());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For Met Resolution study ~~~~~
-    //DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
-    //ANA = new DelAna(DEV);
-    //TString tempname = name;
-    //tempname.ReplaceAll(process.c_str(), "MetDiMuon");
-    //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+    DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
+    ANA = new DelAna(DEV);
+    TString tempname = name;
+    tempname.ReplaceAll(process.c_str(), "MetDiMuon");
+    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = name;
-    //tempname.ReplaceAll(process.c_str(), "MetDiEle");
-    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    tempname = name;
+    tempname.ReplaceAll(process.c_str(), "MetDiEle");
+    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }

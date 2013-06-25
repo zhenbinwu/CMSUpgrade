@@ -181,7 +181,6 @@ int DelEvent::LoadCAJet(TClonesArray* branchCAJet)
 
   for (int i = 0; i < branchCAJet->GetEntries(); ++i)
   {
-    
     // Now, get the jet at index
     Jet* jet = (Jet*)branchCAJet->At(i);
     lJetPt.push_back(std::make_pair(jet->PT, i));
@@ -389,9 +388,6 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
       HT += pho->P4().Mag();
     }
 
-  if (MHT == TLorentzVector(0, 0, 0,0))
-    return false;
-
   double met_x = -MHT.Px();
   double met_y = -MHT.Py();
   PUCorMet.Set(met_x, met_y);
@@ -489,7 +485,7 @@ int DelEvent::CleanEvent()
   vMissingET.clear();
 
   //Clear the locale variables
-  PUCorMet.Clear();
+  PUCorMet.Set(0., 0.);
   MHT.SetPxPyPzE(0, 0, 0, 0);
   HT= -999.;
 
@@ -541,6 +537,18 @@ bool DelEvent::DiMuonMet()
 {
   if (vMuon.size() != 2) return false;
   if (vElectron.size()> 0) return false;
+
+  int sign = 1;
+  TLorentzVector Qt(0, 0, 0, 0);
+  for (int i = 0; i < vMuon.size(); ++i)
+  {
+    Qt += vMuon.at(i).P4();
+    sign *= vMuon.at(i).Charge;
+  }
+  if (sign > 0) return false;
+  if (Qt.M() < 60 || Qt.M() > 120) return false;
+  if (Qt.Pt() < 50) return false;
+
   return true;
 }       // -----  end of function DelEvent::DiMuonMet  -----
  
@@ -552,6 +560,18 @@ bool DelEvent::DiEleMet()
 {
   if (vElectron.size() != 2) return false;
   if (vMuon.size()> 0) return false;
+
+  int sign = 1;
+  TLorentzVector Qt(0, 0, 0, 0);
+  for (int i = 0; i < vElectron.size(); ++i)
+  {
+    Qt += vElectron.at(i).P4();
+    sign *= vElectron.at(i).Charge;
+  }
+  if (sign > 0) return false;
+  if (Qt.M() < 60 || Qt.M() > 120) return false;
+  if (Qt.Pt() < 50) return false;
+
 
   return true;
   

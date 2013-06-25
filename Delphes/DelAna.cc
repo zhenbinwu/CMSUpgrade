@@ -91,6 +91,8 @@ bool DelAna::Clear()
   J2 = 0;
   J3 = 0;
   Weight = 1.0;
+  RawMet.Set(0.0, 0.0);
+  RHT = 0.0;
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -100,6 +102,7 @@ bool DelAna::Clear()
 int DelAna::GetBasic()
 {
   Met = PUCorMet->Mod();
+  RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
   if (vJet->size() > 0) J1 = &vJet->at(0);
   if (vJet->size() > 1) 
   {
@@ -108,6 +111,23 @@ int DelAna::GetBasic()
   }
   if (vJet->size() > 2) J3 = &vJet->at(2);
   Weight = vEvent->at(0).Weight;
+
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    RHT += vJet->at(i).P4().Mag();
+  }
+  for (int i = 0; i < vElectron->size(); ++i)
+  {
+    RHT += vElectron->at(i).P4().Mag();
+  }
+  for (int i = 0; i < vMuon->size(); ++i)
+  {
+    RHT += vMuon->at(i).P4().Mag();
+  }
+  for (int i = 0; i < vPhoton->size(); ++i)
+  {
+    RHT += vPhoton->at(i).P4().Mag();
+  }
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -119,7 +139,7 @@ bool DelAna::MetDiLepton()
 {
 
   if (CurrentTag != "MetDiMuon" && CurrentTag != "MetDiEle")
-    return 0;
+    return false;
   // Initial values
   // The Qt of Z/gramma*
   TLorentzVector Qt(0, 0, 0, 0);
@@ -132,21 +152,27 @@ bool DelAna::MetDiLepton()
   QT = -999.;
   MetScale = -999.;
 
+  int sign=1;
   if (vMuon->size() == 2 && vElectron->size() == 0)
   {
     for (int i = 0; i < vMuon->size(); ++i)
     {
       Qt += vMuon->at(i).P4();
+      sign *= vMuon->at(i).Charge;
     }
   } else if (vMuon->size() == 0 && vElectron->size() == 2) {
     
     for (int i = 0; i < vElectron->size(); ++i)
     {
       Qt += vElectron->at(i).P4();
+      sign *= vElectron->at(i).Charge;
     }
 
   }
 
+  //Should be dummy now, the cuts are moved to DelEvent.CheckFlag
+  if (sign > 0) return false;
+  if (Qt.M() < 60 || Qt.M() > 120) return false;
   if (Qt.Pt() < 50) return false;
 
   //Loop over the jet correction

@@ -73,6 +73,8 @@ class DelAna
     double Weight;
 
     // For Met Study
+    TVector2 RawMet;
+    double RHT;
     double Mll;
     double UParallel;
     double UTransverse;

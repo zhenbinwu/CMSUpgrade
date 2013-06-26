@@ -98,8 +98,6 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   branchMet        = 0;
   branchHt         = 0;
   branchParticle   = 0;
-  branchEFlowTrack = 0;
-  branchEFlowTower = 0;
 
   // Double check the filename and get the cross section
   GetCrossSection(process);
@@ -222,9 +220,7 @@ int DPhes::ReadDelPhes()
   branchMet        = treeReader->UseBranch("MissingET");
   branchHt         = treeReader->UseBranch("ScalarHT");
   branchParticle   = treeReader->UseBranch("Particle");
-  branchEFlowTrack = treeReader->UseBranch("EFlowTrack");
-  branchEFlowTower = treeReader->UseBranch("EFlowTower");
-  }       // -----  end of function DPhes::ReadDelPhes  -----
+}       // -----  end of function DPhes::ReadDelPhes  -----
 
 
 // ===  FUNCTION  ============================================================

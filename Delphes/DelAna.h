@@ -63,6 +63,7 @@ class DelAna
     TVector2 *PUCorMet;
     TLorentzVector *MHT;
     double *HT;
+    double DelHT;
 
     // Common variable
     Jet *J1;

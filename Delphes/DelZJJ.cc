@@ -118,8 +118,11 @@ bool DelZJJ::LoadZLLEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   LoadGenJet(branchGenJet);
   LoadCAJet(branchCAJet);
 
+  DelEvent::LoadScalarHT(branchHt);
+
   //Whether this event is preselected?
-  return PreSelected();
+  //return PreSelected();
+  return true;
 }       // -----  end of function DelZJJ::LoadZLLEvent  -----
 
 // ===  FUNCTION  ============================================================
@@ -514,8 +517,56 @@ int DelZJJ::LoadZLLMuon(TClonesArray *branchMuon)
 bool DelZJJ::CheckFlag(std::string flag)
 {
   if (flag == "MetDiMuon" && !FakingZvv)
-    return DelEvent::DiMuonMet();
+    return DiMuonMet();
   if (flag == "MetDiEle" && !FakingZvv)
-    return DelEvent::DiEleMet();
+    return DiEleMet();
   return true;
 }       // -----  end of function DelZJJ::CheckFlag  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelZJJ::DiMuonMet
+//  Description:  
+// ===========================================================================
+bool DelZJJ::DiMuonMet()
+{
+  if (vMuon.size() != 2) return false;
+  if (vElectron.size()> 0) return false;
+
+  int sign = 1;
+  TLorentzVector Qt(0, 0, 0, 0);
+  for (int i = 0; i < vMuon.size(); ++i)
+  {
+    Qt += vMuon.at(i).P4();
+    sign *= vMuon.at(i).Charge;
+  }
+
+  if (sign > 0) return false;
+  if (Qt.M() < 60 || Qt.M() > 120) return false;
+  //if (Qt.Pt() < 50) return false;
+
+  return true;
+}       // -----  end of function DelZJJ::DiMuonMet  -----
+ 
+// ===  FUNCTION  ============================================================
+//         Name:  DelZJJ::DiEleMet
+//  Description:  
+// ===========================================================================
+bool DelZJJ::DiEleMet()
+{
+  if (vElectron.size() != 2) return false;
+  if (vMuon.size()> 0) return false;
+
+  int sign = 1;
+  TLorentzVector Qt(0, 0, 0, 0);
+  for (int i = 0; i < vElectron.size(); ++i)
+  {
+    Qt += vElectron.at(i).P4();
+    sign *= vElectron.at(i).Charge;
+  }
+  if (sign > 0) return false;
+  if (Qt.M() < 60 || Qt.M() > 120) return false;
+  //if (Qt.Pt() < 50) return false;
+
+  return true;
+}       // -----  end of function DelZJJ::DiEleMet  -----
+

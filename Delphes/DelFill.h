@@ -94,17 +94,15 @@ class DPhes
 
     // Delphes branches
     TClonesArray *branchEvent;
-    TClonesArray *branchJet;
+    TClonesArray *branchParticle;
     TClonesArray *branchGenJet;
     TClonesArray *branchCAJet;
+    TClonesArray *branchJet;
     TClonesArray *branchElectron;
-    TClonesArray *branchMuon;
     TClonesArray *branchPhoton;
+    TClonesArray *branchMuon;
     TClonesArray *branchMet;
     TClonesArray *branchHt;
-    TClonesArray *branchParticle;
-    TClonesArray *branchEFlowTrack;
-    TClonesArray *branchEFlowTower;
 
 
 

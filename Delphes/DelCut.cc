@@ -74,6 +74,10 @@ bool DelCut::BookHistogram()
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("Weight", "Weight", 100, 0, 10 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
+  His->AddTH1("NJets", "Num. of Jets", 20, 0, 20 );
+  His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
+  His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
+  His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
   // Met study
   His->AddTH1("Met", "Met", "#slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
   His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
@@ -188,6 +192,10 @@ int DelCut::FillCut()
   His->SetWeight(Ana->Weight);
   His->FillTH1("NEVT", 1, 1);
   His->FillTH1("Weight", Ana->Weight);
+  His->FillTH1("NJets", (int)Ana->vJet->size());
+  His->FillTH1("NEle", (int)Ana->vElectron->size());
+  His->FillTH1("NMuon", (int)Ana->vMuon->size());
+  His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
 
   // Met Study
   {

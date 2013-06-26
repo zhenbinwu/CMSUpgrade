@@ -93,6 +93,7 @@ bool DelAna::Clear()
   Weight = 1.0;
   RawMet.Set(0.0, 0.0);
   RHT = 0.0;
+  DelHT = -999.;
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -101,7 +102,8 @@ bool DelAna::Clear()
 // ===========================================================================
 int DelAna::GetBasic()
 {
-  Met = PUCorMet->Mod();
+  DelHT = DEV->DelHT;
+  Met   = PUCorMet->Mod();
   RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
   if (vJet->size() > 0) J1 = &vJet->at(0);
   if (vJet->size() > 1) 

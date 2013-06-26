@@ -59,7 +59,8 @@ class DelEvent
         TClonesArray *branchMuon, TClonesArray *branchPhoton, TClonesArray *branchMet, 
         TClonesArray *branchHt, TClonesArray *branchParticle);
 
-    // To store the event information
+    // To store the event information 
+    // only use common infor from 307 and 309
     std::vector<LHEFEvent> vEvent;
     std::vector<GenParticle> vGenParticle;
     std::vector<Photon> vPhoton;
@@ -67,6 +68,7 @@ class DelEvent
     std::vector<Muon> vMuon;
     std::vector<Jet> vJet, vGenJet, vCAJet;
     std::vector<MissingET> vMissingET;
+    double DelHT;
     TVector2 PUCorMet;
     TLorentzVector MHT;
     double HT;
@@ -91,13 +93,11 @@ class DelEvent
     int LoadJet(TClonesArray *branchJet);
     int LoadGenJet(TClonesArray *branchJet);
     int LoadCAJet(TClonesArray* branchCAJet);
+    int LoadScalarHT(TClonesArray *branchHt);
     // GenParticle level preselection, which rejects almost all the events
     double GenMet();
     bool GenPreSelected();
 
-    // For Met study
-    bool DiMuonMet();
-    bool DiEleMet();
 
     //Flags for the selection on the event
     double JetEtaCut;

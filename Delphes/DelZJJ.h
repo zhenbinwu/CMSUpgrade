@@ -77,6 +77,9 @@ class DelZJJ : public DelEvent
     std::set<int> MatchedEle;
     std::set<int> MatchedMuon;
 
+    // For Met study
+    bool DiMuonMet();
+    bool DiEleMet();
 
 }; /* -----  end of class DelZJJ  ----- */
 

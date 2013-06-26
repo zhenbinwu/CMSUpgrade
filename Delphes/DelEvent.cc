@@ -298,6 +298,17 @@ int DelEvent::LoadRawMet(TClonesArray *branchMet)
 }       // -----  end of function DelEvent::LoadRawMet  -----
 
 // ===  FUNCTION  ============================================================
+//         Name:  DelEvent::LoadScalarHT
+//  Description:  Load the scalar HT stored in Delphes
+// ===========================================================================
+int DelEvent::LoadScalarHT(TClonesArray *branchHt)
+{
+  ScalarHT *sht = (ScalarHT*)branchHt->At(0);
+  DelHT = sht->HT;
+  return 1;
+}       // -----  end of function DelEvent::LoadScalarHT  -----
+
+// ===  FUNCTION  ============================================================
 //         Name:  DelEvent::LoadEvent
 //  Description:  Functions to load the Event
 // ===========================================================================
@@ -486,6 +497,7 @@ int DelEvent::CleanEvent()
   //Clear the locale variables
   PUCorMet.Set(0., 0.);
   MHT.SetPxPyPzE(0, 0, 0, 0);
+  DelHT = -999.;
   HT= -999.;
 
   RMjet.clear();
@@ -519,6 +531,7 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   LoadJet(branchJet);
   LoadGenJet(branchGenJet);
   LoadCAJet(branchCAJet);
+  LoadScalarHT(branchHt);
 
   CalPUCorMet(branchJet, branchElectron, branchMuon, branchPhoton);
   //Whether this event is preselected?
@@ -528,53 +541,6 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
 }       // -----  end of function DelEvent::LoadEvent  -----
 
 
-// ===  FUNCTION  ============================================================
-//         Name:  DelEvent::DiMuonMet
-//  Description:  
-// ===========================================================================
-bool DelEvent::DiMuonMet()
-{
-  if (vMuon.size() != 2) return false;
-  if (vElectron.size()> 0) return false;
-
-  int sign = 1;
-  TLorentzVector Qt(0, 0, 0, 0);
-  for (int i = 0; i < vMuon.size(); ++i)
-  {
-    Qt += vMuon.at(i).P4();
-    sign *= vMuon.at(i).Charge;
-  }
-  if (sign > 0) return false;
-  if (Qt.M() < 60 || Qt.M() > 120) return false;
-  //if (Qt.Pt() < 50) return false;
-
-  return true;
-}       // -----  end of function DelEvent::DiMuonMet  -----
- 
-// ===  FUNCTION  ============================================================
-//         Name:  DelEvent::DiEleMet
-//  Description:  
-// ===========================================================================
-bool DelEvent::DiEleMet()
-{
-  if (vElectron.size() != 2) return false;
-  if (vMuon.size()> 0) return false;
-
-  int sign = 1;
-  TLorentzVector Qt(0, 0, 0, 0);
-  for (int i = 0; i < vElectron.size(); ++i)
-  {
-    Qt += vElectron.at(i).P4();
-    sign *= vElectron.at(i).Charge;
-  }
-  if (sign > 0) return false;
-  if (Qt.M() < 60 || Qt.M() > 120) return false;
-  //if (Qt.Pt() < 50) return false;
-
-
-  return true;
-  
-}       // -----  end of function DelEvent::DiEleMet  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelEvent::CheckFlag

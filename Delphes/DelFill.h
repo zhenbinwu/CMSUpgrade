@@ -85,7 +85,6 @@ class DPhes
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     TChain* fChain; //Chain of input files
-    Long64_t NEntries;
 
     // Delphes Classes
     ExRootTreeReader *treeReader;

@@ -81,6 +81,10 @@ class DelAna
     double QT;
     double UT;
     double MetScale;
+    int UtNJets;
+    int UtNPhotons;
+    double UTJetsPT;
+    double UTPhotonsPT;
 
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;

@@ -102,6 +102,10 @@ bool DelCut::BookHistogram()
   His->AddTPro("RMetXMean", "RMetXMean", "HT [GeV]", "<Raw #slash{E}_{x}> [GeV]",  50, 0, 400);
   His->AddTPro("RMetYMean", "RMetYMean", "HT [GeV]", "<Raw #slash{E}_{y}> [GeV]",  50, 0, 400);
 
+  His->AddTH1("UtNJets", "Num. of Jets in UT Cal", 20, 0, 20 );
+  His->AddTH1("UtNPhotons", "Num. of photon in UT Cal", 20, 0, 20 );
+  His->AddTH1("UTJetsPT", "Sum PT of Jets in UT Cal", 200, 0, 400);
+  His->AddTH1("UTPhotonsPT", "Sum PT of Photons in UT Cal", 200, 0, 400);
 
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
@@ -183,30 +187,40 @@ int DelCut::FillCut()
 
   His->SetWeight(Ana->Weight);
   His->FillTH1("NEVT", 1, 1);
+  His->FillTH1("Weight", Ana->Weight);
 
   // Met Study
-  Ana->MetDiLepton();
+  {
+    Ana->MetDiLepton();
+    His->FillTH1("RawMet", Ana->RawMet.Mod());
+    His->FillTH1("Met", Ana->PUCorMet->Mod());
+    His->FillTH1("MLL", Ana->Mll);
+    His->FillTH1("UT", Ana->UT);
+    His->FillTH1("QT", Ana->QT);
+    His->FillTH1("UPQT", Ana->UParallel + Ana->QT);
+    His->FillTH1("UPerp", Ana->UTransverse);
+    His->FillTH1("UParal", Ana->UParallel);
+    His->FillTH1("MetX", Ana->PUCorMet->Px());
+    His->FillTH1("MetY", Ana->PUCorMet->Py());
+    His->FillTH1("RMetX", Ana->RawMet.Px());
+    His->FillTH1("RMetY", Ana->RawMet.Py());
+    His->FillTPro("MetScale", Ana->QT, Ana->MetScale);
+    His->FillTPro("MetResP", Ana->QT, Ana->UParallel);
+    His->FillTPro("MetResT", Ana->QT, Ana->UTransverse);
+    His->FillTPro("MetResX", *Ana->HT, Ana->PUCorMet->Px());
+    His->FillTPro("MetResY", *Ana->HT, Ana->PUCorMet->Py());
+    His->FillTPro("RMetResX", Ana->RHT, Ana->RawMet.Px());
+    His->FillTPro("RMetResY", Ana->RHT, Ana->RawMet.Py());
+    His->FillTPro("MetXMean", *Ana->HT, Ana->PUCorMet->Px());
+    His->FillTPro("MetYMean", *Ana->HT, Ana->PUCorMet->Py());
+    His->FillTPro("RMetXMean", Ana->RHT, Ana->RawMet.Px());
+    His->FillTPro("RMetYMean", Ana->RHT, Ana->RawMet.Py());
 
-  His->FillTH1("Weight", Ana->Weight);
-  His->FillTH1("RawMet", Ana->RawMet.Mod());
-  His->FillTH1("Met", Ana->PUCorMet->Mod());
-  His->FillTH1("MLL", Ana->Mll);
-  His->FillTH1("UT", Ana->UT);
-  His->FillTH1("QT", Ana->QT);
-  His->FillTH1("UPQT", Ana->UParallel + Ana->QT);
-  His->FillTH1("UPerp", Ana->UTransverse);
-  His->FillTH1("UParal", Ana->UParallel);
-  His->FillTH1("MetX", Ana->PUCorMet->Px());
-  His->FillTH1("MetY", Ana->PUCorMet->Py());
-  His->FillTH1("RMetX", Ana->RawMet.Px());
-  His->FillTH1("RMetY", Ana->RawMet.Py());
-  His->FillTPro("MetScale", Ana->QT, Ana->MetScale);
-  His->FillTPro("MetResP", Ana->QT, Ana->UParallel);
-  His->FillTPro("MetResT", Ana->QT, Ana->UTransverse);
-  His->FillTPro("MetResX", *Ana->HT, Ana->PUCorMet->Px());
-  His->FillTPro("MetResY", *Ana->HT, Ana->PUCorMet->Py());
-  His->FillTPro("RMetResX", Ana->RHT, Ana->RawMet.Px());
-  His->FillTPro("RMetResY", Ana->RHT, Ana->RawMet.Py());
+    His->FillTH1("UtNJets", Ana->UtNJets);
+    His->FillTH1("UtNPhotons", Ana->UtNPhotons);
+    His->FillTH1("UTJetsPT", Ana->UTJetsPT);
+    His->FillTH1("UTPhotonsPT", Ana->UTPhotonsPT);
+  }
 
   for (int i = 0; i < CutOrder.size(); ++i)
   {

@@ -100,7 +100,6 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   branchParticle   = 0;
   branchEFlowTrack = 0;
   branchEFlowTower = 0;
-  NEntries         = 0;
 
   // Double check the filename and get the cross section
   GetCrossSection(process);
@@ -211,7 +210,6 @@ int DPhes::ReadDelPhes()
   // Create object of class ExRootTreeReader
   treeReader = new ExRootTreeReader(fChain);
 
-  NEntries = fChain->GetEntries();
 
   // Get pointers to branches used in this analysis
   branchEvent      = treeReader->UseBranch("Event");
@@ -252,29 +250,26 @@ int DPhes::PreLooping()
 // ===========================================================================
 int DPhes::Looping()
 {
-
-  //----------------------------------------------------------------------------
-  //  Too many messy stuff dump in here for the Desy. Need to clean up afterward
-  //----------------------------------------------------------------------------
-  std::cout << "NEntriese" << NEntries << std::endl;
   // Loop over all events
-  for(Int_t entry = 0; entry < NEntries ; ++entry)
+  int entry = 0;
+  while (true) //Using the break from treeReader 
   {
     //if (entry > 2000 ) break;
-    if (entry % 2000 == 0)
+    if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
     // Load selected branches with data from specified event
-    treeReader->ReadEntry(entry);
+    if (! treeReader->ReadEntry(entry)) break;
+    entry++;
 
-//----------------------------------------------------------------------------
-//  Loading the current event and perform the preselection
-//----------------------------------------------------------------------------
+    //----------------------------------------------------------------------------
+    //  Loading the current event and perform the preselection
+    //----------------------------------------------------------------------------
     if (!DEV->LoadEvent(branchEvent, branchJet, branchGenJet, branchCAJet,
           branchElectron, branchMuon, branchPhoton, 
           branchMet, branchHt, branchParticle))
       continue;
-     
+
     for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
         it!=MDelCut.end(); it++)
     {

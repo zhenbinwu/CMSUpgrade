@@ -351,7 +351,7 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
         continue;
       MHT += jet->P4();
       //std::cout << "MHT"<< MHT.Pt() << std::endl;
-      HT += jet->P4().Mag();
+      HT += jet->P4().Pt();
     }
 
   //Loop over the Electron correction
@@ -362,7 +362,7 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
       //if (std::fabs(ele->Eta) > JetEtaCut)
         //continue;
       MHT += ele->P4();
-      HT += ele->P4().Mag();
+      HT += ele->P4().Pt();
     }
 
   //Loop over the muon correction
@@ -373,19 +373,18 @@ bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron
       //if (std::fabs(muon->Eta) > JetEtaCut)
         //continue;
       MHT += muon->P4();
-      HT += muon->P4().Mag();
+      HT += muon->P4().Pt();
     }
 
   //Loop over the photon correction
   if (branchPhoton->GetEntries() > 0)
     for (int i = 0; i < branchPhoton->GetEntries(); ++i)
     {
-
       Photon* pho = (Photon*)branchPhoton->At(i);
-      //if (std::fabs(pho->Eta) > JetEtaCut)
-        //continue;
+      if (std::fabs(pho->Eta) > JetEtaCut)
+        continue;
       MHT += pho->P4();
-      HT += pho->P4().Mag();
+      HT += pho->P4().Pt();
     }
 
   double met_x = -MHT.Px();
@@ -547,7 +546,7 @@ bool DelEvent::DiMuonMet()
   }
   if (sign > 0) return false;
   if (Qt.M() < 60 || Qt.M() > 120) return false;
-  if (Qt.Pt() < 50) return false;
+  //if (Qt.Pt() < 50) return false;
 
   return true;
 }       // -----  end of function DelEvent::DiMuonMet  -----
@@ -570,7 +569,7 @@ bool DelEvent::DiEleMet()
   }
   if (sign > 0) return false;
   if (Qt.M() < 60 || Qt.M() > 120) return false;
-  if (Qt.Pt() < 50) return false;
+  //if (Qt.Pt() < 50) return false;
 
 
   return true;

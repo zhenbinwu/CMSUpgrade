@@ -146,11 +146,15 @@ bool DelAna::MetDiLepton()
   // Ut , sum of other objects 
   TLorentzVector Ut(0, 0, 0, 0);
 
-  Mll = -999.;
-  UParallel = -999.;
+  Mll         = -999.;
+  UParallel   = -999.;
   UTransverse = -999.;
-  QT = -999.;
-  MetScale = -999.;
+  QT          = -999.;
+  MetScale    = -999.;
+  UtNJets     = 0;
+  UtNPhotons  = 0;
+  UTJetsPT    = 0;
+  UTPhotonsPT = 0;
 
   int sign=1;
   if (vMuon->size() == 2 && vElectron->size() == 0)
@@ -161,7 +165,7 @@ bool DelAna::MetDiLepton()
       sign *= vMuon->at(i).Charge;
     }
   } else if (vMuon->size() == 0 && vElectron->size() == 2) {
-    
+
     for (int i = 0; i < vElectron->size(); ++i)
     {
       Qt += vElectron->at(i).P4();
@@ -171,9 +175,9 @@ bool DelAna::MetDiLepton()
   }
 
   //Should be dummy now, the cuts are moved to DelEvent.CheckFlag
-  if (sign > 0) return false;
-  if (Qt.M() < 60 || Qt.M() > 120) return false;
-  if (Qt.Pt() < 50) return false;
+  //if (sign > 0) return false;
+  //if (Qt.M() < 60 || Qt.M() > 120) return false;
+  //if (Qt.Pt() < 50) return false;
 
   //Loop over the jet correction
   if (vJet->size()> 0)
@@ -183,13 +187,19 @@ bool DelAna::MetDiLepton()
           || vJet->at(i).PT < DEV->JetPtCut)
         continue;
       Ut += vJet->at(i).P4();
+      UtNJets++;
+      UTJetsPT += vJet->at(i).PT;
     }
 
   //Loop over the photon correction
   if (vPhoton->size() > 0)
     for (int i = 0; i < vPhoton->size(); ++i)
     {
+      if (std::fabs(vPhoton->at(i).Eta) > DEV->JetEtaCut)
+        continue;
       Ut += vPhoton->at(i).P4();
+      UtNPhotons++;
+      UTPhotonsPT += vPhoton->at(i).PT;
     }
 
   //Double check the system : Ut+Qt+Met = 0

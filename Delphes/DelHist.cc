@@ -64,11 +64,19 @@ int main ( int argc, char *argv[] )
 
   std::cout<<"Running Process : \033[0;31m"<< Process<<"\033[0m with pileup : \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
 
-  //TString TreeList = Path + Pileup +"/"+Process+"/"+Process+"_"+Pileup+"_*.root";
-  TString TreeList = "FileList/"+Process+"_"+Pileup+".list";
-  std::cout << "Files to be run on : " << TreeList  << std::endl;
-  TChain chain("Delphes");
+  std::string env  = getenv("DELPHES");
+  TString TreeList = "";
 
+  if (env.find("3.0.9") != std::string::npos) //For Delphes 3.0.9 
+  {
+    if (Process.find("HT") != std::string::npos) //For HTBin samples 
+      TreeList = "FileList/HTBin/"+Process+"_"+Pileup+".list";
+    else
+      TreeList = "FileList/DEL/"+Process+"_"+Pileup+".list";
+  } else TreeList = "FileList/"+Process+"_"+Pileup+".list";
+  std::cout << "Files to be run on : " << TreeList  << std::endl;
+
+  TChain chain("Delphes");
   if(TreeList.Contains("FileList"))
   {
     std::fstream input(TreeList.Data());
@@ -79,11 +87,19 @@ int main ( int argc, char *argv[] )
     }
   }
   else
-    chain.Add(TreeList);
+    chain.Add(TreeList);  
 
+
+  //chain.Add("test/tt-4p-1700-2500-v1510_14TEV_140PileUp_99660663.root");
   //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
   //chain.Add("test/ZJETS_13TEV_NoPileUp_9850.root");
   //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
+
+  if (chain.GetListOfFiles()->GetEntries() == 0)
+  {
+    std::cout << "No files attached! Exiting ...."  << std::endl;
+    return EXIT_FAILURE;
+  }
 
   DPhes DP(&chain);
   DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);

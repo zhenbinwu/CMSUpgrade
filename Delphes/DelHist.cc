@@ -72,7 +72,7 @@ int main ( int argc, char *argv[] )
     if (Process.find("HT") != std::string::npos) //For HTBin samples 
       TreeList = "FileList/HTBin/"+Process+"_"+Pileup+".list";
     else
-      TreeList = "FileList/DEL/"+Process+"_"+Pileup+".list";
+      TreeList = "FileList/DEL309/"+Process+"_"+Pileup+".list";
   } else TreeList = "FileList/"+Process+"_"+Pileup+".list";
   std::cout << "Files to be run on : " << TreeList  << std::endl;
 

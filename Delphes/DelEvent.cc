@@ -84,14 +84,17 @@ int DelEvent::LoadJet(TClonesArray *branchJet)
 //----------------------------------------------------------------------------
   for (int i = 0; i < branchJet->GetEntries(); ++i)
   {
+    // Now, get the jet at index
+    Jet* jet = (Jet*)branchJet->At(i);
+
+    // Remove or correct jet that matched to lepton
+    CorLepJet(i, jet);
+
     // Removing the jets from other requirement first
     if (RMjet.find(i) != RMjet.end()) 
       continue;
 
-    // Now, get the jet at index
-    Jet* jet = (Jet*)branchJet->At(i);
-
-    // Apply correction to all the jet
+    // Apply correction to this jet
     if (CRJet.find(i) != CRJet.end())
     {
       jet = JetCor(*jet, CRJet[i]);
@@ -277,6 +280,8 @@ int DelEvent::LoadPhoton(TClonesArray *branchPhoton)
   for (int i = 0; i < branchPhoton->GetEntries(); ++i)
   {
     Photon* pho = (Photon*)branchPhoton->At(i);
+    if (std::fabs(pho->Eta) > JetEtaCut)
+      continue;
     vPhoton.push_back(*pho);
   }
 
@@ -344,58 +349,45 @@ int DelEvent::LoadGenParticle(TClonesArray *branchGenParticle)
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelEvent::PUCorMet
-//  Description:  
+//  Description:  Calculate the MHT in the event using the loaded DelEvent
+//  instead of the info. stored in the Delphes tree
 // ===========================================================================
-bool DelEvent::CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron, 
-    TClonesArray *branchMuon, TClonesArray *branchPhoton) 
+bool DelEvent::CalPUCorMet() 
 {
   HT = 0.0;
-
   //Calculate the MHT and Met in the event
 
-  //Loop over the jet correction
-  if (branchJet->GetEntries() > 0)
-    for (int i = 0; i < branchJet->GetEntries(); ++i)
+  //Loop over the jet correction in DelEvent, jet Pt and Eta selection already
+  //applied in the LoadJet()
+  if (vJet.size() > 0)
+    for (int i = 0; i < vJet.size(); ++i)
     {
-      Jet* jet = (Jet*)branchJet->At(i);
-      if(std::fabs(jet->Eta) > JetEtaCut || jet->PT < JetPtCut)
-        continue;
-      MHT += jet->P4();
-      //std::cout << "MHT"<< MHT.Pt() << std::endl;
-      HT += jet->P4().Pt();
+      MHT += vJet.at(i).P4();
+      HT += vJet.at(i).PT;
     }
 
   //Loop over the Electron correction
-  if (branchElectron->GetEntries() > 0)
-    for (int i = 0; i < branchElectron->GetEntries(); ++i)
+  if (vElectron.size() > 0)
+    for (int i = 0; i < vElectron.size(); ++i)
     {
-      Electron *ele = (Electron*)branchElectron->At(i);
-      //if (std::fabs(ele->Eta) > JetEtaCut)
-        //continue;
-      MHT += ele->P4();
-      HT += ele->P4().Pt();
+      MHT += vElectron.at(i).P4();
+      HT += vElectron.at(i).PT;
     }
 
   //Loop over the muon correction
-  if (branchMuon->GetEntries() > 0)
-    for (int i = 0; i < branchMuon->GetEntries(); ++i)
+  if (vMuon.size() > 0)
+    for (int i = 0; i < vMuon.size(); ++i)
     {
-      Muon *muon = (Muon*)branchMuon->At(i);
-      //if (std::fabs(muon->Eta) > JetEtaCut)
-        //continue;
-      MHT += muon->P4();
-      HT += muon->P4().Pt();
+      MHT += vMuon.at(i).P4();
+      HT += vMuon.at(i).PT;
     }
 
   //Loop over the photon correction
-  if (branchPhoton->GetEntries() > 0)
-    for (int i = 0; i < branchPhoton->GetEntries(); ++i)
+  if (vPhoton.size() > 0)
+    for (int i = 0; i < vPhoton.size(); ++i)
     {
-      Photon* pho = (Photon*)branchPhoton->At(i);
-      if (std::fabs(pho->Eta) > JetEtaCut)
-        continue;
-      MHT += pho->P4();
-      HT += pho->P4().Pt();
+      MHT += vPhoton.at(i).P4();
+      HT += vPhoton.at(i).PT;
     }
 
   double met_x = -MHT.Px();
@@ -533,7 +525,7 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   LoadCAJet(branchCAJet);
   LoadScalarHT(branchHt);
 
-  CalPUCorMet(branchJet, branchElectron, branchMuon, branchPhoton);
+  CalPUCorMet();
   //Whether this event is preselected?
   //return PreSelected();
   return true;
@@ -576,3 +568,49 @@ double DelEvent::GenMet()
 
   return NvSum.Pt();
 }       // -----  end of function DelEvent::GenMet  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelEvent::CorLepJet
+//  Description:  For jet that matched to the lepton in the event, do
+//  something!
+//  ==> Normally the Delphes samples has the unique object block to remove
+//  these overlap. But for Delphes3.0.9 0PU samples, this is not true. So we
+//  need this step.
+//  --> Matching jet and lepton in the eta-phi plane. In case of matched,
+//  compare the energy fraction: 
+//  * fraction > 90% (mostly jet from the lepton), remove this jet
+//  * fraction < 80%: additional energy from pileup, just correct this jet by
+//  removing the lepton energy
+// ===========================================================================
+bool DelEvent::CorLepJet(int idx, Jet *jet)
+{
+  for (int i = 0; i < vMuon.size(); ++i)
+  {
+    Muon muon = vMuon.at(i);
+    if (jet->P4().DeltaR(muon.P4()) < 0.4)
+    {
+      if (muon.P4().E()/jet->P4().E() > 0.9)
+        RMjet.insert(i);
+      else
+        CRJet[i] = muon.P4();
+      break;
+    }
+  }
+
+  for (int i = 0; i < vElectron.size(); ++i)
+  {
+    Electron ele = vElectron.at(i);
+    if (jet->P4().DeltaR(ele.P4()) < 0.4)
+    {
+      if (ele.P4().E()/jet->P4().E() > 0.9)
+        RMjet.insert(i);
+      else
+        CRJet[i] = ele.P4();
+      break;
+    }
+  }
+
+  return false;
+
+}       // -----  end of function DelEvent::CorLepJet  -----
+

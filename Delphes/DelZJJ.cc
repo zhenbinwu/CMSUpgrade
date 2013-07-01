@@ -105,7 +105,7 @@ bool DelZJJ::LoadZLLEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   
   //Now, start to load up the event
   DelEvent::LoadEvent(branchEvent);
-  CalPUCorMet(branchJet, branchElectron, branchMuon, branchPhoton);
+  DelEvent::CalPUCorMet();
   LoadRawMet(branchMet);
   LoadPhoton(branchPhoton);
 
@@ -542,7 +542,7 @@ bool DelZJJ::DiMuonMet()
 
   if (sign > 0) return false;
   if (Qt.M() < 60 || Qt.M() > 120) return false;
-  //if (Qt.Pt() < 50) return false;
+  if (Qt.Pt() < 50) return false;
 
   return true;
 }       // -----  end of function DelZJJ::DiMuonMet  -----
@@ -565,7 +565,7 @@ bool DelZJJ::DiEleMet()
   }
   if (sign > 0) return false;
   if (Qt.M() < 60 || Qt.M() > 120) return false;
-  //if (Qt.Pt() < 50) return false;
+  if (Qt.Pt() < 50)  return false;
 
   return true;
 }       // -----  end of function DelZJJ::DiEleMet  -----

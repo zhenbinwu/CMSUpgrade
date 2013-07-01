@@ -167,19 +167,13 @@ bool DelAna::MetDiLepton()
       sign *= vMuon->at(i).Charge;
     }
   } else if (vMuon->size() == 0 && vElectron->size() == 2) {
-
     for (int i = 0; i < vElectron->size(); ++i)
     {
       Qt += vElectron->at(i).P4();
       sign *= vElectron->at(i).Charge;
     }
-
   }
 
-  //Should be dummy now, the cuts are moved to DelEvent.CheckFlag
-  //if (sign > 0) return false;
-  //if (Qt.M() < 60 || Qt.M() > 120) return false;
-  //if (Qt.Pt() < 50) return false;
 
   //Loop over the jet correction
   if (vJet->size()> 0)

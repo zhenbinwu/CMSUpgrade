@@ -80,8 +80,6 @@ class DelEvent
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
-    bool CalPUCorMet(TClonesArray *branchJet, TClonesArray *branchElectron, 
-                TClonesArray *branchMuon, TClonesArray *branchPhoton);
     int LoadEvent(TClonesArray *branchEvent);
     int LoadGenParticle(TClonesArray *branchGenParticle);
     int LoadRawMet(TClonesArray *branchMet);
@@ -97,6 +95,8 @@ class DelEvent
     // GenParticle level preselection, which rejects almost all the events
     double GenMet();
     bool GenPreSelected();
+    bool CorLepJet(int idx, Jet *jet);
+    bool CalPUCorMet();
 
 
     //Flags for the selection on the event

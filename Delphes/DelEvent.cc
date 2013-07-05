@@ -579,7 +579,7 @@ double DelEvent::GenMet()
 //  --> Matching jet and lepton in the eta-phi plane. In case of matched,
 //  compare the energy fraction: 
 //  * fraction > 90% (mostly jet from the lepton), remove this jet
-//  * fraction < 80%: additional energy from pileup, just correct this jet by
+//  * fraction < 90%: additional energy from pileup, just correct this jet by
 //  removing the lepton energy
 // ===========================================================================
 bool DelEvent::CorLepJet(int idx, Jet *jet)

@@ -18,6 +18,9 @@
 #include "classes/DelphesFactory.h"
 #include "classes/SortableObject.h"
 
+#include "fastjet/PseudoJet.hh"
+
+
 CompBase *GenParticle::fgCompare = 0;
 CompBase *Photon::fgCompare = CompPT<Photon>::Instance();
 CompBase *Electron::fgCompare = CompPT<Electron>::Instance();
@@ -96,8 +99,11 @@ Candidate::Candidate() :
   PID(0), Status(0), M1(-1), M2(-1), D1(-1), D2(-1),
   Charge(0), Mass(0.0),
   IsPU(0), IsConstituent(0),
-  BTag(0), TauTag(0), Eem(0.0), Ehad(0.0),
-  DeltaEta(0.0), DeltaPhi(0.0),
+  BTag(0), TauTag(0),
+  WTag(0), TopTag(0), HTag(0),
+  Tau1(-999), Tau2(-999), Tau3(-999),
+  NSubJets(-999), MassDrop(-999), TrimmedMass(-999),
+  Eem(0.0), Ehad(0.0),  DeltaEta(0.0), DeltaPhi(0.0),
   Momentum(0.0, 0.0, 0.0, 0.0),
   Position(0.0, 0.0, 0.0, 0.0),
   Area(0.0, 0.0, 0.0, 0.0),
@@ -184,6 +190,15 @@ void Candidate::Copy(TObject &obj) const
   object.IsConstituent = IsConstituent;
   object.BTag = BTag;
   object.TauTag = TauTag;
+  object.WTag = WTag;
+  object.TopTag = TopTag;
+  object.HTag = HTag;
+  object.Tau1=Tau1; 
+  object.Tau2=Tau2; 
+  object.Tau3=Tau3;
+  object.NSubJets=NSubJets;
+  object.MassDrop=MassDrop;
+  object.TrimmedMass=TrimmedMass;
   object.Eem = Eem;
   object.Ehad = Ehad;
   object.Edges[0] = Edges[0];
@@ -227,6 +242,15 @@ void Candidate::Clear(Option_t* option)
   TauTag = 0;
   Eem = 0.0;
   Ehad = 0.0;
+  WTag = 0;
+  TopTag = 0;
+  HTag = 0;
+  Tau1 = -999;
+  Tau2 = -999;
+  Tau3 = -999;
+  NSubJets=-999;
+  MassDrop = -999;
+  TrimmedMass = -999;
   Edges[0] = 0.0;
   Edges[1] = 0.0;
   Edges[2] = 0.0;

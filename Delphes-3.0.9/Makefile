@@ -337,6 +337,7 @@ tmp/modules/FastJetFinder.$(ObjSuf): \
 	external/fastjet/Selector.hh \
 	external/fastjet/ClusterSequenceArea.hh \
 	external/fastjet/tools/JetMedianBackgroundEstimator.hh \
+        external/fastjet/tools/Njettiness.hh \
 	external/fastjet/plugins/SISCone/fastjet/SISConePlugin.hh \
 	external/fastjet/plugins/CDFCones/fastjet/CDFMidPointPlugin.hh \
 	external/fastjet/plugins/CDFCones/fastjet/CDFJetCluPlugin.hh

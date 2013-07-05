@@ -22,7 +22,11 @@
 #include "TRefArray.h"
 #include "TLorentzVector.h"
 
-#include "classes/SortableObject.h"
+#include "SortableObject.h"
+
+namespace fastjet {
+  class PseudoJet;
+}
 
 class DelphesFactory;
 
@@ -259,6 +263,17 @@ public:
 
   UInt_t BTag; // 0 or 1 for a jet that has been tagged as containing a heavy quark
   UInt_t TauTag; // 0 or 1 for a jet that has been tagged as a tau
+  UInt_t WTag;
+  UInt_t TopTag;
+  UInt_t HTag;
+  
+  Float_t Tau1;
+  Float_t Tau2;
+  Float_t Tau3;
+
+  UInt_t NSubJets;
+  Float_t MassDrop;
+  Float_t TrimmedMass;
 
   Int_t Charge; // tau charge
 
@@ -359,6 +374,17 @@ public:
   
   UInt_t BTag;
   UInt_t TauTag;
+  UInt_t WTag;
+  UInt_t TopTag;
+  UInt_t HTag;
+
+  Float_t Tau1;
+  Float_t Tau2;
+  Float_t Tau3;
+
+  UInt_t NSubJets;
+  Float_t MassDrop;
+  Float_t TrimmedMass;
 
   Float_t Eem;
   Float_t Ehad;

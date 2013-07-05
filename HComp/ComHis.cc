@@ -22,6 +22,14 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ComHis::ComHis ()
 {
+  VColor.push_back(1);
+  VColor.push_back(2);
+  VColor.push_back(4);
+  VColor.push_back(6);
+  VColor.push_back(kGreen+2);
+  VColor.push_back(kOrange+9);
+  VColor.push_back(60);
+  //VColor.push_back(7);
 }  // ~~~~~  end of constructor of template class ComHis  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -134,11 +142,7 @@ bool ComHis::SetStyle()
     drawopt = "HISTP";
   }
 
-  // No Green color as Dr. Ken suggested
-  if (tagidx > 1)
-    color = tagidx+2;
-  else
-    color = tagidx+1;
+  color = VColor.at(tagidx);
 
   return true;
 

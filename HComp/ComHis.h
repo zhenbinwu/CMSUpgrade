@@ -75,6 +75,7 @@ class ComHis
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     std::vector<std::string> VTag;
+    std::vector<int> VColor;
 
     bool Setup();
 

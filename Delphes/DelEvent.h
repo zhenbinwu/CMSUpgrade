@@ -77,6 +77,7 @@ class DelEvent
     // preselection
     int CleanEvent();
     virtual bool PreSelected();
+    virtual bool CalPUCorMet();
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
@@ -96,7 +97,6 @@ class DelEvent
     double GenMet();
     bool GenPreSelected();
     bool CorLepJet(int idx, Jet *jet);
-    bool CalPUCorMet();
 
 
     //Flags for the selection on the event

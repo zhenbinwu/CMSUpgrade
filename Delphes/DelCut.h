@@ -69,6 +69,11 @@ class DelCut
     int FillJets(int NCut);
     int FillEle(int NCut);
     int FillMet(int NCut);
+
+    
+    // For MET Performance study
+    int BookMetPerf() const;
+    int FillMetPerf() const;
 }; /* -----  end of class DelCut  ----- */
 
 

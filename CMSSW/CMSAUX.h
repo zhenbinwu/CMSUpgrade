@@ -63,6 +63,7 @@ public :
    Double_t        mhtSgnfProb;
    vector<TLorentzVector> *jetsLVec;
    vector<TLorentzVector> *muonsLVec;
+   vector<vector<double> > *muonsIso;
    vector<TLorentzVector> *elesLVec;
    vector<TLorentzVector> *tausLVec;
    Double_t        dPhi0_CUT;
@@ -109,6 +110,7 @@ public :
    TBranch        *b_mhtSgnfProb;   //!
    TBranch        *b_jetsLVec;   //!
    TBranch        *b_muonsLVec;   //!
+   TBranch        *b_muonsIso;
    TBranch        *b_elesLVec;   //!
    TBranch        *b_tausLVec;   //!
    TBranch        *b_dPhi0_CUT;   //!
@@ -149,7 +151,10 @@ public :
    bool LoadMuon();
    bool LoadElectron();
    bool LoadJet();
+   bool CalPUCorMet();
 
+   bool FillCMSHist(DelCut* DCUT);
+   bool BookCMSHist(DelCut* DCUT);
 
    CMSAUX(TTree *tree=0);
    virtual ~CMSAUX();
@@ -215,6 +220,7 @@ void CMSAUX::Init(TTree *tree)
    // Set object pointer
    jetsLVec = 0;
    muonsLVec = 0;
+   muonsIso = 0;
    elesLVec = 0;
    tausLVec = 0;
    recoJetsFlavor = 0;
@@ -260,6 +266,7 @@ void CMSAUX::Init(TTree *tree)
    fChain->SetBranchAddress("mhtSgnfProb", &mhtSgnfProb, &b_mhtSgnfProb);
    fChain->SetBranchAddress("jetsLVec", &jetsLVec, &b_jetsLVec);
    fChain->SetBranchAddress("muonsLVec", &muonsLVec, &b_muonsLVec);
+   fChain->SetBranchAddress("muonsIso", &muonsIso, &b_muonsIso);
    fChain->SetBranchAddress("elesLVec", &elesLVec, &b_elesLVec);
    fChain->SetBranchAddress("tausLVec", &tausLVec, &b_tausLVec);
    fChain->SetBranchAddress("dPhi0_CUT", &dPhi0_CUT, &b_dPhi0_CUT);
@@ -323,9 +330,9 @@ int CMSAUX::SetPreName(std::string process, std::string pu, std::string outdir)
     tempname.ReplaceAll(process.c_str(), "MetDiMuon");
     MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = name;
-    //tempname.ReplaceAll(process.c_str(), "MetDiEle");
-    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    tempname = name;
+    tempname.ReplaceAll(process.c_str(), "MetDiEle");
+    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }

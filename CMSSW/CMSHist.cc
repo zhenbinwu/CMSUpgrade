@@ -41,12 +41,13 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
 //  Define all the variables here
 //----------------------------------------------------------------------------
-  std::string Pileup  = "TEST";
-  std::string Process = "TTBAR";
+  //std::string Pileup  = "50PileUp25ns";
+  //std::string Process = "TTBAR";
   //std::string Process = "ZJETS";
 
-  //std::string Pileup    = argv[1];
-  //std::string Process   = argv[2];
+  std::string Pileup    = argv[1];
+  std::string Process   = argv[2];
+  std::string File      = argv[3];
 
 
   // PU corrected Met
@@ -56,7 +57,7 @@ int main ( int argc, char *argv[] )
   //const double PUCorJetPt    = atof(argv[4]);
 
   char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "Test", PUCorJetEta, PUCorJetPt );
+  sprintf(buf, "%s_%.0f_%.0f", "MuonIso05", PUCorJetEta, PUCorJetPt );
   const std::string Outdir  = buf;
   //const std::string Outdir  = "TEST";
 
@@ -67,8 +68,8 @@ int main ( int argc, char *argv[] )
   std::cout<<"Running Process : \033[0;31m"<< Process<<"\033[0m with pileup : \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
 
   //TString TreeList = Path + Pileup +"/"+Process+"/"+Process+"_"+Pileup+"_*.root";
-  TString TreeList = "FileList/"+Process+"_"+Pileup+".list";
-  std::cout << "Files to be run on : " << TreeList  << std::endl;
+  //TString TreeList = "FileList/"+Process+"_"+Pileup+".list";
+  std::cout << "Files to be run on : " << File  << std::endl;
   TChain chain("histAndTree_forVBFSusy/AUX","");
 
   //if(TreeList.Contains("FileList"))
@@ -84,7 +85,7 @@ int main ( int argc, char *argv[] )
     //chain.Add(TreeList);
 
   //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
-  chain.Add("./VBFSusy.root");
+  chain.Add(File.c_str());
   //chain.Add("./CMS/res/*root");
   //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
 

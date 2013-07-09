@@ -3,6 +3,10 @@
 //       Filename:  HistComp.cc
 // 
 //    Description:  This is the code to make pretty comparison among files.
+//           TODO:  1. Support HT bin comparison
+//                  2. Comparison of HTbin combined samples
+//                  3. Comparison among cuts
+//                  4. Get the list of input histograms
 // 
 //        Version:  1.0
 //        Created:  05/17/2013 10:07:32 PM
@@ -52,18 +56,18 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
 //  Setup Style
 //----------------------------------------------------------------------------
-  //TopStyle();
   StopStyle();
-  TRint *theApp = new TRint("plot interactively", &argc, argv);
+  //TRint *theApp = new TRint("plot interactively", &argc, argv);
 
 
 //----------------------------------------------------------------------------
 //  Flags for what to do?
 //----------------------------------------------------------------------------
-  //std::string study = "Cut"; // Study the cut flow on the sample
-  //std::string study = "C1PU"; // Study the effect of PU on different cut level
-  //std::string study = "PU"; // Study the effect of PU on different cut level
-  //std::string study = "SIM"; // Study the effect of PU on different cut level
+  std::string study = "Dir"; // Compare among dirs
+  //std::string study = "Pro"; // Compare among processes
+  //std::string study = "PU";  // Compare among PU
+  //std::string study = "HT";  // Compare among HT      // todo
+  //std::string study = "Cut"; // Compare among CutFlow // todo
 
 
 //----------------------------------------------------------------------------
@@ -72,14 +76,14 @@ int main ( int argc, char *argv[] )
   VecPair VDir;
   //VDir.push_back(std::make_pair("NoQtCut", "MET_NoQTCut__4_30/"));
   //VDir.push_back(std::make_pair("Qt50", "MET_4_30"));
-  //VDir.push_back(std::make_pair("Jet_5_30", "MET_5_30/"));
-  //VDir.push_back(std::make_pair("Nitish", "./Nitish_4_30/"));
+  //VDir.push_back(std::make_pair("Inclusive", "MET_20_0/"));
+
   // Eta cut 
-  VDir.push_back(std::make_pair("Jet_2_30", "MET_2_30/"));
-  VDir.push_back(std::make_pair("Jet_3_30", "MET_3_30/"));
-  VDir.push_back(std::make_pair("Jet_4_30", "MET_4_30/"));
-  VDir.push_back(std::make_pair("Jet_5_30", "MET_5_30/"));
-  VDir.push_back(std::make_pair("Jet_10_30", "MET_10_30/"));
+  //VDir.push_back(std::make_pair("Jet_2_30", "MET_2_30/"));
+  //VDir.push_back(std::make_pair("Jet_3_30", "MET_3_30/"));
+  //VDir.push_back(std::make_pair("Jet_4_30", "MET_4_30/"));
+  //VDir.push_back(std::make_pair("Jet_5_30", "MET_5_30/"));
+  //VDir.push_back(std::make_pair("Jet_10_30", "MET_10_30/"));
 
   // Energy cut 
   //VDir.push_back(std::make_pair("Jet_5_30", "MET_5_30/"));
@@ -89,17 +93,26 @@ int main ( int argc, char *argv[] )
   //VDir.push_back(std::make_pair("Jet_5_100", "MET_5_100/"));
 
   VecPair VPro;
+  //VPro.push_back(std::make_pair("ZJETS", "ZJETS"));
   //VPro.push_back(std::make_pair("DiElectron", "MetDiEle"));
-  //VPro.push_back(std::make_pair("DiMuon", "MetDiMuon"));
+  VPro.push_back(std::make_pair("DiMuon", "MetDiMuon"));
   //VPro.push_back(std::make_pair("TTBAR_FLep", "TTBAR_13TEV_FLep"));
-  //VPro.push_back(std::make_pair("TTBAR_SLep", "TTBAR_13TEV_SLep"));
-  VPro.push_back(std::make_pair("TT_Had", "TTBAR_13TEV_Had"));
+  //VPro.push_back(std::make_pair("TTBAR_SLep_Pt", "TTBAR_13TEV_SLep"));
+  //VPro.push_back(std::make_pair("TT_Had", "TTBAR_13TEV_Had"));
+  //VPro.push_back(std::make_pair("TT_HT1", "TT_14TEV_HT1"));
+  //VPro.push_back(std::make_pair("TT_HT2", "TT_14TEV_HT2"));
+  //VPro.push_back(std::make_pair("TT_HT3", "TT_14TEV_HT3"));
+  //VPro.push_back(std::make_pair("TT_HT4", "TT_14TEV_HT4"));
+  //VPro.push_back(std::make_pair("TT_HT5", "TT_14TEV_HT5"));
   
 
   VecPair VPU;
-  VPU.push_back(std::make_pair("0PU", "NoPileUp"));
-  VPU.push_back(std::make_pair("50PU", "50PileUp"));
-  VPU.push_back(std::make_pair("140PU", "140PileUp"));
+  //VPU.push_back(std::make_pair("0PU", "NoPileUp")); 
+  //VPU.push_back(std::make_pair("50PU", "50PileUp")); 
+  VPU.push_back(std::make_pair("140PU", "140PileUp")); 
+  //VPU.push_back(std::make_pair("50PU50ns", "50PileUp50ns"));
+  //VPU.push_back(std::make_pair("50PU25ns", "50PileUp25ns"));
+  //VPU.push_back(std::make_pair("140PU25ns", "140PileUp25ns"));
 
   std::vector<std::string> VCut;
   VCut.push_back("NoCut");
@@ -119,30 +132,70 @@ int main ( int argc, char *argv[] )
 //  Get the list of hist for comparison
 //----------------------------------------------------------------------------
   std::vector<std::string> Vvar;
-  //Vvar.push_back("Met");
-  //Vvar.push_back("MLL");
-  //Vvar.push_back("QT");
-  //Vvar.push_back("UPQT");
-  //Vvar.push_back("UParal");
-  //Vvar.push_back("UPerp");
-  //Vvar.push_back("MetScale");
-  //Vvar.push_back("MetResP");
-  //Vvar.push_back("MetResT");
+  Vvar.push_back("RawMet");
+  Vvar.push_back("Met");
+  Vvar.push_back("MLL");
+  Vvar.push_back("QT");
+  Vvar.push_back("UT");
+  //Vvar.push_back("JetEta");
+  //Vvar.push_back("MJJ_0");
+  //Vvar.push_back("J1Pt_0");
+  //Vvar.push_back("J2Pt_0");
+  //Vvar.push_back("J3Pt_0");
+  //Vvar.push_back("NJets");
+  //Vvar.push_back("NEle");
+  //Vvar.push_back("NMuon");
+  //Vvar.push_back("NPhoton");
+  //Vvar.push_back("UtNPhotons");
+  //Vvar.push_back("UTJetsPT");
+  //Vvar.push_back("UTPhotonsPT");
+  Vvar.push_back("UPQT");
+  Vvar.push_back("UParal");
+  Vvar.push_back("UPerp");
+  Vvar.push_back("MetScale");
+  Vvar.push_back("MetResP");
+  Vvar.push_back("MetResT");
+  //Vvar.push_back("MUPQT");
+  //Vvar.push_back("MUParal");
+  //Vvar.push_back("MUPerp");
+  //Vvar.push_back("MMetScale");
+  //Vvar.push_back("MMetResP");
+  //Vvar.push_back("MMetResT");
   //Vvar.push_back("MetX");
   //Vvar.push_back("MetY");
-  Vvar.push_back("MetResX");
-  Vvar.push_back("MetResY");
+  //Vvar.push_back("MetResX");
+  //Vvar.push_back("MetResY");
+  //Vvar.push_back("RMetX");
+  //Vvar.push_back("RMetY");
+  //Vvar.push_back("RMetResX");
+  //Vvar.push_back("RMetResY");
+  //Vvar.push_back("RMetXMean");
+  //Vvar.push_back("RMetYMean");
+  //Vvar.push_back("MetXMean");
+  //Vvar.push_back("MetYMean");
+  //Vvar.push_back("MuonIso1");
+  //Vvar.push_back("MuonIso2");
+  //Vvar.push_back("MuonIso3");
 
+  //for (int i = 0; i < 11; ++i)
+  //{
+      //char temp[50];
+      //sprintf(temp, "UPQT_%d", i);
+      //Vvar.push_back(temp);
+      //sprintf(temp, "UPerp_%d", i);
+      //Vvar.push_back(temp);
+      //sprintf(temp, "UParal_%d", i);
+      //Vvar.push_back(temp);
+  //}
 //----------------------------------------------------------------------------
 //  Making the comparison plots with different function
 //----------------------------------------------------------------------------
-  //MakeCutFlow(Com, order);
   // Input list of files, which vector for comparison, what variables
-  MakeComparison(FileList, VDir, Vvar);
-  //MakeComparison(FileList, VPro, Vvar);
-  //MakeComparison(FileList, VPU, Vvar);
+  if (study == "Dir" ) MakeComparison(FileList, VDir, Vvar);
+  if (study == "Pro" ) MakeComparison(FileList, VPro, Vvar);
+  if (study == "PU"  ) MakeComparison(FileList, VPU,  Vvar);
 
-  theApp->Run();
+  //theApp->Run();
   return EXIT_SUCCESS;
 }				// ----------  end of function main  ----------
 

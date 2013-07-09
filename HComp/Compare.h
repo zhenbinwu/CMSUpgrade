@@ -58,6 +58,7 @@ class Compare
     bool GetPrefix();
     bool GetScaleIgl();
     bool GetScaleOne();
+    bool GetScaleXS();
     bool GetScale();
     bool CompHistPre(std::string prefix, std::string hname);
     bool CompEachHist(std::string prefix, std::string Hname);
@@ -67,6 +68,7 @@ class Compare
     ComHis* InitComHisTH1(std::string tag, std::string prefix, std::string hname);
     ComHis* InitComHisTPro(std::string tag, std::string prefix, std::string hname);
     bool UserHist(ComHis *his, std::string hname);
+    bool UserVHist(std::vector<ComHis*> &VHis, std::string hname);
     bool UserLegend();
     TLegend* PlotComp(TCanvas* ca, std::vector<ComHis*> &VHis, std::string prefix, std::string hname);
     bool GetRMSDiff(std::vector<ComHis*> VHis, std::string prefix);

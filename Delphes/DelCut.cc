@@ -124,19 +124,25 @@ bool DelCut::InitCutOrder()
 {
    // The Cut flow
    CutOrder.push_back("NoCut");
+   CutOrder.push_back("CTVBF");
    CutOrder.push_back("CTJ1");
    CutOrder.push_back("CTJ2");
    CutOrder.push_back("CTMjj");
-   CutOrder.push_back("CTJ3BL");
+   CutOrder.push_back("CTJ3");
+   CutOrder.push_back("CTBJ");
+   CutOrder.push_back("CTLep");
    CutOrder.push_back("CTMet200");
    CutOrder.push_back("AllCut");
 
    CutMap["NoCut"]    = "0000000000";
-   CutMap["CTJ1"]     = "0000000001";
-   CutMap["CTJ2"]     = "0000000011";
-   CutMap["CTMjj"]    = "0000000111";
-   CutMap["CTJ3BL"]   = "0000001111";
-   CutMap["CTMet200"] = "0000011111";
+   CutMap["CTVBF"]    = "0000000001";
+   CutMap["CTJ1"]     = "0000000011";
+   CutMap["CTJ2"]     = "0000000111";
+   CutMap["CTMjj"]    = "0000001111";
+   CutMap["CTJ3"]     = "0000011111";
+   CutMap["CTBJ"]     = "0000111111";
+   CutMap["CTLep"]    = "0001111111";
+   CutMap["CTMet200"] = "0011111111";
    CutMap["AllCut"]   = "1111111111";
 
    His->Cutorder(CutOrder);
@@ -199,9 +205,109 @@ int DelCut::FillCut()
 // ===========================================================================
 bool DelCut::CheckCut(std::bitset<10> cutflag)
 {
-  return CheckPhenoCut(cutflag);
+  return CheckDMCut(cutflag);
+  //return CheckPhenoCut(cutflag);
   //return true;
 }       // -----  end of function DelCut::CheckCut  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::CheckDMCut
+//  Description:  Cut for Susy VBF DM
+// ===========================================================================
+bool DelCut::CheckDMCut(std::bitset<10> cutflag)
+{
+ 
+//----------------------------------------------------------------------------
+//  VBF Cut
+//----------------------------------------------------------------------------
+  if (cutflag.test(0)) 
+  {
+    if (Ana->vJet->size() < 2) return false;
+    // This function may be called from Loop.
+    // returns  1 if entry is accepted.
+    // returns -1 otherwise.
+
+    if (Ana->Met < 50) return false;
+
+    if (Ana->J1->PT < 30 || std::fabs(Ana->J1->Eta) > 5) return false;
+    if (Ana->J2->PT < 30 || std::fabs(Ana->J2->Eta) > 5) return false;
+
+    //
+    // Opposive eta and eta separation
+    //
+    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
+
+    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
+
+  }
+
+//----------------------------------------------------------------------------
+//  Leading jet cut
+//----------------------------------------------------------------------------
+  if (cutflag.test(1)) 
+  {
+    if ( Ana->J1 == 0 || Ana->J1->PT < 50) return false;
+  }
+
+  if (cutflag.test(2)) 
+  {
+    if (Ana->J2 == 0 || Ana->J2->PT < 50) return false;
+  }
+
+  if (cutflag.test(3)) 
+  {
+    if ( Ana->Mjj<1500. ) return false;
+  }
+
+  if (cutflag.test(4)) 
+  {
+
+    if (Ana->J3 != 0)
+    {
+      
+      // Jet3 is within jet1 and jet2 
+      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
+         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
+      {
+        // Only reject hard jets 
+        if (Ana->J3->PT > 30) return false;
+      }
+
+    }
+  }
+
+
+
+  if (cutflag.test(5)) 
+  {
+    // b veto
+    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+    {
+      if (it->BTag) return false;
+    }
+  }
+
+
+  if (cutflag.test(6)) 
+  {
+    // b veto
+    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+    {
+      if (it->TauTag) return false;
+    }
+    if (Ana->vElectron->size() > 0) return false;
+    if (Ana->vMuon->size() > 0) return false;
+  }
+
+  if (cutflag.test(7)) 
+  {
+    if (Ana->Met < 200) return false;
+  }
+
+  return true;
+}       // -----  end of function DelCut::CheckDMCut  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::CheckPhenoCut
@@ -484,10 +590,8 @@ int DelCut::FillMetPerf() const
     
     if (Ana->QT >= low && Ana->QT < high)
     {
-      std::cout << " QT " << Ana->QT << " within " << i << std::endl;
       char temp[50];
       sprintf(temp, "UPQT_%d", i);
-      std::cout << "temp" << temp << std::endl;
       His->FillTH1(temp, Ana->UParallel + Ana->QT);
       sprintf(temp, "UPerp_%d", i);
       His->FillTH1(temp, Ana->UTransverse);

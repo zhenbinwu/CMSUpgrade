@@ -78,10 +78,35 @@ bool Compare::GetScale()
 {
   // First, get the vector of prefix for all the comparison
   GetPrefix();
+  //return GetScaleXS();
   //return GetScaleOne();
   return GetScaleIgl();
 }       // -----  end of function Compare::GetScale  -----
 
+
+// ===  FUNCTION  ============================================================
+//         Name:  Compare::GetScaleXS
+//  Description:  
+// ===========================================================================
+bool Compare::GetScaleXS() 
+{
+   BOOST_FOREACH(std::string prefix, VPre)
+  {
+    BOOST_FOREACH(std::string tag, VTag)
+    {
+      TH1F* hisxs = (TH1F*)TagFile[tag][prefix]->Get("CrossSection");
+      double xs = hisxs->GetBinContent(hisxs->FindBin(1));
+      TH1F* hisevt = (TH1F*)TagFile[tag][prefix]->Get("NEVT");
+      double evt = hisevt->GetBinContent(hisevt->FindBin(1));
+      HScale[prefix][tag] = xs/evt;
+      std::cout << " File name " << TagFile[tag][prefix]->GetName() << " scale " << HScale[prefix][tag] << std::endl;
+      delete hisevt;
+      delete hisxs;
+    }
+
+  }
+  return true;
+}       // -----  end of function Compare::GetScaleXS  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  Compare::GetScale
@@ -262,11 +287,23 @@ ComHis* Compare::InitComHisTPro(std::string tag, std::string prefix, std::string
 // ===========================================================================
 bool Compare::UserHist(ComHis *his, std::string hname)
 {
+  if (hname == "Met")
+  {
+    his->xlabel = "#slash{H}_{T} [GeV]";
+  }
   
-  if (hname == "MetScale")
+  if (hname == "MetScale" || hname == "MMetScale")
   {
     if (his->line) his->drawopt = "HIST";
     his->scale =1;
+  }
+
+  if (hname == "MetResP" || hname == "MetResT" ||
+      hname == "MMetResP" || hname == "MMetResT" )
+  {
+    his->ymin = 10;
+    his->ymax = 90;
+    //his->ymax = 180;
   }
 
   if (hname == "MetResX" || hname == "MetResY")
@@ -280,7 +317,6 @@ bool Compare::UserHist(ComHis *his, std::string hname)
     his->style = 20;
     his->scale =1;
   }
-
   return true;
 }       // -----  end of function Compare::UserHist  -----
 
@@ -299,7 +335,7 @@ TLegend* Compare::PlotComp(TCanvas* c1, std::vector<ComHis*> &VHis,
     lg = new TLegend(LgLoc[hname].at(0),LgLoc[hname].at(1),
         LgLoc[hname].at(2),LgLoc[hname].at(3), NULL, "brNDC"); 
   else 
-    lg = new TLegend(0.6862416,0.5995763,0.9228188,0.8940678, NULL,"brNDC");
+    lg = new TLegend(0.6862416,0.6495763,0.9228188,0.9440678, NULL,"brNDC");
 
   lg->SetBorderSize(0);
   lg->SetFillStyle(0); //transparent hollow?
@@ -333,21 +369,26 @@ TLegend* Compare::PlotComp(TCanvas* c1, std::vector<ComHis*> &VHis,
 
       // For axis
       if (His->ymin != -999.) 
-        ymin = His->his->GetMinimum() < His->ymin ? His->his->GetMinimum() : His->ymin;
+        ymin = His->ymin;
       else ymin = His->his->GetMinimum();
       if (His->ymax != -999.) 
-        ymax = His->his->GetMaximum() > His->ymax ? His->his->GetMaximum() : His->ymax;
+        ymax = His->ymax;
       else ymax = His->his->GetMaximum();
       yaxis = His->his->GetYaxis();
       xaxis = His->his->GetXaxis();
 
       count++;
     } else {
-      ymin = ymin < His->his->GetMinimum() ? ymin : His->his->GetMinimum();
-      ymax = ymax > His->his->GetMaximum() ? ymax : His->his->GetMaximum();
+      if (His->ymin != -999.) 
+        ymin = His->ymin;
+      else
+        ymin = ymin < His->his->GetMinimum() ? ymin : His->his->GetMinimum();
 
-      //His->his->SetMaximum(10*ymax);
-      //His->his->SetMinimum(0.1*ymin);
+      if (His->ymax != -999.) 
+        ymax = His->ymax;
+      else
+        ymax = ymax > His->his->GetMaximum() ? ymax : His->his->GetMaximum();
+
       TString overlay = "same"+His->drawopt;
       His->his->Draw(overlay);
     }
@@ -363,27 +404,33 @@ TLegend* Compare::PlotComp(TCanvas* c1, std::vector<ComHis*> &VHis,
       His->his->SetMarkerSize(His->size);
       His->his->SetMarkerColor(His->color);
       His->his->SetLineColor(His->color);
+      His->his->SetLineWidth(3);
       His->his->SetMarkerStyle(His->style);
-      //his.th->SetMarkerStyle(his.style);
       lg->AddEntry(His->his, His->tag.c_str(), "lep");
     }
   }
 
   if (!LogY) yaxis->SetRangeUser(0.8*ymin, 1.2*ymax);
   else{
-    ymin = ymin == 0 ? ymax/100000 : ymin;
-    //yaxis->SetRangeUser(0.1*ymin, 5*ymax);
+    ymin = ymin == 0 ? ymax/100 : ymin;
+    yaxis->SetRangeUser(0.1*ymin, 5*ymax);
   }
 
   yaxis->SetTitleOffset(1.0);
-  xaxis->SetTitleOffset(0.8);
-  if (hname == "MetScale")
+  xaxis->SetTitleOffset(0.9);
+  xaxis->SetTitleSize(0.06);
+  yaxis->SetTitleSize(0.06);
+  xaxis->SetLabelSize(0.05);
+  yaxis->SetLabelSize(0.05);
+
+  if (hname == "MetScale" || hname == "MMetScale")
   {
     c1->SetGridx();
     c1->SetGridy();
   }
   if (LogX) c1->SetLogx();
   if (LogY) c1->SetLogy();
+
   lg->Draw();
 
   return lg;
@@ -396,12 +443,14 @@ TLegend* Compare::PlotComp(TCanvas* c1, std::vector<ComHis*> &VHis,
 // ===========================================================================
 bool Compare::UserLegend() 
 {
-  //LgLoc["MetScale"] = {{0.1, 0.4, 0.8, 0.9}};
-  double lt[4] = {0.1241611,0.6398305,0.3842282,0.8983051};
-  double rb[4] = {0.6526846,0.1588983,0.9127517,0.4173729};
+  double lt[4] = {0.1741611,0.6398305,0.4342282,0.8983051};
+  double rb[4] = {0.6526846,0.1788983,0.9127517,0.4373729};
+  double cb[4] = {0.3526846,0.1788983,0.6127517,0.4373729};
   double lb[4] = {0.1409396,0.1377119,0.3775168,0.4322034};
+  double rt[4] = {0.6526846,0.6228814,0.9127517,0.8813559};
 
-  LgLoc["MetScale"].assign(rb, rb+4);
+  LgLoc["MetScale"].assign(cb, cb+4);
+  LgLoc["MMetScale"].assign(cb, cb+4);
   LgLoc["MetResP"].assign(lt, lt+4);
   LgLoc["MetResT"].assign(lt, lt+4);
   LgLoc["MetResX"].assign(lt, lt+4);
@@ -422,6 +471,8 @@ bool Compare::FillVHis(std::vector<ComHis*> &VHis, std::string prefix, std::stri
     ComHis *temp = InitComHisTH1(tag, prefix,  Hname);
     VHis.push_back(temp);
   }
+  //Whether to set the last Hist in marker
+  //UserVHist(VHis, Hname);
   return true;
 }       // -----  end of function Compare::FillVHis  -----
 
@@ -442,7 +493,6 @@ bool Compare::FillMetResVHis(std::vector<ComHis*> &VHis, std::string prefix, std
     tempH->Clear();
     for (int i = 0; i <= pro->GetNbinsX(); ++i)
     {
-      //std::cout << i << " bin Error " << pro->GetBinError(i) << std::endl;
       tempH->SetBinContent(i, pro->GetBinError(i));
       double error = pro->GetBinError(i) / std::sqrt(2 * pro->GetBinEntries(i));
       if (pro->GetBinError(i)!= 0)
@@ -457,16 +507,9 @@ bool Compare::FillMetResVHis(std::vector<ComHis*> &VHis, std::string prefix, std
     CH->scale = 1;
     CH->drawopt = "X0E1";
     CH->style = 20;
-    if (cot == 3) cot++; // skip the green
     
-    if (Hname == "MetResT") 
-    {
-      CH->ymin = 10;
-      CH->ymax = 80;
-    }
-
-    CH->color = cot++;
     CH->size = 1;
+    UserHist(CH, Hname);
     VHis.push_back(CH);
   }
   return true;
@@ -516,3 +559,21 @@ bool Compare::CalRMSDiff()
   
 
 }       // -----  end of function Compare::CalRMSDiff  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  Compare::UserVHist
+//  Description:  
+// ===========================================================================
+bool Compare::UserVHist(std::vector<ComHis*> &VHis, std::string hname)
+{
+  if (true)
+  {
+    VHis.back()->line = false;
+    VHis.back()->size = 1;
+    VHis.back()->style = 20;
+    VHis.back()->drawopt = "HISTP";
+  }
+  
+  return true;
+
+}       // -----  end of function Compare::UserVHist  -----

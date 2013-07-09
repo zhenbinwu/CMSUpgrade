@@ -74,7 +74,7 @@ bool DelCut::BookHistogram()
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("Weight", "Weight", 100, 0, 10 );
   His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
-  His->AddTH1("NJets", "Num. of Jets", 20, 0, 20 );
+  His->AddTH1("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
   His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
@@ -82,7 +82,8 @@ bool DelCut::BookHistogram()
   His->AddTH1("Met", "Met", "#slash{H}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
   His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
 
-//----------------------------------------------------------------------------
+  His->AddTH1("JetEta", "#eta_{Jets}", 280, -7, 7 );
+//----------------------------------------------------------------------------i
 //  Booking histogram for MET performance study
 //----------------------------------------------------------------------------
   BookMetPerf();
@@ -180,6 +181,11 @@ int DelCut::FillCut()
   His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
   His->FillTH1("RawMet", Ana->RawMet.Mod());
   His->FillTH1("Met", Ana->PUCorMet->Mod());
+
+//----------------------------------------------------------------------------
+//  Filling jets
+//----------------------------------------------------------------------------
+   FillJets();
 
 //----------------------------------------------------------------------------
 //  Filling histogram for MET performance study
@@ -396,6 +402,19 @@ int DelCut::WriteHistogram()
   return 1;
 }       // -----  end of function DelCut::WriteHistogram  -----
 
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillJets
+//  Description:  Filling jets relative hist
+// ===========================================================================
+int DelCut::FillJets() const
+{
+
+  for (int i = 0; i < Ana->vJet->size(); ++i)
+  {
+    His->FillTH1("JetEta", Ana->vJet->at(i).Eta);
+  }
+  return 1;
+}       // -----  end of function DelCut::FillJets  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::FillJets
@@ -524,9 +543,11 @@ int DelCut::BookMetPerf() const
   His->AddTH1("MetY", "MetY", "#slash{E}_{y} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
   His->AddTPro("MetScale", "MetScale", "Z/#gamma q_{T} [GeV]", "-<u_{#parallel}>/q_{T}",  50, 0, 400);
   double xbin[12] = {0, 40 , 60, 80, 100, 120, 140, 160, 200, 240, 300, 400};
-  TProfile* pro1 = new TProfile( "MetResP", "MetResP;Z/#gamma q_{T} [GeV];#sigma(u_{#parallel}) [GeV]",  11, xbin, "s");
+  TProfile* pro1 = new TProfile( "MetResP", "MetResP;Z/#gamma q_{T} [GeV];#sigma(u_{#parallel}) [GeV]",  11, xbin, "S");
+  pro1->BuildOptions(-300, 300, "s");
   His->AddTPro(pro1);
-  TProfile* pro2 = new TProfile( "MetResT", "MetResT;Z/#gamma q_{T} [GeV];#sigma(u_{#perp}) [GeV]",  11, xbin, "s");
+  TProfile* pro2 = new TProfile( "MetResT", "MetResT;Z/#gamma q_{T} [GeV];#sigma(u_{#perp}) [GeV]",  11, xbin, "S");
+  pro2->BuildOptions(-300, 300, "s");
   His->AddTPro(pro2);
   His->AddTPro("MetResX", "MetResX", "HT [GeV]", "#sigma(#slash{E}_{x}) [GeV]",  50, 0, 400);
   His->AddTPro("MetResY", "MetResY", "HT [GeV]", "#sigma(#slash{E}_{y}) [GeV]",  50, 0, 400);

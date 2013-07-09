@@ -40,7 +40,7 @@ class DelCut
 
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
-    bool FillSampleXS(double xs);
+    bool FillSampleXS(double xs, double error);
     bool InitCutOrder();
     bool CutFlow(std::bitset<10> cutbit);
     int FillCut();
@@ -50,6 +50,11 @@ class DelCut
     int WriteHistogram();
     int DrawHistogram();
     /* ====================  MUTATORS      ======================================= */
+    // Move HistTool to public so that the CMSSW can book and fill some
+    // histogram apart from the DelCut.
+    // Warning: This is not healthy for the code! But we need to scarify for
+    // the analysis
+    HistTool *His; 
 
     /* ====================  OPERATORS     ======================================= */
 
@@ -61,12 +66,14 @@ class DelCut
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;
-    HistTool *His;
 
     std::vector<std::string> CutOrder;
     std::map<std::string, std::string>  CutMap;
 
-    // Filling 
+    // Filling variables globally
+    int FillJets() const;
+
+    // Filling variables for each cut
     int FillJets(int NCut);
     int FillEle(int NCut);
     int FillMet(int NCut);

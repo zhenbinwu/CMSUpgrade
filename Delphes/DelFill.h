@@ -111,7 +111,8 @@ class DPhes
     double PUCorJetPt; // The Pt of the jet into the Met correction
 
     // Cross Section
-    double CrossSection; // For HTBin sample, store the cross section according to the process
+    double CrossSection;      // For HTBin sample, store the cross section according to the process
+    double CrossSectionError; // For HTBin sample, store the cross section according to the process
 }; /* -----  end of class DPhes  ----- */
 
 #endif /* __DPHES_H__ */

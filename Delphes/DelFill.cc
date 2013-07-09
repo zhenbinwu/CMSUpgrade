@@ -234,7 +234,7 @@ int DPhes::PreLooping()
   {
     it->second->InitCutOrder();
     it->second->BookHistogram();
-    it->second->FillSampleXS(CrossSection);
+    it->second->FillSampleXS(CrossSection, CrossSectionError);
   } 
   return 1;
 
@@ -320,11 +320,13 @@ bool DPhes::GetCrossSection(std::string process)
 
     std::string pro;
     float xs;
+    float xserr;
 
-    std::stringstream(line) >>  pro >> xs;
+    std::stringstream(line) >>  pro >> xs >> xserr;
     if (pro == process)
     {
       CrossSection = xs;
+      CrossSectionError = xserr;
       break;
     }
   }

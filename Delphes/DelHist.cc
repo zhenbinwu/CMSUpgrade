@@ -29,7 +29,7 @@ const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.
 int main ( int argc, char *argv[] )
 {
 
-  if (argc < 3)
+  if (argc < 5)
   {
     std::cout << "Please enter the pileup and process name, Jet Eta and PT for PU correction to be run on ! " <<  std::endl;
     return EXIT_FAILURE;

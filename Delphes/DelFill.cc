@@ -229,14 +229,14 @@ int DPhes::ReadDelPhes()
 // ===========================================================================
 int DPhes::PreLooping()
 {
-    for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-        it!=MDelCut.end(); it++)
-    {
-      it->second->InitCutOrder();
-      it->second->BookHistogram();
-      it->second->FillSampleXS(CrossSection);
-    } 
-    return 1;
+  for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
+      it!=MDelCut.end(); it++)
+  {
+    it->second->InitCutOrder();
+    it->second->BookHistogram();
+    it->second->FillSampleXS(CrossSection, CrossSectionError);
+  } 
+  return 1;
 
 }       // -----  end of function DPhes::PreLooping  -----
 
@@ -320,11 +320,13 @@ bool DPhes::GetCrossSection(std::string process)
 
     std::string pro;
     float xs;
+    float xserr;
 
-    std::stringstream(line) >>  pro >> xs;
+    std::stringstream(line) >>  pro >> xs >> xserr;
     if (pro == process)
     {
       CrossSection = xs;
+      CrossSectionError = xserr;
       break;
     }
   }

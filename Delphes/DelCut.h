@@ -40,7 +40,7 @@ class DelCut
 
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
-    bool FillSampleXS(double xs);
+    bool FillSampleXS(double xs, double error);
     bool InitCutOrder();
     bool CutFlow(std::bitset<10> cutbit);
     int FillCut();

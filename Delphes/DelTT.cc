@@ -117,8 +117,9 @@ bool DelTT::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
         TClonesArray *branchHt, TClonesArray *branchParticle)
 {
-    return DelEvent::LoadEvent(branchEvent,  branchJet, 
-         branchGenJet,   branchCAJet, branchElectron,  branchMuon, 
-         branchPhoton,  branchMet, branchHt,  branchParticle);
+  DelEvent::LoadEvent(branchEvent,  branchJet, 
+      branchGenJet,   branchCAJet, branchElectron,  branchMuon, 
+      branchPhoton,  branchMet, branchHt,  branchParticle);
+  return true;
   
 }       // -----  end of function DelTT::LoadEvent  -----

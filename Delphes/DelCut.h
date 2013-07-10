@@ -46,6 +46,7 @@ class DelCut
     int FillCut();
     bool CheckCut(std::bitset<10> cutflag);
     bool CheckPhenoCut(std::bitset<10> cutflag);
+    bool CheckDMCut(std::bitset<10> cutflag);
     int WriteHistogram();
     int DrawHistogram();
     /* ====================  MUTATORS      ======================================= */

@@ -51,7 +51,7 @@ DPhes::~DPhes ()
   delete DEV;
   delete ANA;
   for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-    it!=MDelCut.end(); it++)
+      it!=MDelCut.end(); it++)
   {
     delete it->second;
   }
@@ -129,19 +129,19 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     name = process+"_"+pu;
 
 
-//----------------------------------------------------------------------------
-//  For Z+Jets sample
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //  For Z+Jets sample
+  //----------------------------------------------------------------------------
   if (process.find("ZJETS") != std::string::npos)
   {
-      
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
     //DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
     //ANA = new DelAna(DEV);
 
     //MDelCut["Default"] = new DelCut(ANA, name.Data());
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For Met Resolution study ~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For Met Resolution study ~~~~~
     DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV);
     TString tempname = name;
@@ -155,9 +155,9 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     return 1;
   }
 
-//----------------------------------------------------------------------------
-//  For TTBar sample
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //  For TTBar sample
+  //----------------------------------------------------------------------------
   if (process.find("TTBAR") != std::string::npos)
   {
     DEV = new DelTT(PUCorJetEta, PUCorJetPt);
@@ -180,9 +180,9 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   }
 
 
-//----------------------------------------------------------------------------
-//  For Wino singal sample
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //  For Wino singal sample
+  //----------------------------------------------------------------------------
   if (process.find("Wino") != std::string::npos)
   {
     DEV = new DelWino(PUCorJetEta, PUCorJetPt);
@@ -250,7 +250,7 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
-    //if (entry > 2000 ) break;
+    //if (entry > 5000000 ) break;
     if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
@@ -310,7 +310,7 @@ bool DPhes::GetCrossSection(std::string process)
     std::cout << " Error to open the Cross Section file!" << std::endl;
     return false;
   }
-  
+
   std::string line;
   while (!file.eof())
   {

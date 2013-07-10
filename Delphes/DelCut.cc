@@ -374,10 +374,11 @@ int DelCut::FillMet(int NCut)
 //         Name:  DelCut::FillSampleXS
 //  Description:  Save the cross section in bin 1 in histogram XS
 // ===========================================================================
-bool DelCut::FillSampleXS(double xs)
+bool DelCut::FillSampleXS(double xs, double error)
 {
   His->AddTH1("CrossSection", "Cross Section", 2, 0, 2);
   His->FillTH1("CrossSection", 1, xs);
+  His->FillTH1("CrossSection", 0, error);
 }       // -----  end of function DelCut::FillSampleXS  -----
 
 

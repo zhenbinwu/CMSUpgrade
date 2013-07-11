@@ -20,6 +20,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "TError.h"
 #include <cstdio>
 
 using namespace std;
@@ -99,6 +100,12 @@ int main ( int argc, char *argv[] )
     std::cout << "No files attached! Exiting ...."  << std::endl;
     return EXIT_FAILURE;
   }
+
+
+  // To remove the warning from TFile::Append
+  // -->  Replacing existing TH1: CrossSection (Potential memory leak)
+  // We need same histname for later on comparison
+  gErrorIgnoreLevel = kError;
 
   DPhes DP(&chain);
   DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);

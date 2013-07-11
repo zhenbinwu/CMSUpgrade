@@ -30,7 +30,6 @@
 
 #include "TFile.h"
 #include "TH1F.h"
-//#include "StopStyle.hh" //Need this for TFile?? don't understand 
 
 std::string exec(std::string cmd);
 bool HistNoMerg(std::string target, std::string firstfile, std::string hname);
@@ -47,9 +46,6 @@ int main ( int argc, char *argv[] )
 
   std::string target = argv[1]; // Output Target
   std::vector<std::string> vFiles;
-  //TFile te(argv[2], "R");
-  //return 1;
-
 
    for ( int i = 2; i < argc; i++ ) {
      vFiles.push_back(argv[i]);
@@ -119,8 +115,6 @@ std::string exec(std::string cmd) {
 // ===========================================================================
 bool HistNoMerg(std::string target, std::string firstfile, std::string hname)
 {
-  //TFile targF(target.c_str(), "UPDATE");
-  //TFile inpF(firstfile.c_str(), "R");
   TFile* targF = new TFile(target.c_str(), "UPDATE");
   TFile* inpF = new TFile(firstfile.c_str(), "R");
 

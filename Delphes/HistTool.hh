@@ -60,10 +60,11 @@ class HistTool
 //  TH1
 //----------------------------------------------------------------------------
     // Book the His TH1
-    int AddTH1 (const std::string name, const std::string title, 
+    TH1F* AddTH1(TH1F* th);
+    TH1F* AddTH1 (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
-    int AddTH1 (const std::string name, const std::string title, 
+    TH1F* AddTH1 (const std::string name, const std::string title, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax);
     int AddTH1C (const std::string name, const std::string title, 
         Int_t nxbins, double xmin, double  xmax);
@@ -86,11 +87,11 @@ class HistTool
 //  TProfile
 //----------------------------------------------------------------------------
     // Book the His TPro
-    int AddTPro(TProfile* pro);
-    int AddTPro (const std::string name, const std::string title, 
+    TProfile* AddTPro(TProfile* pro);
+    TProfile* AddTPro (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
-    int AddTPro (const std::string name, const std::string title, 
+    TProfile* AddTPro (const std::string name, const std::string title, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax);
     int AddTProC (const std::string name, const std::string title, 
         Int_t nxbins, double xmin, double  xmax);
@@ -121,11 +122,11 @@ class HistTool
     int AddTH2C (const std::string name, const std::string title, 
         Int_t nxbins, Axis_t xmin, Axis_t xmax, 
         Int_t nybins, Axis_t ymin, Axis_t ymax);
-    int AddTH2 (const std::string name, const std::string title, 
+    TH2D* AddTH2 (const std::string name, const std::string title, 
         const std::string xlabel, const std::string ylabel, Int_t nxbins, 
         Axis_t xmin, Axis_t xmax, Int_t nybins, Axis_t ymin, 
         Axis_t ymax, Int_t logx=0, Int_t logy=0);
-    int AddTH2 (const std::string name, const std::string title, Int_t nxbins, 
+    TH2D* AddTH2 (const std::string name, const std::string title, Int_t nxbins, 
         Axis_t xmin, Axis_t xmax, Int_t nybins, Axis_t ymin, Axis_t ymax);
 
     // Filling the his TH2

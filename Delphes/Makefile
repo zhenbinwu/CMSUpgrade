@@ -1,4 +1,5 @@
 DEL           = $(shell echo $(DELPHES))
+#CXX           = ~/.vim/bundle/ClangComplete/bin/cc_args.py g++
 CXX           = g++
 CXXFLAGS      = -Wno-deprecated $(shell root-config --cflags) -I../$(DEL)/external/ -I../$(DEL) -std=c++0x 
 LDFLAGS       = 
@@ -9,7 +10,12 @@ LIBS += -L../$(DEL) -lDelphes
 
 
 OBJS          = DelFill.o DelHist.o DelEvent.o DelWino.o DelTT.o DelZJJ.o DelAna.o DelCut.o HistTool.o
+OBJS         += DelHTB.o
 PROGRAM       = DelFill
+
+ifneq (, $(findstring cmslpc, $(shell hostname)))
+  CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
+endif
 
 all:            $(PROGRAM)
 

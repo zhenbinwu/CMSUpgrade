@@ -2,7 +2,9 @@
 // 
 //       Filename:  DelAna.cc
 // 
-//    Description: , G
+//    Description:  After we reconstruct the DelEvent, we use DelAna for
+//    analysis purpose. Construction of more complex variables, study of
+//    different objects should take place in here.
 // 
 //        Version:  1.0
 //        Created:  06/10/2013 10:12:09 AM
@@ -80,6 +82,18 @@ bool DelAna::CheckFlag(std::string name)
   if (name == "Default") return true;
   return DEV->CheckFlag(name);
 }       // -----  end of function DelAna::CheckFlag  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::RunPerEvent
+//  Description:  This function sums up all the things that are common for
+//  each DelCut process. This could speed up the code for those samples with
+//  many DelCut instances.
+// ===========================================================================
+bool DelAna::RunPerEvent()
+{
+  Clear();
+  GetBasic();
+}       // -----  end of function DelAna::RunPerEvent  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelAna::Clear

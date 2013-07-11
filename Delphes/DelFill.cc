@@ -158,7 +158,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   //----------------------------------------------------------------------------
   //  For TTBar sample
   //----------------------------------------------------------------------------
-  if (process.find("TTBAR") != std::string::npos)
+  if (process.find("TT") != std::string::npos)
   {
     DEV = new DelTT(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV);
@@ -191,7 +191,46 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     return 1;
   }
 
-  // Default
+
+//----------------------------------------------------------------------------
+//  For HTBin single boson sample
+//----------------------------------------------------------------------------
+
+  if (std::count(process.begin(), process.end(), 'B') == 1) //TODO: make sure only one B,  
+  {
+    DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
+    ANA = new DelAna(DEV);
+    MDelCut["Default"] = new DelCut(ANA, name.Data());
+
+    TString tempname = name;
+    tempname.ReplaceAll('B', 'H');
+    MDelCut["H"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll('B', 'W');
+    MDelCut["W"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll('B', 'Z');
+    MDelCut["Z"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll('B', "MetDiMuon");
+    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll('B', "MetDiEle");
+    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+
+    tempname = name;
+    tempname.ReplaceAll('B', "Photon");
+    MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
+
+    return 1;
+  }
+//----------------------------------------------------------------------------
+//  Default
+//----------------------------------------------------------------------------
   DEV = new DelEvent(PUCorJetEta, PUCorJetPt);
   ANA = new DelAna(DEV);
   MDelCut[process] = new DelCut(ANA, name.Data());
@@ -259,24 +298,29 @@ int DPhes::Looping()
     entry++;
 
     //----------------------------------------------------------------------------
-    //  Loading the current event and perform the preselection
+    //  Loading the current event and perform general calculations in DelAna.
     //----------------------------------------------------------------------------
-    if (!DEV->LoadEvent(branchEvent, branchJet, branchGenJet, branchCAJet,
-          branchElectron, branchMuon, branchPhoton, 
-          branchMet, branchHt, branchParticle))
-      continue;
+    DEV->LoadEvent(branchEvent, branchJet, branchGenJet, branchCAJet,
+        branchElectron, branchMuon, branchPhoton, 
+        branchMet, branchHt, branchParticle);
+    ANA->RunPerEvent();
 
+    //----------------------------------------------------------------------------
+    //  Filling the Hist for different DelCut according to the Flag
+    //----------------------------------------------------------------------------
     for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
         it!=MDelCut.end(); it++)
     {
+      // For each DelCut, fill NEVT with weight.
+      // This is needed for normalization despite of the flags
+      it->second->FillNEVT(ANA->Weight);
+
       if (ANA->CheckFlag(it->first))
       {
         it->second->FillCut();
       }
     } 
-
   }
-
   return 1;
 }       // -----  end of function DPhes::Looping  -----
 
@@ -301,8 +345,11 @@ int DPhes::PostLooping()
 //  FileList/HTBin/CrossSection.list file. For the Delphes-3.0.7, use the
 //  default value so far.
 // ===========================================================================
-bool DPhes::GetCrossSection(std::string process)
+bool DPhes::GetCrossSection(const std::string process_)
 {
+//----------------------------------------------------------------------------
+//  Opening the CrossSection.list
+//----------------------------------------------------------------------------
   std::fstream file;
   file.open("FileList/CrossSection.list", std::fstream::in);
   if (!file.is_open())
@@ -311,6 +358,22 @@ bool DPhes::GetCrossSection(std::string process)
     return false;
   }
 
+//----------------------------------------------------------------------------
+//  Correct process name for splitted HTBin sample
+//----------------------------------------------------------------------------
+  std::string process = process_; //local process
+  if (process.find("HT") != std::string::npos)
+  {
+    int  idx = process.find_last_of('_');
+    if (idx != std::string::npos && process.find("HT") < idx)
+    {
+      process.erase(process.find_last_of("_"), process.length());
+    }
+  }
+
+//----------------------------------------------------------------------------
+//  Reading file to get cross section
+//----------------------------------------------------------------------------
   std::string line;
   while (!file.eof())
   {

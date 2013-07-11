@@ -41,6 +41,7 @@ class DelAna
     ~DelAna ();                    /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
+    bool RunPerEvent();
     bool CheckFlag(std::string name);
     bool Clear();
     int GetBasic();

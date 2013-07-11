@@ -44,6 +44,7 @@ class DelCut
     bool InitCutOrder();
     bool CutFlow(std::bitset<10> cutbit);
     int FillCut();
+    bool FillNEVT(double weight=1) const;
     bool CheckCut(std::bitset<10> cutflag);
     bool CheckPhenoCut(std::bitset<10> cutflag);
     bool CheckDMCut(std::bitset<10> cutflag);
@@ -66,6 +67,7 @@ class DelCut
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;
+    std::string ProName; // Process name
 
     std::vector<std::string> CutOrder;
     std::map<std::string, std::string>  CutMap;

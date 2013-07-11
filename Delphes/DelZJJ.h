@@ -55,7 +55,6 @@ class DelZJJ : public DelEvent
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
 
-  private:
     bool CheckZ();
     TVector2 ZLLMet(TClonesArray *branchParticle, TClonesArray *branchElectron, 
         TClonesArray *branchMuon, TClonesArray *branchJet);
@@ -80,6 +79,8 @@ class DelZJJ : public DelEvent
     // For Met study
     bool DiMuonMet();
     bool DiEleMet();
+
+  private:
 
 }; /* -----  end of class DelZJJ  ----- */
 

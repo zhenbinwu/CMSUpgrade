@@ -29,9 +29,9 @@ const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.
 int main ( int argc, char *argv[] )
 {
 
-  if (argc < 5)
+  if (argc < 4)
   {
-    std::cout << "Please enter the pileup and process name, Jet Eta and PT for PU correction to be run on ! " <<  std::endl;
+    std::cout << "Please enter the pileup, process name and Dir_Eta_PT to be run on ! " <<  std::endl;
     return EXIT_FAILURE;
   }
 
@@ -39,24 +39,22 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
 //  Define all the variables here
 //----------------------------------------------------------------------------
-  //std::string Pileup  = "TEST";
-  //std::string Process = "TTBAR";
+  //std::string Pileup  = "140PileUp";
+  //std::string Process = "BJJ_14TEV_HT1_1";
   //std::string Process = "ZJETS";
-
-  std::string Pileup    = argv[1];
-  std::string Process   = argv[2];
+  //const std::string Outdir = "test_5_30";
 
 
-  // PU corrected Met
-  //const double PUCorJetEta = 5;
-  //const double PUCorJetPt  = 30;
-  const double PUCorJetEta   = atof(argv[3]);
-  const double PUCorJetPt    = atof(argv[4]);
+  const std::string Pileup  = argv[1];
+  const std::string Process = argv[2];
+  const std::string Outdir  = argv[3];
 
-  char buf[100];
-  sprintf(buf, "%s_%.0f_%.0f", "Test", PUCorJetEta, PUCorJetPt );
-  const std::string Outdir  = buf;
-  //const std::string Outdir  = "TEST";
+
+  double PUCorJetEta = -99;
+  double PUCorJetPt = -99;
+  char buf[10];
+  sscanf(Outdir.c_str(), "%[^_]_%lf_%lf", buf, &PUCorJetEta, &PUCorJetPt );
+
 
 //----------------------------------------------------------------------------
 //  Done with input variables
@@ -82,6 +80,7 @@ int main ( int argc, char *argv[] )
     std::fstream input(TreeList.Data());
     for(std::string line; getline(input, line);)
     {
+      if (line[0] == '#') continue;
       std::cout << "Add File: " << line << std::endl;
       chain.Add(line.c_str());
     }
@@ -93,7 +92,7 @@ int main ( int argc, char *argv[] )
   //chain.Add("test/tt-4p-1700-2500-v1510_14TEV_140PileUp_99660663.root");
   //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
   //chain.Add("test/ZJETS_13TEV_NoPileUp_9850.root");
-  //chain.Add("./ZJETS_13TEV_NoPileUp_62128.root");
+  //chain.Add("./Bjj-vbf-4p-700-1400-v1510_14TEV_140PileUp_36404679.root");
 
   if (chain.GetListOfFiles()->GetEntries() == 0)
   {

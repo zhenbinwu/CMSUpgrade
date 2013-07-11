@@ -23,6 +23,7 @@
 #include <list>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <bitset>
 #include <sys/stat.h>
 #include "TChain.h"
@@ -41,6 +42,7 @@
 #include "DelZJJ.h"
 #include "DelTT.h"
 #include "DelAna.h"
+#include "DelHTB.h"
 #include "DelCut.h"
 
 // Classes from Delphes

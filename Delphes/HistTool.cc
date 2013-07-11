@@ -136,15 +136,25 @@ int HistTool::AddTH1C (const std::string name, const std::string title,
     TString maptitle = title+" ("+order.at(i)+")";
     AddTH1(mapname.Data(), maptitle.Data(), nxbins, xmin, xmax);
   }
-
   return 1;
 }       // -----  end of function HistTool::AddTH1C  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTH1
+//  Description:  degenrous! What if the external th gets destroy? Need to
+//  figure out a better way for this!
+// ===========================================================================
+TH1F* HistTool::AddTH1(TH1F* th)
+{
+  HisMap[th->GetName()] = th;
+  return HisMap[th->GetName()];
+}       // -----  end of function HistTool::AddTH1  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HistTool::AddTH1
 //  Description:  
 // ===========================================================================
-int HistTool::AddTH1 (const std::string name, const std::string title,
+TH1F* HistTool::AddTH1 (const std::string name, const std::string title,
     const std::string xlabel, const std::string ylabel,
     Int_t nxbins, Axis_t xmin, Axis_t xmax,
     Int_t logx, Int_t logy)
@@ -156,19 +166,19 @@ int HistTool::AddTH1 (const std::string name, const std::string title,
   else ylb = ylabel;
   TString Title = title +";"+xlb+";"+ylb;
   HisMap[name.c_str()] = new TH1F(name.c_str(), Title, nxbins, xmin, xmax);
-  return 1;
+  return HisMap[name.c_str()];
 }       // -----  end of function HistTool::AddTH1C  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTH1
 //  Description:  
 // ===========================================================================
-int HistTool::AddTH1 (const std::string name, const std::string title,
+TH1F* HistTool::AddTH1 (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax)
 {
   
   HisMap[name.c_str()] = new TH1F(name.c_str(), title.c_str(), nxbins, xmin, xmax);
-  return 1;
+  return HisMap[name.c_str()];
 }       // -----  end of function HistTool::AddTH1  -----
 
 // ===  FUNCTION  ============================================================
@@ -306,7 +316,7 @@ int HistTool::AddTProC (const std::string name, const std::string title,
 //         Name:  HistTool::AddTPro
 //  Description:  
 // ===========================================================================
-int HistTool::AddTPro (const std::string name, const std::string title,
+TProfile* HistTool::AddTPro (const std::string name, const std::string title,
     const std::string xlabel, const std::string ylabel,
     Int_t nxbins, Axis_t xmin, Axis_t xmax,
     Int_t logx, Int_t logy)
@@ -318,29 +328,29 @@ int HistTool::AddTPro (const std::string name, const std::string title,
   else ylb = ylabel;
   TString Title = title +";"+xlb+";"+ylb;
   ProMap[name.c_str()] = new TProfile(name.c_str(), Title, nxbins, xmin, xmax, "s");
-  return 1;
+  return ProMap[name.c_str()];
 }       // -----  end of function HistTool::AddTProC  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTPro
 //  Description:  
 // ===========================================================================
-int HistTool::AddTPro(TProfile* pro)
+TProfile* HistTool::AddTPro(TProfile* pro)
 {
   ProMap[pro->GetName()] = pro;
+  return ProMap[pro->GetName()];
 }       // -----  end of function HistTool::AddTPro  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTPro
 //  Description:  
 // ===========================================================================
-int HistTool::AddTPro (const std::string name, const std::string title,
+TProfile* HistTool::AddTPro (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax)
 {
   
   ProMap[name.c_str()] = new TProfile(name.c_str(), title.c_str(), nxbins, xmin, xmax, "s");
-
-  return 1;
+  return ProMap[name.c_str()];
 }       // -----  end of function HistTool::AddTPro  -----
 
 // ===  FUNCTION  ============================================================
@@ -486,7 +496,7 @@ int HistTool::AddTH2C (const std::string name, const std::string title,
 //         Name:  HistTool::AddTH2
 //  Description:  
 // ===========================================================================
-int HistTool::AddTH2 (const std::string name, const std::string title,
+TH2D* HistTool::AddTH2 (const std::string name, const std::string title,
     const std::string xlabel, const std::string ylabel,
     Int_t nxbins, Axis_t xmin, Axis_t xmax,
     Int_t nybins, Axis_t ymin, Axis_t ymax,
@@ -495,21 +505,21 @@ int HistTool::AddTH2 (const std::string name, const std::string title,
 
   HisMap2D[name.c_str()] = new TH2D(name.c_str(), title.c_str(), 
       nxbins, xmin, xmax, nybins, ymin, ymax);
-  return 1;
+  return HisMap2D[name.c_str()];
 }       // -----  end of function HistTool::AddTH2C  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  HistTool::AddTH2
 //  Description:  
 // ===========================================================================
-int HistTool::AddTH2 (const std::string name, const std::string title,
+TH2D* HistTool::AddTH2 (const std::string name, const std::string title,
     Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t nybins, Axis_t ymin, Axis_t ymax)
 {
   
   HisMap2D[name.c_str()] = new TH2D(name.c_str(), title.c_str(), nxbins, 
       xmin, xmax , nybins, ymin, ymax);
 
-  return 1;
+  return HisMap2D[name.c_str()];
 }       // -----  end of function HistTool::AddTH2  -----
 
 // ===  FUNCTION  ============================================================

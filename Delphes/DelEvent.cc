@@ -129,7 +129,6 @@ int DelEvent::LoadJet(TClonesArray *branchJet)
   }
 
   return 1;
-
 }       // -----  end of function DelEvent::LoadJet  -----
 
 // ===  FUNCTION  ============================================================

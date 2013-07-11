@@ -3,6 +3,7 @@
 //       Filename:  DelCut.cc
 // 
 //    Description:  Class for Cut flow 
+//           TODO:  1. How to avoid the warning of replacing existing TH1F
 // 
 //        Version:  1.0
 //        Created:  06/10/2013 08:18:19 AM
@@ -25,6 +26,7 @@
 DelCut::DelCut (DelAna *ana, std::string name )
 {
   Ana = ana;
+  ProName = name;
   His = new HistTool(name);
 }  // ~~~~~  end of method DelCut::DelCut  (constructor)  ~~~~~
 
@@ -73,7 +75,10 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("Weight", "Weight", 100, 0, 10 );
-  His->AddTH1("CutFlow", "CutFlow " ,  10, 0 , 10 );
+  TH1F* temp = His->AddTH1("CutFlow", "CutFlow", CutOrder.size(), 0 , CutOrder.size());
+  for (int i = 0; i < CutOrder.size(); ++i)
+    temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
+
   His->AddTH1("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
   His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
@@ -86,7 +91,9 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------i
 //  Booking histogram for MET performance study
 //----------------------------------------------------------------------------
-  BookMetPerf();
+   if (ProName.find("MetDiEle") != std::string::npos
+       || ProName.find("MetDiMuon") != std::string::npos)
+    BookMetPerf();
 
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
@@ -146,6 +153,7 @@ bool DelCut::InitCutOrder()
    CutMap["CTMet200"] = "0011111111";
    CutMap["AllCut"]   = "1111111111";
 
+   assert(CutOrder.size() == CutMap.size());
    His->Cutorder(CutOrder);
   
 }       // -----  end of function DelCut::InitCutOrder  -----
@@ -169,11 +177,9 @@ int DelCut::FillCut()
 //----------------------------------------------------------------------------
 //  Set up the DelAna
 //----------------------------------------------------------------------------
-  Ana->Clear();
-  Ana->GetBasic();
-
-  His->SetWeight(Ana->Weight);
-  His->FillTH1("NEVT", 1, 1);
+  //Set Weight for this event, auto fill each his by HistTool
+  //You can over write the weight by adding the weight in Filling
+  His->SetWeight(Ana->Weight); 
   His->FillTH1("Weight", Ana->Weight);
   His->FillTH1("NJets", (int)Ana->vJet->size());
   His->FillTH1("NEle", (int)Ana->vElectron->size());
@@ -183,20 +189,23 @@ int DelCut::FillCut()
   His->FillTH1("Met", Ana->PUCorMet->Mod());
 
 //----------------------------------------------------------------------------
-//  Filling jets
+// Filling jets Globally
 //----------------------------------------------------------------------------
    FillJets();
 
 //----------------------------------------------------------------------------
 //  Filling histogram for MET performance study
 //----------------------------------------------------------------------------
-  FillMetPerf();
+   if (ProName.find("MetDiEle") != std::string::npos
+       || ProName.find("MetDiMuon") != std::string::npos)
+    FillMetPerf();
 
   for (int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<10> locbit(CutMap[CutOrder.at(i)]);
     if (CheckCut(locbit) == false) continue;
-    His->FillTH1("CutFlow", i);
+    // For HTBin sample, the cutflow should fill with event weight
+    His->FillTH1("CutFlow", i); 
     // Filling by functions
     FillJets(i);
     FillMet(i);
@@ -545,10 +554,8 @@ int DelCut::BookMetPerf() const
   His->AddTPro("MetScale", "MetScale", "Z/#gamma q_{T} [GeV]", "-<u_{#parallel}>/q_{T}",  50, 0, 400);
   double xbin[12] = {0, 40 , 60, 80, 100, 120, 140, 160, 200, 240, 300, 400};
   TProfile* pro1 = new TProfile( "MetResP", "MetResP;Z/#gamma q_{T} [GeV];#sigma(u_{#parallel}) [GeV]",  11, xbin, "S");
-  pro1->BuildOptions(-300, 300, "s");
   His->AddTPro(pro1);
   TProfile* pro2 = new TProfile( "MetResT", "MetResT;Z/#gamma q_{T} [GeV];#sigma(u_{#perp}) [GeV]",  11, xbin, "S");
-  pro2->BuildOptions(-300, 300, "s");
   His->AddTPro(pro2);
   His->AddTPro("MetResX", "MetResX", "HT [GeV]", "#sigma(#slash{E}_{x}) [GeV]",  50, 0, 400);
   His->AddTPro("MetResY", "MetResY", "HT [GeV]", "#sigma(#slash{E}_{y}) [GeV]",  50, 0, 400);
@@ -625,3 +632,13 @@ int DelCut::FillMetPerf() const
 
   return 1;
 }       // -----  end of function DelCut::FillMetPerf  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillNEVT
+//  Description:  Pulic function for filling in the NEVT, it should be same
+//  among DelCuts
+// ===========================================================================
+bool DelCut::FillNEVT(double weight) const
+{
+  His->FillTH1("NEVT", 1, weight); //the NEVT with weight 
+}       // -----  end of function DelCut::FillNEVT  -----

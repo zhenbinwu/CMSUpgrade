@@ -2,10 +2,6 @@
 # coding: utf-8
 
 import os
-import sys
-import subprocess
-#import random
-from multiprocessing import Process
 
 
 Command = '~/work/CMSUpgrade/Delphes/RunHT.csh'
@@ -71,21 +67,8 @@ def my_process():
                   (cmd, Directory, pro))
         print to_run
         os.system(to_run)
-        #p = subprocess.call(to_run, shell=True)
-        #pids.add(p.pid)
-
-    #while pids:
-        #pid, status = os.wait()
-        #if pid in pids:
-            #pids.remove(pid)
-            #print "Waiting for %d processes:"   \
-                    #% (len(pids)),
-            #print "\n",
-
-
-
-
+        os.system("sleep 30")
 
 if __name__ == "__main__":
-    #os.system("kinit -r 8d")
+    os.system("kinit -r 8d")
     my_process();

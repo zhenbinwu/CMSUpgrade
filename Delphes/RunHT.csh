@@ -3,6 +3,8 @@
 set PRO=$1
 set DIR=$2
 
+set HTSplit=0
+set EXE=./DelFill
 #set PRO=WJETS_13TEV
 #set DIR=TEST_5_30
 
@@ -20,7 +22,6 @@ cd $LOCAL
 #============================================================================#
 #--------------------------   To Run the Process   --------------------------#
 #============================================================================#
-set EXE=./DelFill
 set toru = ''
 set count = 0
 
@@ -29,7 +30,7 @@ mkdir -p $DIR
 foreach PU (NoPileUp 50PileUp 140PileUp)
   ## HT bin sample
   if (`echo $PRO | grep -c "HT"`) then
-    set totalfile = `ls FileList/HTBin/${PRO}*${PU}.list | wc -l`
+    set totalfile = `ls FileList/HTBin/${PRO}_${PU}.list | wc -l`
     if ($totalfile == 0) then
       echo "No file for " $PRO " at " $PU
       exit
@@ -37,8 +38,9 @@ foreach PU (NoPileUp 50PileUp 140PileUp)
 
     set splitfile = `ls FileList/HTBin/${PRO}_*_${PU}.list | wc -l`
 
-    if ($splitfile == 0) then
+    if ((${HTSplit} == 0) || $splitfile == 0) then
       set toru=`echo $PU $PRO $DIR $toru`
+      echo $PU $PRO $DIR 
       @ count += 1
     else
       foreach file (`ls FileList/HTBin/${PRO}_*_${PU}.list`)

@@ -311,9 +311,10 @@ int DPhes::Looping()
     for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
         it!=MDelCut.end(); it++)
     {
-      // For each DelCut, fill NEVT with weight.
-      // This is needed for normalization despite of the flags
-      it->second->FillNEVT(ANA->Weight);
+      // For each DelCut, fill NEVT without weight.
+      // This is used to include the kfactor within event weight, which
+      // normailized to the NLO cross section
+      it->second->FillNEVT(1);
 
       if (ANA->CheckFlag(it->first))
       {

@@ -39,8 +39,8 @@ foreach PU (NoPileUp 50PileUp 140PileUp)
     set splitfile = `ls FileList/HTBin/${PRO}_*_${PU}.list | wc -l`
 
     if ((${HTSplit} == 0) || $splitfile == 0) then
-      set toru=`echo $PU $PRO $DIR $toru`
       echo $PU $PRO $DIR 
+      set toru=`echo $PU $PRO $DIR $DIR/${PRO}_${PU}.log $toru`
       @ count += 1
     else
       foreach file (`ls FileList/HTBin/${PRO}_*_${PU}.list`)
@@ -60,13 +60,15 @@ foreach PU (NoPileUp 50PileUp 140PileUp)
     endif
 
     echo $PU $PRO $DIR 
-    set toru=`echo $PU $PRO $DIR $toru`
+    set toru=`echo $PU $PRO $DIR $DIR/${PRO}_${PU}.log $toru`
     @ count += 1
   endif
 end
+echo $toru
 
 echo "------------ " $count "jobs in total ------------"
 echo $toru | xargs -n 4 -P6  sh -c  $EXE' $0 $1 $2 > $3'
+#echo $toru | xargs -n 4 -P6  sh -c  echo' $0 $1 $2 > $3'
 
 
 

@@ -68,7 +68,7 @@ bool DelHTB::CheckFlag(const std::string flag)
   if (flag == "H") return GenBonson() == 1;
   if (flag == "W") return GenBonson() == 2;
   if (flag == "Z") return GenBonson() == 3;
-  if (flag == "Photon")  return GenBonson() == 0;
+  if (flag == "Photon")  return GenBonson() == 4;
   if (flag == "MetDiMuon") 
   {
     if ( GenBonson() != 3) return false;
@@ -88,7 +88,7 @@ bool DelHTB::CheckFlag(const std::string flag)
 //                Higgs  -- 1
 //                W      -- 2
 //                Z      -- 3
-//                Photon -- 0
+//                Photon -- 4
 //  
 // ===========================================================================
 int DelHTB::GenBonson() const
@@ -96,11 +96,13 @@ int DelHTB::GenBonson() const
   for (int i = 0; i < vGenParticle.size(); ++i)
   {
     GenParticle p = vGenParticle.at(i);
-    if (p.PID == 25) return 1; //Higgs 
-    if (p.PID == 24) return 2; //W  
-    if (p.PID == 23) return 3;  // Z
+    if (std::fabs(p.PID) == 25) return 1;    // Higgs
+    if (std::fabs(p.PID) == 24) return 2;    // W
+    if (std::fabs(p.PID) == 23) return 3;    // Z
+    if (std::fabs(p.PID) == 22) return 4;    // photon
   }
-  // if can't find W, Z and H, this should be photon+jets
+  //PrintGen();
+  // if can't find W, Z, H and photon
   return 0;
 }       // -----  end of function DelHTB::GenBonson  -----
 

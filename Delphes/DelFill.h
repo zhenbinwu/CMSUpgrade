@@ -115,6 +115,10 @@ class DPhes
     // Cross Section
     double CrossSection;      // For HTBin sample, store the cross section according to the process
     double CrossSectionError; // For HTBin sample, store the cross section according to the process
+
+    // Process and PU
+    std::string Process;
+    std::string PU;
 }; /* -----  end of class DPhes  ----- */
 
 #endif /* __DPHES_H__ */

@@ -99,6 +99,9 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   branchHt         = 0;
   branchParticle   = 0;
 
+  Process = process;
+  PU = pu;
+
   // Double check the filename and get the cross section
   GetCrossSection(process);
 
@@ -289,7 +292,7 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
-    if (entry > 5000000 ) break;
+    if (Process.find("HT") != std::string::npos && entry > 5000000 ) continue;
     if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
@@ -300,9 +303,10 @@ int DPhes::Looping()
     //----------------------------------------------------------------------------
     //  Loading the current event and perform general calculations in DelAna.
     //----------------------------------------------------------------------------
-    DEV->LoadEvent(branchEvent, branchJet, branchGenJet, branchCAJet,
-        branchElectron, branchMuon, branchPhoton, 
-        branchMet, branchHt, branchParticle);
+    if (!DEV->LoadEvent(branchEvent, branchJet, branchGenJet, branchCAJet,
+          branchElectron, branchMuon, branchPhoton, 
+          branchMet, branchHt, branchParticle))
+      continue;
     ANA->RunPerEvent();
 
     //----------------------------------------------------------------------------
@@ -311,10 +315,12 @@ int DPhes::Looping()
     for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
         it!=MDelCut.end(); it++)
     {
-      // For each DelCut, fill NEVT without weight.
-      // This is used to include the kfactor within event weight, which
-      // normailized to the NLO cross section
-      it->second->FillNEVT(1);
+      // For each DelCut, fill NEVT with weight. 07/18/2013 10:41:34 AM
+      // This can include all the information with the TH1F
+      // During the normalization, using TH1F->GetEntries() to get the 
+      // number of event without weight, which is needed to include the
+      // kfactor, which will normalized to NLO cross section
+      it->second->FillNEVT(ANA->Weight);
 
       if (ANA->CheckFlag(it->first))
       {

@@ -98,8 +98,8 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
 //----------------------------------------------------------------------------
-  His->AddTH1C("CMet", "CMet", "PU Corrected #slash{E}_{T} [GeV]", 
-      "Events/ 20 GeV", 100, 0, 800, 0, 1);
+  His->AddTH1C("CMet", "CMet", "#slash{H}_{T} [GeV]", 
+      "Events/ 5 GeV", 200, 0, 1000, 0, 1);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
   His->AddTH1C("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
   His->AddTH1C("J1Eta", "#eta_{J1}", 14, -7, 7 );
@@ -114,6 +114,7 @@ bool DelCut::BookHistogram()
   His->AddTH1C("MJJ", "M_{J1, J2}", 4000, 0, 8000.0 );
   His->AddTH1C("dPtJJ", "#Delta Pt_{J1, J2}", 40, 0, 1200 );
   His->AddTH1C("dPhiJJ", "#Delta #phi_{J1, J2}", 14, -7, 7 );
+  His->AddTH1C("ABSdPhiJJ", "|#Delta #phi_{J1, J2}|", 32, 0, 3.2 );
   His->AddTH1C("dEtaJJ", "#Delta #eta_{J1, J2}", 14, -7, 7 );
   His->AddTH1C("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
 
@@ -130,7 +131,7 @@ bool DelCut::BookHistogram()
 // ===========================================================================
 bool DelCut::InitCutOrder()
 {
-   // The Cut flow
+   // The Cut flow for DM
    CutOrder.push_back("NoCut");
    CutOrder.push_back("CTVBF");
    CutOrder.push_back("CTJ1");
@@ -153,6 +154,28 @@ bool DelCut::InitCutOrder()
    CutMap["CTMet200"] = "0011111111";
    CutMap["AllCut"]   = "1111111111";
 
+   // The Cut flow for Higss
+   //CutOrder.push_back("NoCut");
+   //CutOrder.push_back("CTVBF");
+   //CutOrder.push_back("CTJ1");
+   //CutOrder.push_back("CTJ2");
+   //CutOrder.push_back("CTMjj");
+   //CutOrder.push_back("CTJ3");
+   //CutOrder.push_back("CTDPhi");
+   //CutOrder.push_back("CTLep");
+   //CutOrder.push_back("CTMet130");
+   //CutOrder.push_back("AllCut");
+
+   //CutMap["NoCut"]    = "0000000000";
+   //CutMap["CTVBF"]    = "0000000001";
+   //CutMap["CTJ1"]     = "0000000011";
+   //CutMap["CTJ2"]     = "0000000111";
+   //CutMap["CTMjj"]    = "0000001111";
+   //CutMap["CTJ3"]     = "0000011111";
+   //CutMap["CTDPhi"]   = "0000111111";
+   //CutMap["CTLep"]    = "0001111111";
+   //CutMap["CTMet130"] = "0011111111";
+   //CutMap["AllCut"]   = "1111111111";
    assert(CutOrder.size() == CutMap.size());
    His->Cutorder(CutOrder);
   
@@ -220,10 +243,105 @@ int DelCut::FillCut()
 // ===========================================================================
 bool DelCut::CheckCut(std::bitset<10> cutflag)
 {
+  //return CheckHiggsCut(cutflag);
   return CheckDMCut(cutflag);
   //return CheckPhenoCut(cutflag);
   //return true;
 }       // -----  end of function DelCut::CheckCut  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::CheckHiggsCut
+//  Description:  HIG-13-013
+// ===========================================================================
+bool DelCut::CheckHiggsCut(std::bitset<10> cutflag)
+{
+
+//----------------------------------------------------------------------------
+//  VBF Cut
+//----------------------------------------------------------------------------
+  if (cutflag.test(0)) 
+  {
+    if (Ana->vJet->size() < 2) return false;
+    // This function may be called from Loop.
+    // returns  1 if entry is accepted.
+    // returns -1 otherwise.
+
+    if (Ana->Met < 50) return false;
+
+    if (Ana->J1->PT < 30 || std::fabs(Ana->J1->Eta) > 5) return false;
+    if (Ana->J2->PT < 30 || std::fabs(Ana->J2->Eta) > 5) return false;
+
+    //
+    // Opposive eta and eta separation
+    //
+    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
+
+    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
+
+  }
+
+//----------------------------------------------------------------------------
+//  Leading jet cut
+//----------------------------------------------------------------------------
+  if (cutflag.test(1)) 
+  {
+    if ( Ana->J1 == 0 || Ana->J1->PT < 50 || std::fabs(Ana->J1->Eta) > 4.7) return false;
+  }
+
+  if (cutflag.test(2)) 
+  {
+    if ( Ana->J2 == 0 || Ana->J2->PT < 50 || std::fabs(Ana->J2->Eta) > 4.7) return false;
+  }
+
+  if (cutflag.test(3)) 
+  {
+    if ( Ana->Mjj<1100. ) return false;
+  }
+
+  if (cutflag.test(4)) 
+  {
+
+    if (Ana->J3 != 0)
+    {
+      
+      // Jet3 is within jet1 and jet2 
+      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
+         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
+      {
+        // Only reject hard jets 
+        if (Ana->J3->PT > 30) return false;
+      }
+
+    }
+  }
+
+
+
+  if (cutflag.test(5)) 
+  {
+    double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
+    if (  std::fabs(deltaphi) > 1.0  ) return false;
+  }
+
+
+  if (cutflag.test(6)) 
+  {
+    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+    {
+      if (it->TauTag) return false;
+    }
+    if (Ana->vElectron->size() > 0) return false;
+    if (Ana->vMuon->size() > 0) return false;
+  }
+
+  if (cutflag.test(7)) 
+  {
+    if (Ana->Met < 130) return false;
+  }
+
+  return true;
+}       // -----  end of function DelCut::CheckHiggsCut  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::CheckDMCut
@@ -449,6 +567,7 @@ int DelCut::FillJets(int NCut)
     His->FillTH1(NCut, "MJJ", Ana->Mjj);
     His->FillTH1(NCut, "dPtJJ", Ana->J1->PT-Ana->J2->PT);
     His->FillTH1(NCut, "dPhiJJ", Ana->J1->P4().DeltaPhi(Ana->J2->P4()));
+    His->FillTH1(NCut, "ABSdPhiJJ", std::fabs(Ana->J1->P4().DeltaPhi(Ana->J2->P4())));
     His->FillTH1(NCut, "dEtaJJ", Ana->J1->Eta - Ana->J2->Eta);
     His->FillTH1(NCut, "dRJJ", Ana->J1->P4().DeltaR(Ana->J2->P4()));
   }

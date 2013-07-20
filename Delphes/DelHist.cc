@@ -25,7 +25,7 @@
 
 using namespace std;
 
-const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.7/";
+const std::string Path = "/uscms/home/benwu/work/CMSUpgrade/Delphes/";
 
 int main ( int argc, char *argv[] )
 {
@@ -69,10 +69,10 @@ int main ( int argc, char *argv[] )
   if (env.find("3.0.9") != std::string::npos) //For Delphes 3.0.9 
   {
     if (Process.find("HT") != std::string::npos) //For HTBin samples 
-      TreeList = "FileList/HTBin/"+Process+"_"+Pileup+".list";
+      TreeList = "./FileList/HTBin/"+Process+"_"+Pileup+".list";
     else
-      TreeList = "FileList/DEL309/"+Process+"_"+Pileup+".list";
-  } else TreeList = "FileList/"+Process+"_"+Pileup+".list";
+      TreeList = "./FileList/DEL309/"+Process+"_"+Pileup+".list";
+  } else TreeList = "./FileList/"+Process+"_"+Pileup+".list";
   std::cout << "Files to be run on : " << TreeList  << std::endl;
 
   TChain chain("Delphes");
@@ -109,7 +109,7 @@ int main ( int argc, char *argv[] )
 
   DPhes DP(&chain);
   DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);
-  DP.InitDelPhes(Process, Pileup, Outdir);
+  DP.InitDelPhes(Process, Pileup, "");
   DP.ReadDelPhes();
   DP.PreLooping();
   DP.Looping();

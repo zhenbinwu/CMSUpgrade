@@ -23,6 +23,7 @@
 
 #include "DelEvent.h"
 #include "DelZJJ.h"
+#include <iomanip>
 /*
  * ===========================================================================
  *        Class:  DelHTB
@@ -39,6 +40,11 @@ class DelHTB : public DelZJJ
     ~DelHTB ();                     /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
+    bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+        TClonesArray *branchGenJet, TClonesArray *branchCAJet, 
+        TClonesArray *branchElectron, TClonesArray *branchMuon, 
+        TClonesArray *branchPhoton, TClonesArray *branchMet, 
+        TClonesArray *branchHt, TClonesArray *branchParticle);
 
     /* ====================  MUTATORS      ======================================= */
 
@@ -53,8 +59,16 @@ class DelHTB : public DelZJJ
 
   private:
     /* ====================  DATA MEMBERS  ======================================= */
-    int GenBonson() const;
+    int GenBoson() const;
     bool PrintGen() const;
+    bool CheckPhoton(bool IsPhoton) const;
+    int CheckWMode() const;
+    int CheckZMode() const;
+
+    int Boson;
+    int WMode;
+    int ZMode;
+
 
 }; /* -----  end of class DelHTB  ----- */
 

@@ -22,7 +22,9 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DelHTB::DelHTB (double Eta, double Pt) : DelZJJ(false, Eta, Pt)
 {
-
+  Boson = -99;
+  WMode = -99;
+  ZMode = -99;
 }  // ~~~~~  end of method DelHTB::DelHTB  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,25 +67,45 @@ bool DelHTB::CheckFlag(const std::string flag)
 {
 
   assert(!FakingZvv);
-  if (flag == "H") return GenBonson() == 1;
-  if (flag == "W") return GenBonson() == 2;
-  if (flag == "Z") return GenBonson() == 3;
-  if (flag == "Photon")  return GenBonson() == 4;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating boson production ~~~~~
+  if (flag == "H")      return Boson == 1;
+  if (flag == "W")      return Boson == 2;
+  if (flag == "Z")      return Boson == 3;
+  if (flag == "Photon") return Boson == 4;
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating W decay mode ~~~~~
+  if (flag == "Wev")  return WMode == 1;
+  if (flag == "Wmv")  return WMode == 2;
+  if (flag == "Wtv")  return WMode == 3;
+  if (flag == "Wlv")  return WMode >  0;
+  if (flag == "Whad") return WMode == 0;
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating Z decay mode ~~~~~
+  if (flag == "Zee") return ZMode == 1;
+  if (flag == "Zmm") return ZMode == 2;
+  if (flag == "Ztt") return ZMode == 3;
+  if (flag == "Zll") return ZMode > 0;
+  if (flag == "Zvv") return ZMode == 0;
+  if (flag == "Zhad") return ZMode == -1;
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For MET study ~~~~~
   if (flag == "MetDiMuon") 
   {
-    if ( GenBonson() != 3) return false;
-    return DiMuonMet();
+    if ( Boson != 3) return false;
+    else return DiMuonMet();
   }
   if (flag == "MetDiEle") 
   {
-    if ( GenBonson() != 3) return false;
-    return DiEleMet();
+    if ( Boson != 3) return false;
+    else return DiEleMet();
   }
+
   return false;
 }       // -----  end of function DelHTB::CheckFlag  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::GenBonson
+//         Name:  DelHTB::GenBoson
 //  Description:  Function to check the genparticles for boson
 //                Higgs  -- 1
 //                W      -- 2
@@ -91,7 +113,7 @@ bool DelHTB::CheckFlag(const std::string flag)
 //                Photon -- 4
 //  
 // ===========================================================================
-int DelHTB::GenBonson() const
+int DelHTB::GenBoson() const
 {
   for (int i = 0; i < vGenParticle.size(); ++i)
   {
@@ -101,10 +123,31 @@ int DelHTB::GenBonson() const
     if (std::fabs(p.PID) == 23) return 3;    // Z
     if (std::fabs(p.PID) == 22) return 4;    // photon
   }
-  //PrintGen();
   // if can't find W, Z, H and photon
   return 0;
-}       // -----  end of function DelHTB::GenBonson  -----
+}       // -----  end of function DelHTB::GenBoson  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelHTB::LoadEvent
+//  Description:  
+// ===========================================================================
+bool DelHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+        TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
+        TClonesArray *branchElectron, TClonesArray *branchMuon, 
+        TClonesArray *branchPhoton, TClonesArray *branchMet, 
+        TClonesArray *branchHt, TClonesArray *branchParticle)
+{
+  
+  Boson = WMode = ZMode = -99;
+  DelEvent::LoadEvent(branchEvent,  branchJet, 
+      branchGenJet,   branchCAJet, branchElectron,  branchMuon, 
+      branchPhoton,  branchMet, branchHt,  branchParticle);
+  Boson = GenBoson();
+  WMode = CheckWMode();
+  ZMode = CheckZMode();
+  return true;
+
+}       // -----  end of function DelHTB::LoadEvent  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelHTB::PrintGen
@@ -116,6 +159,130 @@ bool DelHTB::PrintGen() const
   for (int i = 0; i < vGenParticle.size(); ++i)
   {
     GenParticle p = vGenParticle.at(i);
-    std::cout << " i " << i  << " PID " << p.PID << " M1 " << p.M1 << " M2 " << p.M2<< std::endl;
+    std::cout << " i " << i 
+      << " PID "  << std::setw(5) << p.PID 
+      << " Status "  << std::setw(5) << p.Status
+      << " M1 " << p.M1 << " M2 " << p.M2<< std::endl;
   }
 }       // -----  end of function DelHTB::PrintGen  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelHTB::CheckPhoton
+//  Description:  
+// ===========================================================================
+bool DelHTB::CheckPhoton(bool IsPhoton) const
+{
+  if (!IsPhoton) return false;
+  
+  std::cout << "===========================================" << std::endl;
+
+  std::cout << " MET "<< PUCorMet.Mod()<< std::endl;
+
+  if (PUCorMet.Mod() > 20)
+  {
+  std::cout << " Object size : jets " << vJet.size() << " ele " << vElectron.size()
+    << " muon "<< vMuon.size() << " photon" << vPhoton.size() << std::endl;
+    
+  }
+}       // -----  end of function DelHTB::CheckPhoton  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelHTB::CheckWMode
+//  Description:  Separate out the W decay mode
+//  W->ev --- 1
+//  W->mv --- 2
+//  W->tv --- 3
+//  W->jj --- 0
+// ===========================================================================
+int DelHTB::CheckWMode() const
+{
+  // Find whether it is a W event
+  int Widx = -1;
+  for (int i = 0; i < vGenParticle.size(); ++i)
+  {
+    GenParticle p = vGenParticle.at(i);
+    if (std::fabs(p.PID) == 24) 
+    {
+      Widx = i;  //Find W 
+      break;
+    }
+  }
+  if (Widx == -1) return -99;
+
+  // Now find the W decay products
+  // Assuming the status 3 electron directly from W
+  // Delphes has broken mother links, can't track back to mother W
+  int GenSize = vGenParticle.size();
+  for (int i = 0; i < GenSize; ++i)
+  {
+    GenParticle p = vGenParticle.at(i);
+    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+    if (std::fabs(p.PID) == 11) return 1;
+    if (std::fabs(p.PID) == 13) return 2;
+    if (std::fabs(p.PID) == 15) return 3;
+  }
+
+  //In the case without leptons, it should be hadronic W decay
+  return 0;
+}       // -----  end of function DelHTB::CheckWMode  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelHTB::CheckZMode
+//  Description:  Separate out the Z decay mode
+//  Z-> vv --- 0
+//  Z-> ee --- 1
+//  Z-> mm --- 2
+//  Z-> tt --- 3
+//  Z-> jj --- -1
+// ===========================================================================
+int DelHTB::CheckZMode() const
+{
+  // Find whether it is a Z event
+  int Zidx = -1;
+  int GenSize = vGenParticle.size();
+  for (int i = 0; i < GenSize; ++i)
+  {
+    GenParticle p = vGenParticle.at(i);
+    if (std::fabs(p.PID) == 23) 
+    {
+      Zidx = i;  //Find Z 
+      break;
+    }
+  }
+
+  if (Zidx == -1) return -99;
+
+  // Now find the Z decay products
+  // Assuming the status 3 electron directly from Z
+  // Delphes has broken mother links, can't track back to mother Z
+  std::vector<int> vLep;
+  std::vector<int> vNv;
+  for (int i = 0; i < GenSize; ++i)
+  {
+    GenParticle p = vGenParticle.at(i);
+    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+    if (std::fabs(p.PID) == 11 || std::fabs(p.PID) == 13 ||
+        std::fabs(p.PID) == 15 )
+    vLep.push_back(p.PID);
+    if (std::fabs(p.PID) == 12 || std::fabs(p.PID) == 14 ||
+        std::fabs(p.PID) == 16 )
+    vNv.push_back(p.PID);
+  }
+  
+   
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z->hadronic ~~~~~
+  if (vLep.size() == 0 && vNv.size() == 0) return -1;
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z->ll ~~~~~
+  if (vLep.size() == 2)
+  {
+    assert(vLep.at(0) == -vLep.at(1));
+    if (std::fabs(vLep.at(0)) == 11) return 1;
+    if (std::fabs(vLep.at(0)) == 13) return 2;
+    if (std::fabs(vLep.at(0)) == 15) return 3;
+  } 
+  else if (vNv.size() == 2) return 0;
+
+  return -99;
+}       // -----  end of function DelHTB::CheckZMode  -----

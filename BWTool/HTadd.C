@@ -57,7 +57,7 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
   std::vector<std::string> vHist;
   vHist.push_back("CrossSection");
-  vHist.push_back("NEVT");
+  //vHist.push_back("NEVT");
 
 //----------------------------------------------------------------------------
 //  Merging the files

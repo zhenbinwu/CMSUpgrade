@@ -53,15 +53,15 @@ foreach PU (NoPileUp 50PileUp 140PileUp)
       set MinLine = `echo ${wcline}/100 | bc`
       if ($MinLine > $SplitLine) then
         set NewSplitLine = `echo ${MinLine}+1 | bc`
-        split -l $NewSplitLine -d $file splited_file_
+        split -l $NewSplitLine -d $file ${PRO}_split_
       else
-        split -l $SplitLine -d $file splited_file_
+        split -l $SplitLine -d $file ${PRO}_split_
       endif
 
-      set num = `ls splited_file_*|wc -l `
+      set num = `ls ${PRO}_split_*|wc -l `
       set num = `echo $num-1 |bc`
-      foreach sp (`seq -w 00 1 ${num}`)
-        mv splited_file_${sp} FileList/HTBin/${PRO}_${sp}_${PU}.list
+      foreach sp (`seq -f "%02g" 00 1 ${num}`)
+        mv ${PRO}_split_${sp} FileList/HTBin/${PRO}_${sp}_${PU}.list
       end
     end
 
@@ -85,8 +85,9 @@ else
     exit
   endif
 
+  set Filesize = `wc FileList/DEL309/${PRO}*${PU}.list | tail -1 | cut -f 3 -d ' '`
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ No Splitting ~~~~~
-  if (${HTSplit} == 0) then ## No splitting 
+  if (${HTSplit} == 0 || $SplitLine > $Filesize) then ## No splitting 
   echo $PU $PRO $DIR 
   set toru=`echo $PU $PRO $DIR ${PRO}_${PU}.log $toru`
   @ count += 1
@@ -99,15 +100,15 @@ else
     set MinLine = `echo ${wcline}/100 | bc`
     if ($MinLine > $SplitLine) then
       set NewSplitLine = `echo ${MinLine}+1 | bc`
-      split -l $NewSplitLine -d $file splited_file_
+      split -l $NewSplitLine -d $file ${PRO}_split_
     else
-      split -l $SplitLine -d $file splited_file_
+      split -l $SplitLine -d $file ${PRO}_split_
     endif
 
-    set num = `ls splited_file_*|wc -l `
+    set num = `ls ${PRO}_split_*|wc -l `
     set num = `echo $num-1 |bc`
-    foreach sp (`seq -w 00 1 ${num}`)
-      mv splited_file_${sp} FileList/DEL309/${PRO}_${sp}_${PU}.list
+    foreach sp (`seq -f "%02g" 00 1 ${num}`)
+      mv ${PRO}_split_${sp} FileList/DEL309/${PRO}_${sp}_${PU}.list
     end
   end
 

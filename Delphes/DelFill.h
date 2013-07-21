@@ -83,6 +83,7 @@ class DPhes
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
+    TString ModifiedPreName(const TString output, std::string org, std::string rep) const;
 
   private:
     /* ====================  DATA MEMBERS  ======================================= */

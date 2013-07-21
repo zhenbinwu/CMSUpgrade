@@ -1,0 +1,14 @@
+
+universe = vanilla
+Executable = RunHT.csh
+Requirements = Memory >= 199 &&OpSys == "LINUX"&& (Arch != "DUMMY" )&& Disk > 1000000
+Should_Transfer_Files = YES
+Transfer_Input_Files = FileList.tgz
+WhenToTransferOutput = ON_EXIT
+Output = Delphes_$(Cluster)_$(Process).stdout
+Error = Delphes_$(Cluster)_$(Process).stderr
+Log = Delphes_$(Cluster)_$(Process).log
+notify_user = USER@FNAL.GOV
+Arguments = ProcessName Tag_JetEta_JetPt
+Queue 1
+

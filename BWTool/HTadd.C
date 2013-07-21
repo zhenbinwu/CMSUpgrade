@@ -43,6 +43,7 @@ int main ( int argc, char *argv[] )
     std::cout << "Please enter the target file and input file names ! " <<  std::endl;
     return EXIT_FAILURE;
   }
+  std::cout << "============================================" << std::endl;
 
   std::string target = argv[1]; // Output Target
   std::vector<std::string> vFiles;
@@ -75,6 +76,8 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------o  
   std::for_each(vHist.begin(), vHist.end(), 
       std::bind(HistNoMerg, target, vFiles.front(), std::placeholders::_1));
+
+  return EXIT_SUCCESS;
 
 
 //----------------------------------------------------------------------------

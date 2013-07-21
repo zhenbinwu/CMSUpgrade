@@ -39,7 +39,7 @@ class DelZJJ : public DelEvent
 
     /* ====================  ACCESSORS     ======================================= */
     //bool CheckFlag(std::string flag);
-    bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+    virtual bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet, TClonesArray *branchCAJet,
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 

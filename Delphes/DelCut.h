@@ -41,16 +41,12 @@ class DelCut
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
     bool FillSampleXS(double xs, double error);
-    bool InitCutOrder();
-    bool CutFlow(std::bitset<10> cutbit);
+    bool InitCutOrder(std::string ana="DM");
     int FillCut();
     bool FillNEVT(double weight=1) const;
-    bool CheckCut(std::bitset<10> cutflag);
-    bool CheckPhenoCut(std::bitset<10> cutflag);
-    bool CheckDMCut(std::bitset<10> cutflag);
-    bool CheckHiggsCut(std::bitset<10> cutflag);
     int WriteHistogram();
     int DrawHistogram();
+
     /* ====================  MUTATORS      ======================================= */
     // Move HistTool to public so that the CMSSW can book and fill some
     // histogram apart from the DelCut.
@@ -64,11 +60,20 @@ class DelCut
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
+    bool CutFlow(std::bitset<10> cutbit);
+    bool CheckCut(std::bitset<10> cutflag);
+    bool CheckPhenoCut(std::bitset<10> cutflag);
+    bool CheckDMCut(std::bitset<10> cutflag);
+    bool CheckHiggsCut(std::bitset<10> cutflag);
 
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;
     std::string ProName; // Process name
+    std::string AnaCut;  // Flag to choose which analysis cut to apply 
+    // "DM"    -> SUSY VBF DM Cut
+    // "Higgs" -> Higgs invisible Cut
+    // "RA2"   -> SUSY RA2 Cut (To be implemented)
 
     std::vector<std::string> CutOrder;
     std::map<std::string, std::string>  CutMap;

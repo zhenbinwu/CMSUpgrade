@@ -84,8 +84,10 @@ bool DelCut::BookHistogram()
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
 
-  His->AddTH1("Met", "Met", "#slash{H}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
-  His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", "Events / 8 GeV",  100, 0, 800, 0, 1);
+  His->AddTH1("Met", "Met", "#slash{H}_{T} [GeV]", 
+      "Events / 5 GeV",  400, 0, 2000, 0, 1);
+  His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", 
+      "Events / 5 GeV",  280, 0, 1400, 0, 1);
 
   His->AddTH1("JetEta", "#eta_{Jets}", 280, -7, 7 );
 //----------------------------------------------------------------------------i
@@ -122,6 +124,8 @@ bool DelCut::BookHistogram()
   //His->AddTH1("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   //His->AddTH1("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   //His->AddTH1("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
+  if (ProName.find("Photon") != std::string::npos)
+      His->AddTH2("MetVsPhoton", "Met Vs Photon", 10, 0 , 10, 100, 0, 1000);
 }       // -----  end of function DelCut::BookHistogram  -----
 
 
@@ -129,53 +133,65 @@ bool DelCut::BookHistogram()
 //         Name:  DelCut::InitCutOrder
 //  Description:  
 // ===========================================================================
-bool DelCut::InitCutOrder()
+bool DelCut::InitCutOrder(std::string ana)
 {
+  AnaCut = ana;
    // The Cut flow for DM
-   CutOrder.push_back("NoCut");
-   CutOrder.push_back("CTVBF");
-   CutOrder.push_back("CTJ1");
-   CutOrder.push_back("CTJ2");
-   CutOrder.push_back("CTMjj");
-   CutOrder.push_back("CTJ3");
-   CutOrder.push_back("CTBJ");
-   CutOrder.push_back("CTLep");
-   CutOrder.push_back("CTMet200");
-   CutOrder.push_back("AllCut");
+   if (AnaCut == "DM")
+   {
+     CutOrder.clear();
+     CutMap.clear();
+     CutOrder.push_back("NoCut");
+     CutOrder.push_back("CTVBF");
+     CutOrder.push_back("CTJ1");
+     CutOrder.push_back("CTJ2");
+     CutOrder.push_back("CTMjj");
+     CutOrder.push_back("CTJ3");
+     CutOrder.push_back("CTBJ");
+     CutOrder.push_back("CTLep");
+     CutOrder.push_back("CTMet200");
+     CutOrder.push_back("AllCut");
 
-   CutMap["NoCut"]    = "0000000000";
-   CutMap["CTVBF"]    = "0000000001";
-   CutMap["CTJ1"]     = "0000000011";
-   CutMap["CTJ2"]     = "0000000111";
-   CutMap["CTMjj"]    = "0000001111";
-   CutMap["CTJ3"]     = "0000011111";
-   CutMap["CTBJ"]     = "0000111111";
-   CutMap["CTLep"]    = "0001111111";
-   CutMap["CTMet200"] = "0011111111";
-   CutMap["AllCut"]   = "1111111111";
+     CutMap["NoCut"]    = "0000000000";
+     CutMap["CTVBF"]    = "0000000001";
+     CutMap["CTJ1"]     = "0000000011";
+     CutMap["CTJ2"]     = "0000000111";
+     CutMap["CTMjj"]    = "0000001111";
+     CutMap["CTJ3"]     = "0000011111";
+     CutMap["CTBJ"]     = "0000111111";
+     CutMap["CTLep"]    = "0001111111";
+     CutMap["CTMet200"] = "0011111111";
+     CutMap["AllCut"]   = "1111111111";
+   }
 
    // The Cut flow for Higss
-   //CutOrder.push_back("NoCut");
-   //CutOrder.push_back("CTVBF");
-   //CutOrder.push_back("CTJ1");
-   //CutOrder.push_back("CTJ2");
-   //CutOrder.push_back("CTMjj");
-   //CutOrder.push_back("CTJ3");
-   //CutOrder.push_back("CTDPhi");
-   //CutOrder.push_back("CTLep");
-   //CutOrder.push_back("CTMet130");
-   //CutOrder.push_back("AllCut");
+   if (AnaCut == "Higgs")
+   {
+     CutOrder.clear();
+     CutMap.clear();
+     CutOrder.push_back("NoCut");
+     CutOrder.push_back("CTVBF");
+     CutOrder.push_back("CTJ1");
+     CutOrder.push_back("CTJ2");
+     CutOrder.push_back("CTMjj");
+     CutOrder.push_back("CTJ3");
+     CutOrder.push_back("CTDPhi");
+     CutOrder.push_back("CTLep");
+     CutOrder.push_back("CTMet130");
+     CutOrder.push_back("AllCut");
 
-   //CutMap["NoCut"]    = "0000000000";
-   //CutMap["CTVBF"]    = "0000000001";
-   //CutMap["CTJ1"]     = "0000000011";
-   //CutMap["CTJ2"]     = "0000000111";
-   //CutMap["CTMjj"]    = "0000001111";
-   //CutMap["CTJ3"]     = "0000011111";
-   //CutMap["CTDPhi"]   = "0000111111";
-   //CutMap["CTLep"]    = "0001111111";
-   //CutMap["CTMet130"] = "0011111111";
-   //CutMap["AllCut"]   = "1111111111";
+     CutMap["NoCut"]    = "0000000000";
+     CutMap["CTVBF"]    = "0000000001";
+     CutMap["CTJ1"]     = "0000000011";
+     CutMap["CTJ2"]     = "0000000111";
+     CutMap["CTMjj"]    = "0000001111";
+     CutMap["CTJ3"]     = "0000011111";
+     CutMap["CTDPhi"]   = "0000111111";
+     CutMap["CTLep"]    = "0001111111";
+     CutMap["CTMet130"] = "0011111111";
+     CutMap["AllCut"]   = "1111111111";
+   }
+
    assert(CutOrder.size() == CutMap.size());
    His->Cutorder(CutOrder);
   
@@ -211,6 +227,8 @@ int DelCut::FillCut()
   His->FillTH1("RawMet", Ana->RawMet.Mod());
   His->FillTH1("Met", Ana->PUCorMet->Mod());
 
+  if (ProName.find("Photon") != std::string::npos)
+    His->FillTH2("MetVsPhoton", (double)Ana->vPhoton->size(), Ana->PUCorMet->Mod());
 //----------------------------------------------------------------------------
 // Filling jets Globally
 //----------------------------------------------------------------------------
@@ -243,10 +261,11 @@ int DelCut::FillCut()
 // ===========================================================================
 bool DelCut::CheckCut(std::bitset<10> cutflag)
 {
-  //return CheckHiggsCut(cutflag);
-  return CheckDMCut(cutflag);
+  if (AnaCut == "DM") return CheckDMCut(cutflag);
+  if (AnaCut == "Higgs") return CheckHiggsCut(cutflag);
+
   //return CheckPhenoCut(cutflag);
-  //return true;
+  return true;
 }       // -----  end of function DelCut::CheckCut  -----
 
 // ===  FUNCTION  ============================================================
@@ -670,7 +689,7 @@ int DelCut::BookMetPerf() const
   His->AddTH1("RMetY", "Raw MetY", "Raw #slash{E}_{y} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
   His->AddTH1("MetX", "MetX", "#slash{E}_{x} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
   His->AddTH1("MetY", "MetY", "#slash{E}_{y} [GeV]", "Events / 8 GeV",  50, -200, 200, 0, 1);
-  His->AddTPro("MetScale", "MetScale", "Z/#gamma q_{T} [GeV]", "-<u_{#parallel}>/q_{T}",  50, 0, 400);
+  His->AddTPro("MetScale", "MetScale", "Z/#gamma q_{T} [GeV]", "-<u_{#parallel}>/q_{T}",  500, 0, 1000);
   double xbin[12] = {0, 40 , 60, 80, 100, 120, 140, 160, 200, 240, 300, 400};
   TProfile* pro1 = new TProfile( "MetResP", "MetResP;Z/#gamma q_{T} [GeV];#sigma(u_{#parallel}) [GeV]",  11, xbin, "S");
   His->AddTPro(pro1);
@@ -748,7 +767,6 @@ int DelCut::FillMetPerf() const
       break;
     }
   }
-
   return 1;
 }       // -----  end of function DelCut::FillMetPerf  -----
 

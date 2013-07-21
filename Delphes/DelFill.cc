@@ -327,7 +327,6 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
-    if (Process.find("HT") != std::string::npos && entry > 5000000 ) continue;
     if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
@@ -401,7 +400,7 @@ bool DPhes::GetCrossSection(const std::string process_)
   }
 
 //----------------------------------------------------------------------------
-//  Correct process name for splitted HTBin sample
+//  Correct process name for splitted sample
 //----------------------------------------------------------------------------
   std::string process = process_; //local process
   if (process.find("HT") != std::string::npos)
@@ -411,6 +410,14 @@ bool DPhes::GetCrossSection(const std::string process_)
     {
       process.erase(process.find_last_of("_"), process.length());
     }
+  } else { //For splited inclusive sample 
+
+    int  idx = process.find_last_of('_');
+    if (idx != std::string::npos && process.find("V") < idx)
+    {
+      process.erase(process.find_last_of("_"), process.length());
+    }
+
   }
 
 //----------------------------------------------------------------------------

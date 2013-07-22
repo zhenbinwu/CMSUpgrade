@@ -4,15 +4,18 @@
 import os
 import re
 import shutil
-import fileinput
 
-
-DelDir = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
+DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
 Directory = 'TEST_5_30'
 UserEMAIL = 'benwu@fnal.gov'
-Projects = [
-    #'Wino200_14TeV', 
-    #'Wino500_14TeV', 
+PileUps   = [
+    'NoPileUp',
+    '50PileUp',
+    '140PileUp',
+]
+Projects  = [
+    #'Wino200_14TeV',
+    #'Wino500_14TeV',
     'WJETS_13TEV',
     #'ZJETS_13TEV',
     #'TTBAR_13TEV',
@@ -69,32 +72,46 @@ Projects = [
     #'TJ_14TEV_HT5' ,
 ]
 
+
 def my_process():
     ## Some checking first
-    my_CheckFile();
+    my_CheckFile()
 
-    orgdir = os.getcwd()
+    ## Create the output directory
     outdir = DelDir + "/" + Directory
     try:
         os.mkdir(outdir)
     except OSError:
         pass
-        
-    shutil.copy2("RunHT.csh", outdir)
+
+    ## Update RunHT.csh with pileups
+    RunHTFile = outdir + "/" + "RunHT.csh"
+    PUtoRun = '"'
+    for pu in PileUps:
+        PUtoRun += "%s " % pu
+    PUtoRun += '"'
+
+    with open(RunHTFile, "wt") as outfile:
+        for line in open("RunHT.csh", "r"):
+            line = line.replace("PILEUPS", PUtoRun)
+            outfile.write(line)
+
+    ## Update condor files
     shutil.copy2("Delphes_condor", outdir)
     os.chdir(outdir)
     os.system("tar -czf FileList.tgz ../FileList")
     for pro in Projects:
-        cond_file = pro +"_condor"
+        cond_file = pro + "_condor"
         print cond_file
         with open(cond_file, "wt") as out:
             for line in open("Delphes_condor", "r"):
-                line=line.replace("USER@FNAL.GOV", UserEMAIL)
-                line=line.replace("ProcessName", pro)
-                line=line.replace("Tag_JetEta_JetPt", Directory)
+                line = line.replace("USER@FNAL.GOV", UserEMAIL)
+                line = line.replace("ProcessName", pro)
+                line = line.replace("Tag_JetEta_JetPt", Directory)
                 out.write(line)
 
-        os.system("condor_submit "+ cond_file)
+        os.system("condor_submit " + cond_file)
+
 
 def my_CheckFile():
     ## Check RunHT.csh file
@@ -124,7 +141,6 @@ def my_CheckFile():
     else:
         print "Please locate %s" % DelFill
         return None
-            
 
     ## Check HTadd
     if os.path.isfile("HTadd") and os.access("HTadd", os.X_OK):
@@ -142,7 +158,6 @@ def my_CheckFile():
         print "Please compile HTadd"
         return None
 
-
 if __name__ == "__main__":
     os.system("kinit -r 8d")
-    my_process();
+    my_process()

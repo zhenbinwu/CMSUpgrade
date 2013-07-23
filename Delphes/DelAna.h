@@ -65,6 +65,7 @@ class DelAna
     TLorentzVector *MHT;
     double *HT;
     double DelHT;
+    double METAsys;
 
     // Common variable
     Jet *J1;

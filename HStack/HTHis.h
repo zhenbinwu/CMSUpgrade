@@ -21,6 +21,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <cassert>
 
 #include "glob.h"
 #include <boost/foreach.hpp>
@@ -53,6 +54,8 @@ class HTHis
     TH1F* GetTH1(std::string hname, int NCut, bool WithScale=true);
     THStack* GetStack(std::string hname, bool WithScale=true);
 
+    bool Test(std::string name);
+    double GetKFactor(std::string hanme, int NCut=-1);
 
     // ====================  MUTATORS      ===============================
 

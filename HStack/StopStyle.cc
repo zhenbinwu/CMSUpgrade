@@ -65,10 +65,14 @@ void StopStyle()
   //Pad
   SStyle->SetPadColor(0);
   SStyle->SetPadBorderMode(0);
-  SStyle->SetPadLeftMargin(0.08);
-  SStyle->SetPadRightMargin(0.08);
-  SStyle->SetPadTopMargin(0.10);//(0.05);          
-  SStyle->SetPadBottomMargin(0.10);      
+  //SStyle->SetPadLeftMargin(0.08);
+  //SStyle->SetPadRightMargin(0.08);
+  //SStyle->SetPadTopMargin(0.10);//(0.05);          
+  //SStyle->SetPadBottomMargin(0.10);      
+  SStyle->SetPadLeftMargin(0.13);
+  SStyle->SetPadRightMargin(0.05);
+  SStyle->SetPadTopMargin(0.05); 
+  SStyle->SetPadBottomMargin(0.13);      
   SStyle->SetPadTickX(0); //1:ticks on upper,2: ticks+labels on upper xaxis
   SStyle->SetPadTickY(0); //1:ticks on right side
 
@@ -95,9 +99,9 @@ void StopStyle()
 
   //Axis
   SStyle->SetTickLength ( 0.015,"X");
-  SStyle->SetTitleSize  ( 0.05,"X");
+  SStyle->SetTitleSize  ( 0.07,"X");
   SStyle->SetNdivisions ( 505 ,"X");
-  SStyle->SetLabelSize  ( 0.04,"X");
+  SStyle->SetLabelSize  ( 0.05,"X");
   SStyle->SetTitleOffset( 0.8,"X");
   //SStyle->SetTitleColor ( 1    ,"X");
   //SStyle->SetLabelOffset( 0.01,"X");
@@ -105,7 +109,7 @@ void StopStyle()
 
   SStyle->SetTickLength ( 0.015,"Y");
   SStyle->SetTitleSize  ( 0.07,"Y");
-  SStyle->SetLabelSize  ( 0.04,"Y");
+  SStyle->SetLabelSize  ( 0.05,"Y");
   SStyle->SetTitleOffset( 1.3,"Y");
   SStyle->SetNdivisions ( 505   ,"Y");
   //SStyle->SetLabelOffset( 0.01,"Y");

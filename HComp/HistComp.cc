@@ -63,9 +63,9 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
 //  Flags for what to do?
 //----------------------------------------------------------------------------
-  std::string study = "Dir"; // Compare among dirs
+  //std::string study = "Dir"; // Compare among dirs
   //std::string study = "Pro"; // Compare among processes
-  //std::string study = "PU";  // Compare among PU
+  std::string study = "PU";  // Compare among PU
   //std::string study = "HT";  // Compare among HT      // todo
   //std::string study = "Cut"; // Compare among CutFlow // todo
 
@@ -74,6 +74,8 @@ int main ( int argc, char *argv[] )
 //  Input root files, separated as dir, process, pileup,
 //----------------------------------------------------------------------------
   VecPair VDir;
+  VDir.push_back(std::make_pair("HTBinJ", "../HStack/Jul20ALL_5_30/"));
+  //VDir.push_back(std::make_pair("HTBinJ", "../HStack/Condor5M_5_30/"));
   //VDir.push_back(std::make_pair("NoQtCut", "MET_NoQTCut__4_30/"));
   //VDir.push_back(std::make_pair("Qt50", "MET_4_30"));
   //VDir.push_back(std::make_pair("Inclusive", "MET_20_0/"));
@@ -95,7 +97,7 @@ int main ( int argc, char *argv[] )
   VecPair VPro;
   //VPro.push_back(std::make_pair("ZJETS", "ZJETS"));
   //VPro.push_back(std::make_pair("DiElectron", "MetDiEle"));
-  VPro.push_back(std::make_pair("DiMuon", "MetDiMuon"));
+  //VPro.push_back(std::make_pair("DiMuon", "MetDiMuon"));
   //VPro.push_back(std::make_pair("TTBAR_FLep", "TTBAR_13TEV_FLep"));
   //VPro.push_back(std::make_pair("TTBAR_SLep_Pt", "TTBAR_13TEV_SLep"));
   //VPro.push_back(std::make_pair("TT_Had", "TTBAR_13TEV_Had"));
@@ -104,11 +106,30 @@ int main ( int argc, char *argv[] )
   //VPro.push_back(std::make_pair("TT_HT3", "TT_14TEV_HT3"));
   //VPro.push_back(std::make_pair("TT_HT4", "TT_14TEV_HT4"));
   //VPro.push_back(std::make_pair("TT_HT5", "TT_14TEV_HT5"));
+  //VPro.push_back(std::make_pair("Wino200", "Wino200_14TeV"));
+  //VPro.push_back(std::make_pair("Wino500", "Wino500_14TeV"));
+  VPro.push_back(std::make_pair("WlvJ_HT1", "WlvJ_14TEV_HT1"));
+  VPro.push_back(std::make_pair("WlvJ_HT2", "WlvJ_14TEV_HT2"));
+  VPro.push_back(std::make_pair("WlvJ_HT3", "WlvJ_14TEV_HT3"));
+  VPro.push_back(std::make_pair("WlvJ_HT4", "WlvJ_14TEV_HT4"));
+  VPro.push_back(std::make_pair("WlvJ_HT5", "WlvJ_14TEV_HT5"));
+  VPro.push_back(std::make_pair("WlvJ_HT6", "WlvJ_14TEV_HT6"));
+  VPro.push_back(std::make_pair("WlvJ_HT7", "WlvJ_14TEV_HT7"));
+  VPro.push_back(std::make_pair("WlvJJ_HT1", "WlvJJ_14TEV_HT1"));
+  VPro.push_back(std::make_pair("WlvJJ_HT2", "WlvJJ_14TEV_HT2"));
+  VPro.push_back(std::make_pair("WlvJJ_HT3", "WlvJJ_14TEV_HT3"));
+  VPro.push_back(std::make_pair("WlvJJ_HT4", "WlvJJ_14TEV_HT4"));
+  VPro.push_back(std::make_pair("WlvJJ_HT5", "WlvJJ_14TEV_HT5"));
   
+  //VPro.push_back(std::make_pair("DiMuonJJ_HT1", "MetDiMuonJJ_14TEV_HT1"));
+  //VPro.push_back(std::make_pair("DiMuonJJ_HT2", "MetDiMuonJJ_14TEV_HT2"));
+  //VPro.push_back(std::make_pair("DiMuonJJ_HT3", "MetDiMuonJJ_14TEV_HT3"));
+  //VPro.push_back(std::make_pair("DiMuonJJ_HT4", "MetDiMuonJJ_14TEV_HT4"));
+  //VPro.push_back(std::make_pair("DiMuonJJ_HT5", "MetDiMuonJJ_14TEV_HT5"));
 
   VecPair VPU;
-  //VPU.push_back(std::make_pair("0PU", "NoPileUp")); 
-  //VPU.push_back(std::make_pair("50PU", "50PileUp")); 
+  VPU.push_back(std::make_pair("0PU", "NoPileUp")); 
+  VPU.push_back(std::make_pair("50PU", "50PileUp")); 
   VPU.push_back(std::make_pair("140PU", "140PileUp")); 
   //VPU.push_back(std::make_pair("50PU50ns", "50PileUp50ns"));
   //VPU.push_back(std::make_pair("50PU25ns", "50PileUp25ns"));
@@ -133,11 +154,12 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
   std::vector<std::string> Vvar;
   Vvar.push_back("RawMet");
-  Vvar.push_back("Met");
-  Vvar.push_back("MLL");
-  Vvar.push_back("QT");
-  Vvar.push_back("UT");
-  //Vvar.push_back("JetEta");
+  //Vvar.push_back("Met");
+  //Vvar.push_back("MJJ_0");
+  //Vvar.push_back("MLL");
+  //Vvar.push_back("QT");
+  //Vvar.push_back("UT");
+  Vvar.push_back("JetEta");
   //Vvar.push_back("MJJ_0");
   //Vvar.push_back("J1Pt_0");
   //Vvar.push_back("J2Pt_0");
@@ -149,12 +171,12 @@ int main ( int argc, char *argv[] )
   //Vvar.push_back("UtNPhotons");
   //Vvar.push_back("UTJetsPT");
   //Vvar.push_back("UTPhotonsPT");
-  Vvar.push_back("UPQT");
-  Vvar.push_back("UParal");
-  Vvar.push_back("UPerp");
-  Vvar.push_back("MetScale");
-  Vvar.push_back("MetResP");
-  Vvar.push_back("MetResT");
+  //Vvar.push_back("UPQT");
+  //Vvar.push_back("UParal");
+  //Vvar.push_back("UPerp");
+  //Vvar.push_back("MetScale");
+  //Vvar.push_back("MetResP");
+  //Vvar.push_back("MetResT");
   //Vvar.push_back("MUPQT");
   //Vvar.push_back("MUParal");
   //Vvar.push_back("MUPerp");

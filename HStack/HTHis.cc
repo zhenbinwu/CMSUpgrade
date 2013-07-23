@@ -103,6 +103,10 @@ bool HTHis::GetTH1Fs(std::string hisname)
   vHists.clear();
   BOOST_FOREACH(TFile* f, vFiles)
   {
+    TH1F* histest = (TH1F*)f->Get(hisname.c_str());
+    //std::cout << " File name " << f->GetName() 
+      //<< " " << histest->GetName() << " "
+      //<< histest->GetEntries() << " " << histest->Integral()<< std:: endl;
     vHists.push_back((TH1F*)f->Get(hisname.c_str()));
   }
   return true;
@@ -120,7 +124,7 @@ bool HTHis::GetScale(const int Lumi)
       TH1F* hisxs = (TH1F*)f->Get("CrossSection");
       double xs = hisxs->GetBinContent(hisxs->FindBin(1));
       TH1F* hisevt = (TH1F*)f->Get("NEVT");
-      double evt = hisevt->GetEntries(); //Temp solution
+      double evt = hisevt->GetEntries(); 
       vScales.push_back(Lumi*xs/evt);
       //std::cout << " File name " << f->GetName() 
       //<< " event " << evt << " scale " << xs/evt<< std::endl;
@@ -137,13 +141,24 @@ TH1F* HTHis::GetTH1(std::string hname, bool WithScale)
   GetTH1Fs(hname);
   TH1F* ComHT = (TH1F*)vHists.front()->Clone();
   ComHT->Reset();
+  //TH1F* ComHT = NULL;
 
   for (int i = 0; i < (int)vHists.size(); ++i)
   {
     TH1F* his = (TH1F*)vHists.at(i)->Clone();
-    if (WithScale)
-      his->Scale(vScales.at(i));
 
+    //if (i == 0)
+    //{
+      //ComHT = (TH1F*)vHists.at(i)->Clone();
+      //ComHT->Reset();
+    //}
+
+    //TH1F* his = (TH1F*)vHists.at(i);
+    if (WithScale)
+    {
+      assert(!vScales.empty());
+      his->Scale(vScales.at(i));
+    }
     ComHT->Add(his);
     delete his;
   }
@@ -166,14 +181,12 @@ THStack* HTHis::GetStack(std::string hname, bool WithScale)
     TH1F* his = (TH1F*)vHists.at(i)->Clone();
     if (WithScale)
       his->Scale(vScales.at(i));
-    his->SetFillColor(i*2+10);
-    his->SetLineColor(i*2+10);
+    his->SetFillColor(i+1);
+    his->SetLineColor(i+1);
     //std::cout << " netry " << his->GetEntries() << std::endl;
     HTstack->Add(his);
   }
 
-  //HTstack->GetXaxis()->SetTitle("d");
-  //HTstack->GetYaxis()->SetTitle(ComHT->GetYaxis()->GetTitle());
   return HTstack;
 
 }       // -----  end of function HTHis::GetStack  -----
@@ -198,6 +211,7 @@ TH1F* HTHis::GetTH1(std::string hname, int NCut, bool WithScale)
     if (his->Integral() != 0.0)
     {
       if (WithScale)
+        //his->Scale(vScales.at(i));
         his->Scale(vScales.at(i) * his->Integral(0, his->GetNbinsX()+1)/his->Integral());
       ComHT->Add(his);
     }

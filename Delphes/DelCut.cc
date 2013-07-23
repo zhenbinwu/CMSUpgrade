@@ -75,7 +75,10 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
   His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
   His->AddTH1("Weight", "Weight", 100, 0, 10 );
-  TH1F* temp = His->AddTH1("CutFlow", "CutFlow", CutOrder.size(), 0 , CutOrder.size());
+
+  // Initial the cutflow
+  TString title = AnaCut == "DM" ? "SUSY VBF DM" : AnaCut;
+  TH1F* temp = His->AddTH1("CutFlow", title.Data(), CutOrder.size(), 0 , CutOrder.size());
   for (int i = 0; i < CutOrder.size(); ++i)
     temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
 
@@ -97,11 +100,32 @@ bool DelCut::BookHistogram()
        || ProName.find("MetDiMuon") != std::string::npos)
     BookMetPerf();
 
+  His->AddTH1("MetRelSys", "MetAsys", 
+      "|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]", 
+      "Events",  400, 0, 1, 0, 1);
+
+  TProfile* pro1 = new TProfile("MHTAsys", 
+      "MHTAsys;#slash{H}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]",  400, 0, 2000, "S");
+  His->AddTPro(pro1);
+  TProfile* pro2 = new TProfile("METAsys", 
+      "METAsys;#slash{E}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]",  400, 0, 2000, "S");
+  His->AddTPro(pro2);
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
 //----------------------------------------------------------------------------
-  His->AddTH1C("CMet", "CMet", "#slash{H}_{T} [GeV]", 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
+  His->AddTH1C("MHT", "CMet", "#slash{H}_{T} [GeV]", 
       "Events/ 5 GeV", 200, 0, 1000, 0, 1);
+  His->AddTH1C("MHTMET", "MHT - MET", "#slash{H}_{T} - #slash{E}_{T} [GeV]", 
+      "Events/ 5 GeV", 600, -1000, 2000, 0, 1);
+  His->AddTH1C("MET", "CRawMet", "#slash{E}_{T} [GeV]", 
+      "Events/ 5 GeV", 200, 0, 1000, 0, 1);
+  His->AddTH1C("MetAsys", "MetAsys", 
+      "|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]", 
+      "Events",  400, 0, 1, 0, 1);
+  His->AddTH2C("MetMHT", "MetMHT", 
+      "#slash{H}_{T} [GeV]", "#slash{E}_{T} [GeV]", 
+      400, 0, 2000, 400, 0, 2000);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
   His->AddTH1C("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
   His->AddTH1C("J1Eta", "#eta_{J1}", 14, -7, 7 );
@@ -226,6 +250,9 @@ int DelCut::FillCut()
   His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
   His->FillTH1("RawMet", Ana->RawMet.Mod());
   His->FillTH1("Met", Ana->PUCorMet->Mod());
+  His->FillTH1("MetRelSys", Ana->METAsys);
+  His->FillTPro("MHTAsys", Ana->Met, Ana->METAsys);
+  His->FillTPro("METAsys", Ana->RawMet.Mod(), Ana->METAsys);
 
   if (ProName.find("Photon") != std::string::npos)
     His->FillTH2("MetVsPhoton", (double)Ana->vPhoton->size(), Ana->PUCorMet->Mod());
@@ -619,7 +646,11 @@ int DelCut::FillEle(int NCut)
 // ===========================================================================
 int DelCut::FillMet(int NCut)
 {
-  His->FillTH1(NCut, "CMet", Ana->PUCorMet->Mod());
+  His->FillTH1(NCut, "MHT", Ana->PUCorMet->Mod());
+  His->FillTH1(NCut, "MET", Ana->RawMet.Mod());
+  His->FillTH1(NCut, "MHTMET", Ana->Met - Ana->RawMet.Mod());
+  His->FillTH1(NCut, "MetAsys", Ana->METAsys);
+  His->FillTH2(NCut, "MetMHT", Ana->Met, Ana->RawMet.Mod());
   return 1;
 }       // -----  end of function DelCut::FillEle  -----
 

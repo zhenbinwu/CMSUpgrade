@@ -16,7 +16,9 @@ HEADERS = $(shell ls *.h *.hh) Makefile
 HEADERS = Makefile
 
 
-all: HistStack
+#all: test
+all: HTStack
+#all: HistStack
 
 %.o : %.C $(HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
@@ -25,7 +27,7 @@ all: HistStack
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 
-CutTable : CutTable.o
+CutTable : CutTable.o HTSample.o MCHis.o HTHis.o 
 	$(LD) $(LDFLAGS) $^ $(LIBS) -lMinuit $(OutPutOpt)$@
 	@echo "$@ done"
 
@@ -33,10 +35,21 @@ HistStack: HistStack.o StopStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"
 
-try: try.o
+HTStack: HTStack.o MCHis.o HTHis.o HTSample.o StopStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"
 
+test: test.o HTHis.o
+	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
+
+test2: test2.o MCHis.o HTHis.o HTSample.o StopStyle.o
+	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
+
+test3: test3.o MCHis.o HTHis.o HTSample.o StopStyle.o
+	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
 clean :
 	rm -f *.o cyclic tcbayes tccls tcclsobs tcclsexp tcclspx nk_bayes cdf.root
 

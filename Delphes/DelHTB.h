@@ -64,6 +64,7 @@ class DelHTB : public DelZJJ
     bool CheckPhoton(bool IsPhoton) const;
     int CheckWMode() const;
     int CheckZMode() const;
+    bool CheckBoson(int boson) const;
 
     int Boson;
     int WMode;

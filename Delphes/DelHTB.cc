@@ -145,6 +145,81 @@ bool DelHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   Boson = GenBoson();
   WMode = CheckWMode();
   ZMode = CheckZMode();
+
+  if (false)
+  {
+
+    std::cout << "All Gen jets without cut -------------------------------------------" << std::endl;
+    for (int i = 0; i < branchGenJet->GetEntries(); ++i)
+    {
+      // Now, get the jet at index
+      Jet* p = (Jet*)branchGenJet->At(i);
+      std::cout
+        << std::setw(5) << " i:  "   << std::setw(3) << i
+        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+        << std::setw(5) << " Mass  " << std::setw(8) << p->Mass
+        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
+        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+        << std::endl;
+
+    }
+
+    std::cout << "All antiKT jets without cut -------------------------------------------" << std::endl;
+    for (int i = 0; i < branchJet->GetEntries(); ++i)
+    {
+      // Now, get the jet at index
+      Jet* p = (Jet*)branchJet->At(i);
+      std::cout
+        << std::setw(5) << " i:  "   << std::setw(3) << i
+        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+        << std::setw(5) << " Mass  " << std::setw(8) << p->Mass
+        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
+        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+        << std::endl;
+
+    }
+    std::cout << "All CA jets without cut -------------------------------------------" << std::endl;
+    for (int i = 0; i < branchCAJet->GetEntries(); ++i)
+    {
+      // Now, get the jet at index
+      Jet* p = (Jet*)branchCAJet->At(i);
+      std::cout
+        << std::setw(5) << " i:  "   << std::setw(3) << i
+        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+        << std::setw(5) << " Mass  " << std::setw(8) << p->Mass
+        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
+        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+        << std::endl;
+
+    }
+    std::cout << "All CA jets without cut -------------------------------------------" << std::endl;
+    for (int i = 0; i < branchCAJet->GetEntries(); ++i)
+    {
+      // Now, get the jet at index
+      Jet* p = (Jet*)branchCAJet->At(i);
+      std::cout
+        << std::setw(5) << " i:  "   << std::setw(3) << i
+        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+        << std::setw(5) << " Mass  " << std::setw(8) << p->Mass
+        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
+        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+        << std::endl;
+
+    }
+    std::cout << "All jets without cut -------------------------------------------" << std::endl;
+  }
   return true;
 
 }       // -----  end of function DelHTB::LoadEvent  -----
@@ -160,9 +235,18 @@ bool DelHTB::PrintGen() const
   {
     GenParticle p = vGenParticle.at(i);
     std::cout << " i " << i 
-      << " PID "  << std::setw(5) << p.PID 
-      << " Status "  << std::setw(5) << p.Status
-      << " M1 " << p.M1 << " M2 " << p.M2<< std::endl;
+      << std::setw(5) << " PID "    << std::setw(3) << p.PID
+      << std::setw(5) << " Status "    << std::setw(3) << p.Status
+      << std::setw(5) << " M1 "    << std::setw(3) << p.M1
+      << std::setw(5) << " M2 "    << std::setw(3) << p.M2
+      << std::setw(5) << " Px "     << std::setw(8) << p.Px
+      << std::setw(5) << " Py "     << std::setw(8) << p.Py
+      << std::setw(5) << " Pz "     << std::setw(8) << p.Pz
+      << std::setw(5) << " E   "    << std::setw(8) << p.E
+      << std::setw(5) << " PT  "    << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "    << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "    << std::setw(8) << p.Eta
+      << std::endl;
   }
 }       // -----  end of function DelHTB::PrintGen  -----
 
@@ -175,16 +259,270 @@ bool DelHTB::CheckPhoton(bool IsPhoton) const
   if (!IsPhoton) return false;
   
   std::cout << "===========================================" << std::endl;
-
-  std::cout << " MET "<< PUCorMet.Mod()<< std::endl;
-
-  if (PUCorMet.Mod() > 20)
+  PrintGen();
+  std::cout <<  " Printing Gen Photon: " << std::endl;
+  for (int i = 0; i < vGenParticle.size(); ++i)
   {
+    GenParticle p = vGenParticle.at(i);
+    if (std::fabs(p.PID) == 22)
+    {
+      std::cout 
+        << std::setw(5) << " PID "    << std::setw(3) << p.PID
+        << std::setw(5) << " Px "     << std::setw(8) << p.Px
+        << std::setw(5) << " Py "     << std::setw(8) << p.Py
+        << std::setw(5) << " Pz "     << std::setw(8) << p.Pz
+        << std::setw(5) << " E   "    << std::setw(8) << p.E
+        << std::setw(5) << " PT  "    << std::setw(8) << p.PT
+        << std::setw(5) << " Phi "    << std::setw(8) << p.Phi
+        << std::setw(5) << " Eta "    << std::setw(8) << p.Eta
+        << std::endl;
+    }
+  }
+
+
+  std::cout << " Raw Met " << vMissingET.at(0).MET
+    <<" MHT "<< PUCorMet.Mod()<< std::endl;
   std::cout << " Object size : jets " << vJet.size() << " ele " << vElectron.size()
     << " muon "<< vMuon.size() << " photon" << vPhoton.size() << std::endl;
-    
+  std::cout <<  " Printing Reconstructed Photon: " << std::endl;
+  TLorentzVector MPhoton(0., 0., 0., 0.);
+  for (int i = 0; i < vPhoton.size(); ++i)
+  {
+    Photon p = vPhoton.at(i);
+    MPhoton += p.P4();
+      std::cout 
+        << std::setw(5) << " i:  "  << std::setw(3) << i
+        << std::setw(5) << " Px "  << std::setw(8) << p.P4().Px()
+        << std::setw(5) << " Py "  << std::setw(8) << p.P4().Py()
+        << std::setw(5) << " Pz "  << std::setw(8) << p.P4().Pz()
+        << std::setw(5) << " E  "  << std::setw(8) << p.E
+        << std::setw(5) << " PT  "  << std::setw(8) << p.PT
+        << std::setw(5) << " Phi "  << std::setw(8) << p.Phi
+        << std::setw(5) << " Eta "  << std::setw(8) << p.Eta
+        << std::endl;
   }
+
+
+  std::cout <<  " Printing Reconstructed Jet: " << std::endl;
+
+  TLorentzVector MJET(0., 0., 0., 0.);
+  for (int i = 0; i < vJet.size(); ++i)
+  {
+    Jet p = vJet.at(i);
+    MJET += p.P4();
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
+  std::cout <<  " MHT from Jet: " << std::endl;
+  std::cout
+     << std::setw(8) << " MJET: "
+     << std::setw(5) << " Px "    << std::setw(8) << MJET.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MJET.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MJET.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MJET.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MJET.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MJET.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MJET.Eta()
+    << std::endl;
+
+  std::cout <<  " Printing Reconstructed GenJet: " << std::endl;
+
+  TLorentzVector MGenJet(0., 0., 0., 0.);
+  for (int i = 0; i < vGenJet.size(); ++i)
+  {
+    Jet p = vGenJet.at(i);
+    MGenJet += p.P4();
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
+  std::cout <<  " MHT from GenJet: " << std::endl;
+  std::cout
+     << std::setw(8) << " MGenJet: "
+     << std::setw(5) << " Px "    << std::setw(8) << MGenJet.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MGenJet.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MGenJet.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MGenJet.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MGenJet.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MGenJet.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MGenJet.Eta()
+    << std::endl;
+
+  std::cout <<  " MHT from Photon: " << std::endl;
+  std::cout
+     << std::setw(8) << " MPho: "
+     << std::setw(5) << " Px "    << std::setw(8) << MPhoton.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MPhoton.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MPhoton.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MPhoton.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MPhoton.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MPhoton.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MPhoton.Eta()
+    << std::endl;
+
+  std::cout <<  " Between MPhoton and MJET :" << std::endl;
+  std::cout
+     << std::setw(8) << " Pho - Jet: "
+     << std::setw(5) << " Px "    << std::setw(8) << MPhoton.Px()  - MJET.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MPhoton.Py()  - MJET.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MPhoton.Pz()  - MJET.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MPhoton.E()   - MJET.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MPhoton.Pt()  - MJET.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MPhoton.Phi() - MJET.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MPhoton.Eta() - MJET.Eta()
+    << std::endl;
+
+  std::cout << "" << std::endl;
+
 }       // -----  end of function DelHTB::CheckPhoton  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelHTB::CheckBoson
+//  Description:  
+// ===========================================================================
+bool DelHTB::CheckBoson(int boson) const
+{
+  std::cout << "===========================================" << std::endl;
+  PrintGen();
+  std::cout <<  " Printing Gen Boson: " << std::endl;
+  for (int i = 0; i < vGenParticle.size(); ++i)
+  {
+    GenParticle p = vGenParticle.at(i);
+    if (std::fabs(p.PID) == boson)
+    {
+      std::cout 
+        << std::setw(5) << " PID "    << std::setw(3) << p.PID
+        << std::setw(5) << " Px "     << std::setw(8) << p.Px
+        << std::setw(5) << " Py "     << std::setw(8) << p.Py
+        << std::setw(5) << " Pz "     << std::setw(8) << p.Pz
+        << std::setw(5) << " E   "    << std::setw(8) << p.E
+        << std::setw(5) << " PT  "    << std::setw(8) << p.PT
+        << std::setw(5) << " Phi "    << std::setw(8) << p.Phi
+        << std::setw(5) << " Eta "    << std::setw(8) << p.Eta
+        << std::endl;
+    }
+  }
+
+
+  std::cout << " Raw Met " << vMissingET.at(0).MET
+    <<" MHT "<< PUCorMet.Mod()<< std::endl;
+  std::cout << " Object size : jets " << vJet.size() << " ele " << vElectron.size()
+    << " muon "<< vMuon.size() << " photon" << vPhoton.size() << std::endl;
+
+  std::cout <<  " Printing Reconstructed Jet: " << std::endl;
+
+  TLorentzVector MJET(0., 0., 0., 0.);
+  for (int i = 0; i < vJet.size(); ++i)
+  {
+    Jet p = vJet.at(i);
+    MJET += p.P4();
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
+  std::cout <<  " MHT from Jet: " << std::endl;
+  std::cout
+     << std::setw(8) << " MJET: "
+     << std::setw(5) << " Px "    << std::setw(8) << MJET.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MJET.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MJET.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MJET.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MJET.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MJET.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MJET.Eta()
+    << std::endl;
+
+  std::cout <<  " Printing Reconstructed GenJet: " << std::endl;
+
+  TLorentzVector MGenJet(0., 0., 0., 0.);
+  for (int i = 0; i < vGenJet.size(); ++i)
+  {
+    Jet p = vGenJet.at(i);
+    MGenJet += p.P4();
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
+  std::cout <<  " MHT from GenJet: " << std::endl;
+  std::cout
+     << std::setw(8) << " MGenJet: "
+     << std::setw(5) << " Px "    << std::setw(8) << MGenJet.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MGenJet.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MGenJet.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MGenJet.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MGenJet.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MGenJet.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MGenJet.Eta()
+    << std::endl;
+
+  std::cout << "" << std::endl;
+
+  std::cout <<  " Printing Reconstructed CAJet: " << std::endl;
+
+  TLorentzVector MCAJet(0., 0., 0., 0.);
+  for (int i = 0; i < vCAJet.size(); ++i)
+  {
+    Jet p = vCAJet.at(i);
+    MCAJet += p.P4();
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
+  std::cout <<  " MHT from CAJet: " << std::endl;
+  std::cout
+     << std::setw(8) << " MCAJet: "
+     << std::setw(5) << " Px "    << std::setw(8) << MCAJet.Px()
+     << std::setw(5) << " Py "    << std::setw(8) << MCAJet.Py()
+     << std::setw(5) << " Pz "    << std::setw(8) << MCAJet.Pz()
+     << std::setw(5) << " E  "    << std::setw(8) << MCAJet.E()
+     << std::setw(5) << " PT  "   << std::setw(8) << MCAJet.Pt()
+     << std::setw(5) << " Phi "   << std::setw(8) << MCAJet.Phi()
+     << std::setw(5) << " Eta "   << std::setw(8) << MCAJet.Eta()
+    << std::endl;
+
+  std::cout << "" << std::endl;
+}       // -----  end of function DelHTB::CheckBoson  -----
 
 
 // ===  FUNCTION  ============================================================

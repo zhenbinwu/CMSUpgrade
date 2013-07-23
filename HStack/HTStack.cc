@@ -43,6 +43,7 @@
 #include <boost/foreach.hpp>
 
 int Plot (std::string PU, std::string Cut);
+std::vector<std::string> GetAllHis (std::string fname);
 std::vector<double> CalSB(THStack *SGstack, THStack *BGstack);
 double SBWithSys(double sig, double background);
 
@@ -50,35 +51,43 @@ double SBWithSys(double sig, double background);
 //----------------------------------------------------------------------------
 //  Global Variables 
 //----------------------------------------------------------------------------
+//const int InitLumifb = 300; // in the unit of pb
+//const int InitLumifb = 3000; // in the unit of pb
 const int InitLumifb = 500; // in the unit of pb
-const std::string Dir="./Jul163M_5_30_temp/";
+const std::string Dir="./Jul20ALL_5_30/";
+//const std::string Dir="./Jul20NoPhoton_5_30/";
+//const std::string Dir="./Jul20ALL_5_30/";
+//const std::string Dir="./CondorHiggs_5_30/";
+//const std::string Dir="./Condor5M_5_30/";
+//const std::string Dir="./Jul163M_5_30_temp/";
 const std::string TitleLable="5_30";
 
 
 int main ( int argc, char *argv[] )
 {
 
+  TH1::AddDirectory(kFALSE);
 //----------------------------------------------------------------------------
 //  PU Vector
 //----------------------------------------------------------------------------
   std::vector<std::string> VPU;
   VPU.push_back("NoPileUp");
-  //VPU.push_back("50PileUp");
-  //VPU.push_back("140PileUp");
+  VPU.push_back("50PileUp");
+  VPU.push_back("140PileUp");
 
 //----------------------------------------------------------------------------
 //  Cut to check
 //----------------------------------------------------------------------------
   std::vector<std::string> VCut;
-  VCut.push_back("NoCut");
-  VCut.push_back("CTVBF");
-  VCut.push_back("CTJ1");
-  VCut.push_back("CTJ2");
-  VCut.push_back("CTMjj");
-  VCut.push_back("CTJ3");
-  VCut.push_back("CTBJ");
-  VCut.push_back("CTLep");
-  VCut.push_back("CTMet200");
+  //VCut.push_back("NoCut");
+  //VCut.push_back("CTVBF");
+  //VCut.push_back("CTJ1");
+  //VCut.push_back("CTJ2");
+  //VCut.push_back("CTMjj");
+  //VCut.push_back("CTJ3");
+  //VCut.push_back("CTBJ");
+  //VCut.push_back("CTLep");
+  //VCut.push_back("CTMet200");
   VCut.push_back("AllCut");
 
 //----------------------------------------------------------------------------
@@ -102,6 +111,8 @@ int Plot (std::string PU, std::string Cut)
   //TopStyle();
   StopStyle();
 
+  //const std::string nostk = "";
+  const std::string nostk = "noStack";
   std::cout <<  "  ======================  PileUp : " << PU << std::endl;
 
   std::vector<std::string> order; // Order of the cut  
@@ -127,25 +138,39 @@ int Plot (std::string PU, std::string Cut)
 
   if (hisIdx == -1) return 0;
 
-  TString Label = "14TEV_" + PU + "_" + TitleLable;
+  //TString Label = "14TEV_" + PU + "_" + TitleLable;
+  TString Label = "14TEV_" + PU + "_" + TitleLable+ "_BJ";
 
   std::map<std::string, HTSample*> MCSample;
   // Initial the process
-  MCSample["Wino200"] = new HTSample(Dir, "Wino200_14TeV", PU);
-  MCSample["Wino500"] = new HTSample(Dir, "Wino500_14TeV", PU);
-  MCSample["TTbar"] = new HTSample(Dir, "TT_14TEV_HT", PU);
-  MCSample["B"] = new HTSample(Dir, "B_14TEV_HT", PU);
-  MCSample["BJ"] = new HTSample(Dir, "BJ_14TEV_HT", PU);
-  MCSample["BJJ"] = new HTSample(Dir, "BJJ_14TEV_HT", PU);
-
+  MCSample["Wino200"] = new HTSample(Dir, "Wino200_14TeV",    PU);
+  MCSample["Wino500"] = new HTSample(Dir, "Wino500_14TeV",    PU);
+  MCSample["TT"]      = new HTSample(Dir, "TT_14TEV_HT",      PU);
+  MCSample["B"]       = new HTSample(Dir, "B_14TEV_HT",       PU);
+  MCSample["BJ"]      = new HTSample(Dir, "BJ_14TEV_HT",      PU);
+  MCSample["BJJ"]     = new HTSample(Dir, "BJJ_14TEV_HT",     PU);
+  MCSample["W"]       = new HTSample(Dir, "W*_14TEV_HT",      PU);
+  MCSample["Z"]       = new HTSample(Dir, "Z*_14TEV_HT",      PU);
+  MCSample["H"]       = new HTSample(Dir, "H*_14TEV_HT",      PU);
+  MCSample["Photon"]  = new HTSample(Dir, "Photon*_14TEV_HT", PU);
+  MCSample["TTBAR"]  = new HTSample(Dir, "TTBAR_13TEV", PU);
+  MCSample["WJETS"]  = new HTSample(Dir, "WJETS_13TEV", PU);
+  MCSample["ZJETS"]  = new HTSample(Dir, "ZJETS_13TEV", PU);
 
   // Set the option for each process
-  MCSample["Wino200"]->SetOptions(true, 7);
-  MCSample["Wino500"]->SetOptions(true, 3);
-  MCSample["TTbar"]->SetOptions(false, 93);
-  MCSample["B"]->SetOptions(false, 2);
-  MCSample["BJ"]->SetOptions(false, 43);
-  MCSample["BJJ"]->SetOptions(false, 73);
+  MCSample["Wino200"] -> SetOptions(true, 7);
+  MCSample["Wino500"] -> SetOptions(true, 3);
+  MCSample["TT"]   -> SetOptions(false, 93);
+  MCSample["W"]       -> SetOptions(false, 2);
+  MCSample["Z"]       -> SetOptions(false, 7);
+  MCSample["H"]       -> SetOptions(false, 4);
+  MCSample["Photon"]  -> SetOptions(false, 5);
+  MCSample["B"]       -> SetOptions(false, 2);
+  MCSample["BJ"]      -> SetOptions(false, 43);
+  MCSample["BJJ"]     -> SetOptions(false, 73);
+  //MCSample["TTBAR"]     -> SetOptions(false, 73);
+  MCSample["WJETS"]     -> SetOptions(false, 53);
+  MCSample["ZJETS"]     -> SetOptions(false, 33);
 
   for(std::map<std::string, HTSample*>::iterator it=MCSample.begin();
     it!=MCSample.end(); it++)
@@ -159,18 +184,36 @@ int Plot (std::string PU, std::string Cut)
   //----------------------------------------------------------------------------
   std::vector<std::string> ProList; 
   ProList.push_back("Wino200");
-  ProList.push_back("Wino500");
-  ProList.push_back("TTbar");
-  ProList.push_back("B");
-  ProList.push_back("BJ");
-  ProList.push_back("BJJ");
+  //ProList.push_back("Wino500");
+  //ProList.push_back("TTBAR");
+  //ProList.push_back("WJETS");
+  //ProList.push_back("ZJETS");
+  ProList.push_back("TT");
+  //ProList.push_back("B");
+  //ProList.push_back("BJ");
+  //ProList.push_back("BJJ");
+  ProList.push_back("H");
+  ProList.push_back("Photon");
+  ProList.push_back("W");
+  ProList.push_back("Z");
 
+  BOOST_FOREACH(std::string pro, ProList)
+  {
+    
+      TH1F* h = MCSample[pro]->GetTH1("CMet", 0);
+
+      std::cout << " PRo " << pro << " : " << h->Integral() << std::endl;
+  }
+
+  //return true;
   //----------------------------------------------------------------------------
   //  Get the list of containing Hist
   //----------------------------------------------------------------------------
   std::vector<std::string> passive_var;
-  passive_var.push_back("CMet");
-  passive_var.push_back("MJJ");
+  passive_var.push_back("RawMet");
+  passive_var.push_back("Met");
+    //passive_var = GetAllHis("./Condor5M_5_30/Wino200_14TeV_NoPileUp.root");
+  //passive_var.push_back("MJJ");
 
   //The canvas to draw plots
   TCanvas *c1 = new TCanvas("cn", "Canvas", 600, 500);
@@ -181,7 +224,7 @@ int Plot (std::string PU, std::string Cut)
   for (std::vector<std::string>::iterator hit = passive_var.begin();
       hit != passive_var.end(); hit++ )
   {
-    std::cout << " Drawing His : " << *hit << std::endl;
+    std::cout << " Drawing His : " << *hit <<" at " <<hisIdx << std::endl;
     //if (*hit != "CMet") continue;
     //Preparing for making this plot
     //std::cout << "Ploting " << *hit << std::endl;
@@ -191,54 +234,67 @@ int Plot (std::string PU, std::string Cut)
     c1->SetLogy();
 
     std::vector<TH1F*> Stackh; //Keep all the stack histograms in this loop
+    //std::map<std::string, TH1F*>  MCHis;
     THStack *BGstack = new THStack(hit->c_str(), hit->c_str());
     THStack *SNstack = new THStack(hit->c_str(), hit->c_str());
 
     //double maxy = 0;
     //double miny = 0;
     //TAxis* yaix = 0;
-    // Add Legend?? Need a better handling of this
-    TLegend *f = new TLegend(0.6862416,0.5995763,0.9228188,0.8940678,NULL,"brNDC");
+    TLegend *f = new TLegend(0.6879195,0.6525424,0.9244966,0.9470339,NULL,"brNDC");
     f->SetBorderSize(0);
     f->SetFillStyle(0); //transparent hollow?
     f->SetTextFont(62); 
     f->SetTextSize(0.045);
 
     //// Add to the plot the S/B ratio
-    //TPaveText *pt = 0;
-    //if (NSignal.size() == 1)
-    //{
-    //pt = new TPaveText(0.7080537,0.9194915,0.9077181,0.9745763,"brNDC");
-    //pt->SetFillColor(0);
-    //pt->SetBorderSize(0);
-    //pt->SetTextSize(0.05);
-    //TString Tsb =  Form( "S/#sqrt{S+B} = %.1f", sb);
-    //pt->AddText(Tsb);
-    //}
+    TPaveText *pt = 0;
+    pt = new TPaveText(0.2416107,0.845339,0.4412752,0.9237288,"brNDC");
+    pt->SetFillColor(0);
+    pt->SetBorderSize(0);
+    pt->SetTextSize(0.04);
+    pt->SetTextColor(4);
+    pt->AddText("14 TeV, 500 fb^{-1}");
+    pt->AddText("Snowmass detector");
 
     std::string Xlabel;
     for(std::vector<std::string>::iterator it=ProList.begin();
         it!=ProList.end(); it++)
     {
 
-      TH1F* h = MCSample[*it]->GetTH1(*hit, hisIdx);
-      if (*hit == "MJJ") h->Rebin(10);
-
-      std::cout << "NA : " << h->GetTitle() << " from : " << *it<< std::endl;
+      //TH1F* h = MCSample[*it]->GetTH1("CMet_9");
+      TH1F* h = MCSample[*it]->GetTH1(*hit);
+      //TH1F* h = MCSample[*it]->GetTH1(*hit, hisIdx);
+      //if (*hit == "MJJ") h->Rebin(10);
+      //if (*hit == "CMet") h->Rebin(2);
+      
+      std::cout << "NA : " << h->GetTitle() << " from : " << *it << "int " << h->Integral()<< std::endl;
       f->AddEntry(h, it->c_str(), "fl");
       Xlabel = h->GetTitle();
-      h->SetTitle(Label.Data());
-      h->SetLineWidth(3);
+      //h->SetTitle(Label.Data());
+      h->SetTitle("");
       if (MCSample[*it]->isSignal)
       {
         h->SetLineWidth(3);
         h->SetLineStyle(MCSample[*it]->Color);
       }
       else
-        h->SetLineColor(MCSample[*it]->Color);
-        //h->SetFillColor(MCSample[*it]->Color);
+      {
 
-      //h->SetLineColor(1);
+        if (nostk == "noStack")
+        {
+          h->SetLineWidth(3);
+          h->SetLineColor(MCSample[*it]->Color);
+        }
+        else
+        {
+          h->SetFillColor(MCSample[*it]->Color);
+          h->SetLineColor(1);
+
+        }
+
+      }
+
       //h->SetLineColor(it->Color);
       // Now let us rescale it 
       //if (*hit == "CMet") h->Rebin(5);
@@ -246,7 +302,7 @@ int Plot (std::string PU, std::string Cut)
       //if (h->Integral() <= 0)
       //continue;
 
-      std::cout << " INtegral " << h->Integral() << std::endl;
+      //std::cout << " INtegral " << h->Integral() << std::endl;
       Stackh.push_back(h);
       if (MCSample[*it]->isSignal) SNstack->Add(h);
       else BGstack->Add(h);
@@ -254,12 +310,13 @@ int Plot (std::string PU, std::string Cut)
       BGstack->SetTitle(h->GetTitle());
     }
 
-    BGstack->SetMinimum(0.01);
-    BGstack->Draw("noStack");
+    BGstack->SetMaximum(10*BGstack->GetMaximum());
+    //BGstack->SetMinimum(0.1);
+    BGstack->Draw(nostk.c_str());
     BGstack->GetXaxis()->SetTitle(Xlabel.c_str());
     if (*hit == "CMet") BGstack->GetXaxis()->SetLimits(0, 600);
     SNstack->Draw("noStacksame");
-    //if (pt != 0) pt->Draw();
+    if (pt != 0) pt->Draw();
     f->Draw();
 
     //Print out the plots
@@ -274,14 +331,14 @@ int Plot (std::string PU, std::string Cut)
     //----------------------------------------------------------------------------
     //  Clean out the memory
     //----------------------------------------------------------------------------
-    for(std::vector<TH1F*>::iterator it=Stackh.begin();
-        it!=Stackh.end(); it++)
-    {
-      delete *it;
-    }
-    delete BGstack;
-    delete SNstack;
-    delete f;
+    //for(std::vector<TH1F*>::iterator it=Stackh.begin();
+        //it!=Stackh.end(); it++)
+    //{
+      //delete *it;
+    //}
+    //delete BGstack;
+    //delete SNstack;
+    //delete f;
   }
   delete c1;
   return 1;
@@ -305,7 +362,7 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
 
     TH1F* temp = (TH1F*)BGstack->GetStack()->At(BGstack->GetStack()->GetEntries()-1);
 
-    std::cout << " name " << temp->GetName() << " int "<< temp->Integral() << std::endl;
+    //std::cout << " name " << temp->GetName() << " int "<< temp->Integral() << std::endl;
     bk += temp->Integral();
     
     std::cout << " bk " << bk << std::endl;
@@ -314,7 +371,8 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
 
 
     temp = (TH1F*)SNstack->GetStack()->At(0);
-    std::cout << " signal " << 0<< " int " << temp->Integral() << std::endl;
+    //TH1F* temp = (TH1F*)SNstack->GetStack()->At(0);
+    //std::cout << " signal " << 0<< " int " << temp->Integral() << std::endl;
     std::cout << " SB "<< SBWithSys(temp->Integral(), bk) << std::endl;
 
 
@@ -325,7 +383,7 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
     TH1F* temp2 = (TH1F*)SNstack->GetStack()->At(i);
 
 
-    std::cout << " signal " << i<< " int " << temp2->Integral() - temp1->Integral() << std::endl;
+    //std::cout << " signal " << i<< " int " << temp2->Integral() - temp1->Integral() << std::endl;
     std::cout << " SB "<< SBWithSys(temp2->Integral() - temp1->Integral(), bk) << std::endl;
     //std::cout << " name " << temp->GetName() << " int "<< temp->Integral() << std::endl;
     //bk += temp->Integral();
@@ -349,12 +407,12 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
 // ===========================================================================
 double SBWithSys(double sig, double background)
 {
-  //double sys = 0; // 10% systematics
+  double sys = 0; // 10% systematics
   //double sys = 0.01; // 10% systematics
-  double sys = 0.1; // 10% systematics
+  //double sys = 0.1; // 10% systematics
 
   double domi = background + pow(sys*background, 2);
-  return sig/sqrt(domi);
+  return sig/sqrt(sig+domi);
   //return sig/sqrt(sig+domi);
   
 }       // -----  end of function SBWithSys  -----
@@ -505,8 +563,9 @@ double SBWithSys(double sig, double background)
   delete c1;
   return EXIT_SUCCESS;
 }				// ----------  end of function main  ----------
+*/
 
-std::vector<string> GetAllHis (std::vector<MCsample> ProList)
+std::vector<std::string> GetAllHis (std::string fname)
 {
 
   //Similar as LoadFile(), but just looking at the first file so far
@@ -518,12 +577,12 @@ std::vector<string> GetAllHis (std::vector<MCsample> ProList)
   //Loading of the root file list containig the Method2Info objects
   //Now loop over the samples in the list and read in the information
 
-  TFile m2File(ProList.begin()->Fname.c_str(),"R");
+  TFile m2File(fname.c_str(),"R");
   TIter next (m2File.GetListOfKeys());
   std::map<std::string, int> variable;
   std::vector<std::string> varVec;
   TKey *key;
-  //    std::string name;
+      std::string name;
   while ((key= (TKey*) next()))
   {
     std::string stdname=key->GetName();
@@ -536,10 +595,10 @@ std::vector<string> GetAllHis (std::vector<MCsample> ProList)
     if (it->first.find_last_of("_") == std::string::npos)
     {
       varVec.push_back(it->first);
-      //std::cout << " it->first" << it->first  << std::endl;
+      std::cout << " it->first" << it->first  << std::endl;
     }
   }
   varVec.push_back("CMet");
   return varVec;
-}		// -----  end of method MethodIICalc::GetAllHisFromM2Info  -----
-*/
+}		 //-----  end of method MethodIICalc::GetAllHisFromM2Info  -----
+

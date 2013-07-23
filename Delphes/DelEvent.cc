@@ -217,7 +217,7 @@ bool DelEvent::JetSel(Jet j)
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelEvent::JetCor
-//  Description:  
+//  Description:  Memory leak
 // ===========================================================================
 Jet* DelEvent::JetCor(Jet jet, TLorentzVector CorVet)
 {
@@ -508,7 +508,6 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
         TClonesArray *branchHt, TClonesArray *branchParticle)
 {
-  //std::cout << " Get branch? " << branchJet->GetEntries()<< std::endl;
   //First, clean out the local event
   CleanEvent();
   
@@ -525,10 +524,8 @@ bool DelEvent::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   LoadScalarHT(branchHt);
 
   CalPUCorMet();
-  //Whether this event is preselected?
-  //return PreSelected();
+
   return true;
-  
 }       // -----  end of function DelEvent::LoadEvent  -----
 
 
@@ -570,8 +567,8 @@ double DelEvent::GenMet()
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelEvent::CorLepJet
-//  Description:  For jet that matched to the lepton in the event, do
-//  something!
+//  Description:  For jet that matched to the lepton or photons in the event,
+//  do something!
 //  ==> Normally the Delphes samples has the unique object block to remove
 //  these overlap. But for Delphes3.0.9 0PU samples, this is not true. So we
 //  need this step.
@@ -609,7 +606,19 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     }
   }
 
-  return false;
+  for (int i = 0; i < vPhoton.size(); ++i)
+  {
+    Photon pho = vPhoton.at(i);
+    if (jet->P4().DeltaR(pho.P4()) < 0.4)
+    {
+      if (pho.P4().E()/jet->P4().E() > 0.9)
+        RMjet.insert(i);
+      else
+        CRJet[i] = pho.P4();
+      break;
+    }
+  }
 
+  return false;
 }       // -----  end of function DelEvent::CorLepJet  -----
 

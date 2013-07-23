@@ -80,7 +80,7 @@ bool MCHis::GetScale(const int Lumi)
   TH1F* hisxs = (TH1F*)File->Get("CrossSection");
   double xs = hisxs->GetBinContent(hisxs->FindBin(1));
   TH1F* hisevt = (TH1F*)File->Get("NEVT");
-  double evt = hisevt->GetBinContent(hisevt->FindBin(1));
+  double evt = hisevt->GetEntries();
   Scale = Lumi*xs/evt;
   //std::cout << " File name " << File->GetName() << " event " << evt << " scale " << xs/evt<< std::endl;
   return true;

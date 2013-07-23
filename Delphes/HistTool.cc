@@ -460,8 +460,12 @@ int HistTool::AddTH2C (const std::string name, const std::string title,
   for (Long_t i = 0; i < CutSize; ++i)
   {
     TString mapname = name+"_"+i;
-    TString maptitle = title+" ("+order.at(i)+")" + ":" + xlabel + ":" + ylabel;
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
+    TString xlb, ylb;
+    if (logx) xlb = "log_"+xlabel;
+    else xlb = xlabel;
+    if (logy) ylb = "log_"+ylabel;
+    else ylb = ylabel;
+    TString maptitle = title+" ("+order.at(i)+")" + ";" + xlb + ";" + ylb;
     HisMap2D[mapname.Data()] = new TH2D(mapname.Data(), maptitle.Data(), nxbins,
         xmin, xmax, nybins, ymin, ymax);
   }
@@ -480,8 +484,6 @@ int HistTool::AddTH2C (const std::string name, const std::string title,
   {
     TString mapname = name+"_"+i;
     TString maptitle = title+" ("+order.at(i)+")";
-    double binsize = static_cast<int>((xmax-xmin)/nxbins);
-
 
     HisMap2D[mapname.Data()] = new TH2D(mapname.Data(), maptitle.Data(), 
         nxbins, xmin, xmax, nybins, ymin, ymax);
@@ -503,7 +505,13 @@ TH2D* HistTool::AddTH2 (const std::string name, const std::string title,
     Int_t logx, Int_t logy)
 {
 
-  HisMap2D[name.c_str()] = new TH2D(name.c_str(), title.c_str(), 
+  TString xlb, ylb;
+  if (logx) xlb = "log_"+xlabel;
+  else xlb = xlabel;
+  if (logy) ylb = "log_"+ylabel;
+  else ylb = ylabel;
+  TString Title = title +";"+xlb+";"+ylb;
+  HisMap2D[name.c_str()] = new TH2D(name.c_str(), Title.Data(), 
       nxbins, xmin, xmax, nybins, ymin, ymax);
   return HisMap2D[name.c_str()];
 }       // -----  end of function HistTool::AddTH2C  -----
@@ -518,12 +526,11 @@ TH2D* HistTool::AddTH2 (const std::string name, const std::string title,
   
   HisMap2D[name.c_str()] = new TH2D(name.c_str(), title.c_str(), nxbins, 
       xmin, xmax , nybins, ymin, ymax);
-
   return HisMap2D[name.c_str()];
 }       // -----  end of function HistTool::AddTH2  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  HistTool::::FillTH2
+//         Name:  HistTool::FillTH2
 //  Description:  
 // ===========================================================================
 int HistTool::FillTH2(int Ncut, std::string HisName, double xvalue, double yvalue, double weight)
@@ -607,6 +614,8 @@ int HistTool::DrawTH2()
   {
     c1->cd();
     c1->Clear();
+    //it->second->SetMarkerStyle(7);
+    //it->second->SetMarkerSize(1.5);
     it->second->Draw();
     TString picname = prefix + "_" + it->second->GetName() + ".png";
     c1->Print(picname);

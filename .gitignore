@@ -36,6 +36,7 @@ CMSFill
 DelFill
 CutTable
 HistStack
+HTadd
 
 ## Ignore cscope and ctags files
 cscope.*

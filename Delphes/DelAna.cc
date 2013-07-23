@@ -107,6 +107,8 @@ bool DelAna::Clear()
   Weight = 1.0;
   RawMet.Set(0.0, 0.0);
   RHT = 0.0;
+  Met = -999;
+  METAsys = -99;
   DelHT = -999.;
 }       // -----  end of function DelAna::Clear  -----
 
@@ -119,6 +121,8 @@ int DelAna::GetBasic()
   DelHT = DEV->DelHT;
   Met   = PUCorMet->Mod();
   RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
+  METAsys = std::fabs(Met - RawMet.Mod())/(Met + RawMet.Mod());
+
   if (vJet->size() > 0) J1 = &vJet->at(0);
   if (vJet->size() > 1) 
   {

@@ -106,10 +106,6 @@ class DPhes
     TClonesArray *branchMuon;
     TClonesArray *branchMet;
     TClonesArray *branchHt;
-    // Temp for 0PU , not in 140PU
-    TClonesArray *branchEFlowTower;
-    TClonesArray *branchEFlowTrack;
-
 
 
     // Define event

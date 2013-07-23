@@ -98,10 +98,6 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   branchMet        = 0;
   branchHt         = 0;
   branchParticle   = 0;
-  //
-  // Temp for 0PU , not in 140PU
-  branchEFlowTower = 0;
-  branchEFlowTrack = 0;
 
   Process = process;
   PU = pu;
@@ -208,64 +204,64 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
     DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV);
-    //MDelCut["Default"] = new DelCut(ANA, name.Data());
+    MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
-////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Higgs+Jets ~~~~~
-    //tempname = ModifiedPreName(name, "B", "H");
-    //MDelCut["H"] = new DelCut(ANA, tempname.Data());
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Higgs+Jets ~~~~~
+    tempname = ModifiedPreName(name, "B", "H");
+    MDelCut["H"] = new DelCut(ANA, tempname.Data());
 
-////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ W + Jets ~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ W + Jets ~~~~~
     tempname = ModifiedPreName(name, "B", "W");
     MDelCut["W"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Wev");
-    //MDelCut["Wev"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Wev");
+    MDelCut["Wev"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Wmv");
-    //MDelCut["Wmv"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Wmv");
+    MDelCut["Wmv"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Wtv");
-    //MDelCut["Wtv"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Wtv");
+    MDelCut["Wtv"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Wlv");
-    //MDelCut["Wlv"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Wlv");
+    MDelCut["Wlv"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Whad");
-    //MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Whad");
+    MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
 
-////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z + Jets ~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z + Jets ~~~~~
     tempname = ModifiedPreName(name, "B", "Z");
     MDelCut["Z"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Zee");
-    //MDelCut["Zee"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Zee");
+    MDelCut["Zee"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Zmm");
-    //MDelCut["Zmm"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Zmm");
+    MDelCut["Zmm"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Ztt");
-    //MDelCut["Ztt"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Ztt");
+    MDelCut["Ztt"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Zll");
-    //MDelCut["Zll"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Zll");
+    MDelCut["Zll"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Zvv");
-    //MDelCut["Zvv"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Zvv");
+    MDelCut["Zvv"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Zhad");
-    //MDelCut["Zhad"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Zhad");
+    MDelCut["Zhad"] = new DelCut(ANA, tempname.Data());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Photon + Jets ~~~~~
     tempname = ModifiedPreName(name, "B", "Photon");
     MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
-    //tempname = ModifiedPreName(name, "B", "MetDiMuon");
-    //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "MetDiMuon");
+    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "MetDiEle");
-    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "MetDiEle");
+    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }
@@ -301,8 +297,6 @@ int DPhes::ReadDelPhes()
   branchMet        = treeReader->UseBranch("MissingET");
   branchHt         = treeReader->UseBranch("ScalarHT");
   branchParticle   = treeReader->UseBranch("Particle");
-  branchEFlowTower  = treeReader->UseBranch("EFlowTower");
-  branchEFlowTrack  = treeReader->UseBranch("EFlowTrack");
 }       // -----  end of function DPhes::ReadDelPhes  -----
 
 
@@ -333,49 +327,13 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
+    //if (entry > 5000 ) break;
     if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
     // Load selected branches with data from specified event
     if (! treeReader->ReadEntry(entry)) break;
     entry++;
-
-      std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++" << entry << std::endl;
-    std::cout << "All EFlowTower without cut -------------------------------------------" << std::endl;
-    for (int i = 0; i < branchEFlowTower->GetEntries(); ++i)
-    {
-      Tower *p = (Tower*)branchEFlowTower->At(i);
-
-      std::cout
-        << std::setw(5) << " i:  "   << std::setw(3) << i
-        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
-        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
-        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
-        << std::setw(5) << " E  " << std::setw(8) << p->E
-        << std::setw(5) << " PT  "   << std::setw(8) << p->P4().Pt()
-        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
-        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
-        << std::endl;
-
-    }
-
-    std::cout << "All EFlowTrack without cut -------------------------------------------" << std::endl;
-    for (int i = 0; i < branchEFlowTrack->GetEntries(); ++i)
-    {
-      Track *p = (Track*)branchEFlowTrack->At(i);
-
-      std::cout
-        << std::setw(5) << " i:  "   << std::setw(3) << i
-        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
-        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
-        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
-        << std::setw(5) << " PID  " << std::setw(8) << p->PID
-        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
-        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
-        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
-        << std::endl;
-
-    }
 
     //----------------------------------------------------------------------------
     //  Loading the current event and perform general calculations in DelAna.
@@ -404,11 +362,6 @@ int DPhes::Looping()
         it->second->FillCut();
       }
     } 
-      std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++" << entry << std::endl;
-      std::cout << std::endl;
-      std::cout << std::endl;
-      std::cout << std::endl;
-      std::cout << std::endl;
   }
   return 1;
 }       // -----  end of function DPhes::Looping  -----
@@ -422,7 +375,7 @@ int DPhes::PostLooping()
   for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
       it!=MDelCut.end(); it++)
   {
-    it->second->DrawHistogram();
+    //it->second->DrawHistogram();
     it->second->WriteHistogram();
   } 
   return 1;

@@ -217,7 +217,7 @@ bool DelEvent::JetSel(Jet j)
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelEvent::JetCor
-//  Description:  Memory leak
+//  Description:  
 // ===========================================================================
 Jet* DelEvent::JetCor(Jet jet, TLorentzVector CorVet)
 {

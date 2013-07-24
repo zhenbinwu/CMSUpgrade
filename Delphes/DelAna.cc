@@ -22,9 +22,10 @@
 //      Method:  DelAna
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelAna::DelAna (DelEvent *DE)
+DelAna::DelAna (DelEvent *DE, std::string pileup_)
 {
   DEV = DE;
+  PileUp = pileup_;
 
   vEvent = &DEV->vEvent;
   vGenParticle = &DEV->vGenParticle;
@@ -233,3 +234,22 @@ bool DelAna::MetDiLepton()
   return true;
 }       // -----  end of function DelAna::DiLepton  -----
 
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::METMHTAsys
+//  Description:  For HTBin sample, we found that there are jets missing in
+//  the event, which cause much larger MHT than expected. For detail, check my
+//  elog:  http://hep.baylor.edu/elog/benwu/943
+//  In order to supress this problem, we calculate the METMHTAsys by
+//  |MHT-MET|/(MHT+MET) and choose the cut value for different PU case
+//  as from elog:http://hep.baylor.edu/elog/benwu/947 
+// ===========================================================================
+bool DelAna::METMHTAsys() const
+{
+  double AsysCut = -99;
+  if (PileUp == "NoPileUp") AsysCut = 0.2;
+  if (PileUp == "50PileUp") AsysCut = 0.3;
+  if (PileUp == "140PileUp") AsysCut = 0.5;
+  assert(AsysCut != -99.);
+  return METAsys < AsysCut;
+}       // -----  end of function DelAna::METMHTAsys  -----

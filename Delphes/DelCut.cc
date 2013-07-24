@@ -401,6 +401,8 @@ bool DelCut::CheckDMCut(std::bitset<10> cutflag)
 //----------------------------------------------------------------------------
   if (cutflag.test(0)) 
   {
+    if (!Ana->METMHTAsys())  return false;
+
     if (Ana->vJet->size() < 2) return false;
     // This function may be called from Loop.
     // returns  1 if entry is accepted.

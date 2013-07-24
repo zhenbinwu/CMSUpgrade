@@ -36,7 +36,7 @@ class DelAna
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelAna (DelEvent *DEV);        /* constructor      */
+    DelAna (DelEvent *DEV, std::string PileUp);  /* constructor      */
     DelAna (const DelAna &other ); /* copy constructor */
     ~DelAna ();                    /* destructor       */
 
@@ -47,6 +47,7 @@ class DelAna
     int GetBasic();
     bool MetDiLepton();
 
+    bool METMHTAsys() const;
     /* ====================  MUTATORS      ======================================= */
 
     /* ====================  OPERATORS     ======================================= */
@@ -95,6 +96,7 @@ class DelAna
     /* ====================  DATA MEMBERS  ======================================= */
 
   private:
+    std::string PileUp;
     std::string CurrentTag;
 
 }; /* -----  end of class DelAna  ----- */

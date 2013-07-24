@@ -140,7 +140,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
     DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV);
+    ANA = new DelAna(DEV, pu);
 
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
@@ -164,7 +164,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   if (process.find("TT") != std::string::npos)
   {
     DEV = new DelTT(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV);
+    ANA = new DelAna(DEV, pu);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
@@ -189,7 +189,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   if (process.find("Wino") != std::string::npos)
   {
     DEV = new DelWino(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV);
+    ANA = new DelAna(DEV, pu);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
     return 1;
   }
@@ -203,7 +203,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
   {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
     DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV);
+    ANA = new DelAna(DEV, pu);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
@@ -270,7 +270,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
 //  Default
 //----------------------------------------------------------------------------
   DEV = new DelEvent(PUCorJetEta, PUCorJetPt);
-  ANA = new DelAna(DEV);
+  ANA = new DelAna(DEV, pu);
   MDelCut[process] = new DelCut(ANA, name.Data());
   return 1;
 }       // -----  end of function DPhes::SetPreName  -----
@@ -284,7 +284,6 @@ int DPhes::ReadDelPhes()
 
   // Create object of class ExRootTreeReader
   treeReader = new ExRootTreeReader(fChain);
-
 
   // Get pointers to branches used in this analysis
   branchEvent      = treeReader->UseBranch("Event");

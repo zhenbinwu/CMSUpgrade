@@ -285,7 +285,6 @@ int DPhes::ReadDelPhes()
   // Create object of class ExRootTreeReader
   treeReader = new ExRootTreeReader(fChain);
 
-
   // Get pointers to branches used in this analysis
   branchEvent      = treeReader->UseBranch("Event");
   branchJet        = treeReader->UseBranch("Jet");

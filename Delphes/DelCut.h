@@ -60,11 +60,11 @@ class DelCut
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
-    bool CutFlow(std::bitset<10> cutbit);
-    bool CheckCut(std::bitset<10> cutflag);
-    bool CheckPhenoCut(std::bitset<10> cutflag);
-    bool CheckDMCut(std::bitset<10> cutflag);
-    bool CheckHiggsCut(std::bitset<10> cutflag);
+    bool CutFlow(std::bitset<20> cutbit);
+    bool CheckCut(std::bitset<20> cutflag);
+    bool CheckPhenoCut(std::bitset<20> cutflag);
+    bool CheckDMCut(std::bitset<20> cutflag);
+    bool CheckHiggsCut(std::bitset<20> cutflag);
 
   private:
     /* ====================  DATA MEMBERS  ======================================= */

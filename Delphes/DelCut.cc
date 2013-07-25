@@ -87,8 +87,6 @@ bool DelCut::BookHistogram()
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
 
-  His->AddTH1("Met", "Met", "#slash{H}_{T} [GeV]", 
-      "Events / 5 GeV",  400, 0, 2000, 0, 1);
   His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", 
       "Events / 5 GeV",  280, 0, 1400, 0, 1);
 
@@ -193,27 +191,39 @@ bool DelCut::InitCutOrder(std::string ana)
    {
      CutOrder.clear();
      CutMap.clear();
+
      CutOrder.push_back("NoCut");
-     CutOrder.push_back("CTVBF");
-     CutOrder.push_back("CTJ1");
-     CutOrder.push_back("CTJ2");
-     CutOrder.push_back("CTMjj");
-     CutOrder.push_back("CTJ3");
-     CutOrder.push_back("CTDPhi");
-     CutOrder.push_back("CTLep");
-     CutOrder.push_back("CTMet130");
+     CutOrder.push_back("Trigger");
+     CutOrder.push_back("METfilter");
+     CutOrder.push_back("Eveto");
+     CutOrder.push_back("Mveto");
+     CutOrder.push_back("JetPt");
+     CutOrder.push_back("JetEta");
+     CutOrder.push_back("dEta");
+     CutOrder.push_back("MET130");
+     CutOrder.push_back("MJJ");
+     CutOrder.push_back("CJV");
+     CutOrder.push_back("dPhi");
+     CutOrder.push_back("Tveto");
+     CutOrder.push_back("Bveto");
      CutOrder.push_back("AllCut");
 
-     CutMap["NoCut"]    = "0000000000";
-     CutMap["CTVBF"]    = "0000000001";
-     CutMap["CTJ1"]     = "0000000011";
-     CutMap["CTJ2"]     = "0000000111";
-     CutMap["CTMjj"]    = "0000001111";
-     CutMap["CTJ3"]     = "0000011111";
-     CutMap["CTDPhi"]   = "0000111111";
-     CutMap["CTLep"]    = "0001111111";
-     CutMap["CTMet130"] = "0011111111";
-     CutMap["AllCut"]   = "1111111111";
+
+     CutMap["NoCut"]     = "000000000000000";
+     CutMap["Trigger"]   = "000000000000001";
+     CutMap["METfilter"] = "000000000000011";
+     CutMap["Eveto"]     = "000000000000111";
+     CutMap["Mveto"]     = "000000000001111";
+     CutMap["JetPt"]     = "000000000011111";
+     CutMap["JetEta"]    = "000000000111111";
+     CutMap["dEta"]      = "000000001111111";
+     CutMap["MET130"]    = "000000011111111";
+     CutMap["MJJ"]       = "000000111111111";
+     CutMap["CJV"]       = "000001111111111";
+     CutMap["dPhi"]      = "000011111111111";
+     CutMap["Tveto"]     = "000111111111111";
+     CutMap["Bveto"]     = "001111111111111";
+     CutMap["AllCut"]    = "011111111111111";
    }
 
    assert(CutOrder.size() == CutMap.size());
@@ -225,7 +235,7 @@ bool DelCut::InitCutOrder(std::string ana)
 //         Name:  DelCut::CutFlow
 //  Description:  
 // ===========================================================================
-bool DelCut::CutFlow(std::bitset<10> cutbit)
+bool DelCut::CutFlow(std::bitset<20> cutbit)
 {
 
   return 1;
@@ -270,7 +280,7 @@ int DelCut::FillCut()
 
   for (int i = 0; i < CutOrder.size(); ++i)
   {
-    std::bitset<10> locbit(CutMap[CutOrder.at(i)]);
+    std::bitset<20> locbit(CutMap[CutOrder.at(i)]);
     if (CheckCut(locbit) == false) continue;
     // For HTBin sample, the cutflow should fill with event weight
     His->FillTH1("CutFlow", i); 
@@ -286,7 +296,7 @@ int DelCut::FillCut()
 //         Name:  DelCut::CheckCut
 //  Description:  
 // ===========================================================================
-bool DelCut::CheckCut(std::bitset<10> cutflag)
+bool DelCut::CheckCut(std::bitset<20> cutflag)
 {
   if (AnaCut == "DM") return CheckDMCut(cutflag);
   if (AnaCut == "Higgs") return CheckHiggsCut(cutflag);
@@ -299,52 +309,89 @@ bool DelCut::CheckCut(std::bitset<10> cutflag)
 //         Name:  DelCut::CheckHiggsCut
 //  Description:  HIG-13-013
 // ===========================================================================
-bool DelCut::CheckHiggsCut(std::bitset<10> cutflag)
+bool DelCut::CheckHiggsCut(std::bitset<20> cutflag)
 {
 
 //----------------------------------------------------------------------------
-//  VBF Cut
+//  Trigger, just 2 jet trigger?
 //----------------------------------------------------------------------------
   if (cutflag.test(0)) 
   {
     if (Ana->vJet->size() < 2) return false;
-    // This function may be called from Loop.
-    // returns  1 if entry is accepted.
-    // returns -1 otherwise.
-
-    if (Ana->Met < 50) return false;
-
-    if (Ana->J1->PT < 30 || std::fabs(Ana->J1->Eta) > 5) return false;
-    if (Ana->J2->PT < 30 || std::fabs(Ana->J2->Eta) > 5) return false;
-
-    //
-    // Opposive eta and eta separation
-    //
-    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
-
-    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
-
   }
 
 //----------------------------------------------------------------------------
-//  Leading jet cut
+//  MET Filter
 //----------------------------------------------------------------------------
   if (cutflag.test(1)) 
   {
-    if ( Ana->J1 == 0 || Ana->J1->PT < 50 || std::fabs(Ana->J1->Eta) > 4.7) return false;
+    if (!Ana->METMHTAsys())  return false;
   }
 
+//----------------------------------------------------------------------------
+//  Electron Veto
+//----------------------------------------------------------------------------
   if (cutflag.test(2)) 
   {
+    if (Ana->vElectron->size() > 0) return false;
+  }
+
+//----------------------------------------------------------------------------
+//  Muon Veto
+//----------------------------------------------------------------------------
+  if (cutflag.test(3)) 
+  {
+    if (Ana->vMuon->size() > 0) return false;
+  }
+
+//----------------------------------------------------------------------------
+//  J1 J2 Pt 
+//----------------------------------------------------------------------------
+  if (cutflag.test(4)) 
+  {
+    if ( Ana->J1 == 0 || Ana->J1->PT < 50 || std::fabs(Ana->J1->Eta) > 4.7) return false;
     if ( Ana->J2 == 0 || Ana->J2->PT < 50 || std::fabs(Ana->J2->Eta) > 4.7) return false;
   }
 
-  if (cutflag.test(3)) 
+//----------------------------------------------------------------------------
+//  J1J2 Eta
+//----------------------------------------------------------------------------
+  if (cutflag.test(5)) 
+  {
+    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
+  }
+
+//----------------------------------------------------------------------------
+//  J1 J2 Delta Eta
+//----------------------------------------------------------------------------
+  if (cutflag.test(6)) 
+  {
+    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
+  }
+
+//----------------------------------------------------------------------------
+//  MET 130
+//----------------------------------------------------------------------------
+  if (cutflag.test(7)) 
+  {
+    if (Ana->Met < 130) return false;
+  }
+
+//----------------------------------------------------------------------------
+//  MJJ 
+//----------------------------------------------------------------------------
+
+  if (cutflag.test(8)) 
   {
     if ( Ana->Mjj<1100. ) return false;
   }
 
-  if (cutflag.test(4)) 
+
+//----------------------------------------------------------------------------
+//  Central Jet Veto
+//----------------------------------------------------------------------------
+
+  if (cutflag.test(9)) 
   {
 
     if (Ana->J3 != 0)
@@ -361,29 +408,40 @@ bool DelCut::CheckHiggsCut(std::bitset<10> cutflag)
     }
   }
 
-
-
-  if (cutflag.test(5)) 
+//----------------------------------------------------------------------------
+//  Delta Phi 
+//----------------------------------------------------------------------------
+  if (cutflag.test(10)) 
   {
     double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
     if (  std::fabs(deltaphi) > 1.0  ) return false;
   }
 
 
-  if (cutflag.test(6)) 
+//---------------------------------------------------------------------------
+//  Tau Veto
+//----------------------------------------------------------------------------
+  if (cutflag.test(11)) 
   {
+    // tau veto
     for(std::vector<Jet>::iterator it=Ana->vJet->begin();
       it!=Ana->vJet->end(); it++)
     {
       if (it->TauTag) return false;
     }
-    if (Ana->vElectron->size() > 0) return false;
-    if (Ana->vMuon->size() > 0) return false;
   }
 
-  if (cutflag.test(7)) 
+//---------------------------------------------------------------------------
+//  Tau Veto
+//----------------------------------------------------------------------------
+  if (cutflag.test(12)) 
   {
-    if (Ana->Met < 130) return false;
+    // tau veto
+    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+    {
+      if (it->BTag) return false;
+    }
   }
 
   return true;
@@ -393,7 +451,7 @@ bool DelCut::CheckHiggsCut(std::bitset<10> cutflag)
 //         Name:  DelCut::CheckDMCut
 //  Description:  Cut for Susy VBF DM
 // ===========================================================================
-bool DelCut::CheckDMCut(std::bitset<10> cutflag)
+bool DelCut::CheckDMCut(std::bitset<20> cutflag)
 {
  
 //----------------------------------------------------------------------------
@@ -494,7 +552,7 @@ bool DelCut::CheckDMCut(std::bitset<10> cutflag)
 //         Name:  DelCut::CheckPhenoCut
 //  Description:  
 // ===========================================================================
-bool DelCut::CheckPhenoCut(std::bitset<10> cutflag)
+bool DelCut::CheckPhenoCut(std::bitset<20> cutflag)
 {
 
 //----------------------------------------------------------------------------

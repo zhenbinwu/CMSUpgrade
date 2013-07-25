@@ -335,6 +335,45 @@ int DPhes::Looping()
     if (! treeReader->ReadEntry(entry)) break;
     entry++;
 
+/*
+ *      std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++" << entry << std::endl;
+ *    std::cout << "All EFlowTower without cut -------------------------------------------" << std::endl;
+ *    for (int i = 0; i < branchEFlowTower->GetEntries(); ++i)
+ *    {
+ *      Tower *p = (Tower*)branchEFlowTower->At(i);
+ *
+ *      std::cout
+ *        << std::setw(5) << " i:  "   << std::setw(3) << i
+ *        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+ *        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+ *        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+ *        << std::setw(5) << " E  " << std::setw(8) << p->E
+ *        << std::setw(5) << " PT  "   << std::setw(8) << p->P4().Pt()
+ *        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+ *        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+ *        << std::endl;
+ *
+ *    }
+ *
+ *    std::cout << "All EFlowTrack without cut -------------------------------------------" << std::endl;
+ *    for (int i = 0; i < branchEFlowTrack->GetEntries(); ++i)
+ *    {
+ *      Track *p = (Track*)branchEFlowTrack->At(i);
+ *
+ *      std::cout
+ *        << std::setw(5) << " i:  "   << std::setw(3) << i
+ *        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
+ *        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
+ *        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
+ *        << std::setw(5) << " PID  " << std::setw(8) << p->PID
+ *        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
+ *        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
+ *        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
+ *        << std::endl;
+ *
+ *    }
+ */
+
     //----------------------------------------------------------------------------
     //  Loading the current event and perform general calculations in DelAna.
     //----------------------------------------------------------------------------

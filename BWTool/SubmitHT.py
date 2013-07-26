@@ -6,17 +6,18 @@ import re
 import shutil
 
 DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
+DelExe    = 'DelFill'
 Directory = 'TEST_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 PileUps   = [
     'NoPileUp',
-    '50PileUp',
-    '140PileUp',
+    #'50PileUp',
+    #'140PileUp',
 ]
 Projects  = [
     #'Wino200_14TeV',
     #'Wino500_14TeV',
-    'WJETS_13TEV',
+    #'WJETS_13TEV',
     #'ZJETS_13TEV',
     #'TTBAR_13TEV',
     #'B_14TEV_HT1' ,
@@ -37,6 +38,27 @@ Projects  = [
     #'TT_14TEV_HT3',
     #'TT_14TEV_HT4',
     #'TT_14TEV_HT5',
+    
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
+    #'B_33TEV_HT1',
+    #'BJ_33TEV_HT1',
+    #'BJ_33TEV_HT2',
+    #'BJ_33TEV_HT3',
+    #'BJ_33TEV_HT4',
+    #'BJ_33TEV_HT5',
+    #'BJ_33TEV_HT6',
+    #'BJ_33TEV_HT7',
+    #'BJJ_33TEV_HT1',
+    #'BJJ_33TEV_HT2',
+    #'BJJ_33TEV_HT3',
+    #'BJJ_33TEV_HT4',
+    #'BJJ_33TEV_HT5',
+    #'TT_33TEV_HT1',
+    #'TT_33TEV_HT2',
+    #'TT_33TEV_HT3',
+    #'TT_33TEV_HT4',
+    #'TT_33TEV_HT5',
+    #'TT_33TEV_HT6',
 
     ## Below are the files haven't been consider yet
     #'BB_14TEV_HT1' ,
@@ -70,6 +92,40 @@ Projects  = [
     #'TJ_14TEV_HT3' ,
     #'TJ_14TEV_HT4' ,
     #'TJ_14TEV_HT5' ,
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
+    #'BB_33TEV_HT1',
+    #'BB_33TEV_HT2',
+    #'BB_33TEV_HT3',
+    #'BB_33TEV_HT4',
+    #'BB_33TEV_HT5',
+    #'BBB_33TEV_HT1',
+    #'BBB_33TEV_HT2',
+    #'BBB_33TEV_HT3',
+    #'BBB_33TEV_HT4',
+    #'H_33TEV_HT1',
+    #'H_33TEV_HT2',
+    #'H_33TEV_HT3',
+    #'H_33TEV_HT4',
+    #'H_33TEV_HT5',
+    #'LL_33TEV_HT1',
+    #'LL_33TEV_HT2',
+    #'LL_33TEV_HT3',
+    #'LL_33TEV_HT4',
+    #'LL_33TEV_HT5',
+    #'LLB_33TEV_HT1',
+    #'LLB_33TEV_HT2',
+    #'LLB_33TEV_HT3',
+    #'TB_33TEV_HT1',
+    #'TB_33TEV_HT2',
+    #'TB_33TEV_HT3',
+    #'TB_33TEV_HT4',
+    #'TB_33TEV_HT5',
+    #'TJ_33TEV_HT1',
+    #'TJ_33TEV_HT2',
+    #'TJ_33TEV_HT3',
+    #'TJ_33TEV_HT4',
+    #'TJ_33TEV_HT5',
 ]
 
 
@@ -84,7 +140,7 @@ def my_process():
     except OSError:
         pass
 
-    ## Update RunHT.csh with pileups
+    ## Update RunHT.csh with DelDir and pileups
     RunHTFile = outdir + "/" + "RunHT.csh"
     PUtoRun = '"'
     for pu in PileUps:
@@ -94,6 +150,8 @@ def my_process():
     with open(RunHTFile, "wt") as outfile:
         for line in open("RunHT.csh", "r"):
             line = line.replace("PILEUPS", PUtoRun)
+            line = line.replace("DELDIR", DelDir)
+            line = line.replace("DELEXE", DelExe)
             outfile.write(line)
 
     ## Update condor files
@@ -114,33 +172,30 @@ def my_process():
 
 
 def my_CheckFile():
+    ## Check the Delphes Dir
+    if os.path.isdir(DelDir):
+        pass
+    else:
+        print "Please input the path to Delphes"
+        quit()
+
+
     ## Check RunHT.csh file
     if os.path.isfile("RunHT.csh") and os.access("RunHT.csh", os.X_OK):
         #print "Found RunHT.csh"
         pass
     else:
         print "Please locate RunHT.csh"
-        return None
+        quit()
 
     ## Check DelFill to be execute
-    DelPath = ''
-    DelEXE  = ''
-    for line in open("RunHT.csh", "r"):
-        path = re.search('set DEL=(.*)', line)
-        if path:
-            DelPath = path.group(1)
-        #exe = re.search('set EXE=(.*)', line)
-        exe = re.search('set EXE=\$\{DEL\}/(.*)', line)
-        if exe:
-            DelEXE = exe.group(1)
-
-    DelFill = DelPath + "/" + DelEXE
+    DelFill = DelDir + "/" + DelExe
     if os.path.isfile(DelFill) and os.access(DelFill, os.X_OK):
         #print "Found DelFill"
         pass
     else:
         print "Please locate %s" % DelFill
-        return None
+        quit()
 
     ## Check HTadd
     if os.path.isfile("HTadd") and os.access("HTadd", os.X_OK):
@@ -156,8 +211,7 @@ def my_CheckFile():
         pass
     else:
         print "Please compile HTadd"
-        return None
+        quit()
 
 if __name__ == "__main__":
-    os.system("kinit -r 8d")
     my_process()

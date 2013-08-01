@@ -5,8 +5,8 @@ set DIR       = $2
 
 set HTSplit   = 1 
 set SplitLine = 100
-set DEL       = /uscms/home/benwu/work/CMSUpgrade/Delphes/
-set EXE       = ${DEL}/DelFill
+set DEL       = DELDIR
+set EXE       = ${DEL}/DELEXE
 set PUs       = PILEUPS
 
 #set PRO=WJETS_13TEV

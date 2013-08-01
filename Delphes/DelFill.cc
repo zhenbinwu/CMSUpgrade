@@ -148,11 +148,11 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     //DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
     //ANA = new DelAna(DEV, pu);
     //TString tempname = name;
-    //tempname.ReplaceAll(process.c_str(), "MetDiMuon");
+    //tempname.ReplaceAll("ZJETS", "MetDiMuon");
     //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
     //tempname = name;
-    //tempname.ReplaceAll(process.c_str(), "MetDiEle");
+    //tempname.ReplaceAll("ZJETS", "MetDiEle");
     //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
@@ -309,6 +309,7 @@ int DPhes::PreLooping()
       it!=MDelCut.end(); it++)
   {
     it->second->InitCutOrder("DM");
+    //it->second->InitCutOrder("Higgs");
     it->second->BookHistogram();
     it->second->FillSampleXS(CrossSection, CrossSectionError);
   } 

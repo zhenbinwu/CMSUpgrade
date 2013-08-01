@@ -270,6 +270,7 @@ int HistTool::DrawTH1()
     TString picname = prefix + "_" + it->second->GetName() + ".png";
     c1->Print(picname);
   }
+  delete c1;
   return 1;
 }       // -----  end of function HistTool::DrawTH1  -----
 
@@ -443,6 +444,7 @@ int HistTool::DrawTPro()
     TString picname = prefix + "_" + it->second->GetName() + ".png";
     c1->Print(picname);
   }
+  delete c1;
   return 1;
 }       // -----  end of function HistTool::DrawTPro  -----
 
@@ -620,6 +622,7 @@ int HistTool::DrawTH2()
     TString picname = prefix + "_" + it->second->GetName() + ".png";
     c1->Print(picname);
   }
+  delete c1;
   return 1;
 }       // -----  end of function HistTool::DrawTH2  -----
 

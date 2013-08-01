@@ -25,9 +25,9 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DelCut::DelCut (DelAna *ana, std::string name )
 {
-  Ana = ana;
+  Ana     = ana;
   ProName = name;
-  His = new HistTool(name);
+  His     = new HistTool(name);
 }  // ~~~~~  end of method DelCut::DelCut  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,10 +103,10 @@ bool DelCut::BookHistogram()
       "Events",  400, 0, 1, 0, 1);
 
   TProfile* pro1 = new TProfile("MHTAsys", 
-      "MHTAsys;#slash{H}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]",  400, 0, 2000, "S");
+      "MHTAsys;#slash{H}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T}) [GeV]",  400, 0, 2000, "S");
   His->AddTPro(pro1);
   TProfile* pro2 = new TProfile("METAsys", 
-      "METAsys;#slash{E}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]",  400, 0, 2000, "S");
+      "METAsys;#slash{E}_{T} [GeV];|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T}) [GeV]",  400, 0, 2000, "S");
   His->AddTPro(pro2);
 //----------------------------------------------------------------------------
 //  Booking histogram for each cut
@@ -281,7 +281,8 @@ int DelCut::FillCut()
   for (int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<20> locbit(CutMap[CutOrder.at(i)]);
-    if (CheckCut(locbit) == false) continue;
+    if (CheckCut(locbit) == false) break;
+    //if (CheckCut(locbit) == false) continue;
     // For HTBin sample, the cutflow should fill with event weight
     His->FillTH1("CutFlow", i); 
     // Filling by functions
@@ -366,7 +367,7 @@ bool DelCut::CheckHiggsCut(std::bitset<20> cutflag)
 //----------------------------------------------------------------------------
   if (cutflag.test(6)) 
   {
-    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
+    if ( std::fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
   }
 
 //----------------------------------------------------------------------------

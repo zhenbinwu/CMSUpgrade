@@ -9,6 +9,6 @@ Output = Delphes_$(Cluster)_$(Process).stdout
 Error = Delphes_$(Cluster)_$(Process).stderr
 Log = Delphes_$(Cluster)_$(Process).log
 notify_user = USER@FNAL.GOV
-Arguments = ProcessName Tag_JetEta_JetPt
+Arguments = ProcessName Tag_JetEta_JetPt PileUp
 Queue 1
 

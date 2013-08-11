@@ -7,39 +7,39 @@ import shutil
 
 DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
 DelExe    = 'DelFill'
-Directory = 'TEST_5_30'
+Directory = 'SUSY_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 PileUps   = [
     'NoPileUp',
-    #'50PileUp',
-    #'140PileUp',
+    '50PileUp',
+    '140PileUp',
 ]
 Projects  = [
-    #'Wino200_14TeV',
-    #'Wino500_14TeV',
+    'Wino200_14TeV',
+    'Wino500_14TeV',
     #'WJETS_13TEV',
     #'ZJETS_13TEV',
     #'TTBAR_13TEV',
-    #'B_14TEV_HT1' ,
-    #'BJ_14TEV_HT1',
-    #'BJ_14TEV_HT2',
-    #'BJ_14TEV_HT3',
-    #'BJ_14TEV_HT4',
-    #'BJ_14TEV_HT5',
-    #'BJ_14TEV_HT6',
-    #'BJ_14TEV_HT7',
-    #'BJJ_14TEV_HT1',
-    #'BJJ_14TEV_HT2',
-    #'BJJ_14TEV_HT3',
-    #'BJJ_14TEV_HT4',
-    #'BJJ_14TEV_HT5',
-    #'TT_14TEV_HT1',
-    #'TT_14TEV_HT2',
-    #'TT_14TEV_HT3',
-    #'TT_14TEV_HT4',
-    #'TT_14TEV_HT5',
+    'B_14TEV_HT1' ,
+    'BJ_14TEV_HT1',
+    'BJ_14TEV_HT2',
+    'BJ_14TEV_HT3',
+    'BJ_14TEV_HT4',
+    'BJ_14TEV_HT5',
+    'BJ_14TEV_HT6',
+    'BJ_14TEV_HT7',
+    'BJJ_14TEV_HT1',
+    'BJJ_14TEV_HT2',
+    'BJJ_14TEV_HT3',
+    'BJJ_14TEV_HT4',
+    'BJJ_14TEV_HT5',
+    'TT_14TEV_HT1',
+    'TT_14TEV_HT2',
+    'TT_14TEV_HT3',
+    'TT_14TEV_HT4',
+    'TT_14TEV_HT5',
     
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
     #'BJ_33TEV_HT1',
     #'BJ_33TEV_HT2',
@@ -142,14 +142,8 @@ def my_process():
 
     ## Update RunHT.csh with DelDir and pileups
     RunHTFile = outdir + "/" + "RunHT.csh"
-    PUtoRun = '"'
-    for pu in PileUps:
-        PUtoRun += "%s " % pu
-    PUtoRun += '"'
-
     with open(RunHTFile, "wt") as outfile:
         for line in open("RunHT.csh", "r"):
-            line = line.replace("PILEUPS", PUtoRun)
             line = line.replace("DELDIR", DelDir)
             line = line.replace("DELEXE", DelExe)
             outfile.write(line)
@@ -158,17 +152,20 @@ def my_process():
     shutil.copy2("Delphes_condor", outdir)
     os.chdir(outdir)
     os.system("tar -czf FileList.tgz ../FileList")
-    for pro in Projects:
-        cond_file = pro + "_condor"
-        print cond_file
-        with open(cond_file, "wt") as out:
-            for line in open("Delphes_condor", "r"):
-                line = line.replace("USER@FNAL.GOV", UserEMAIL)
-                line = line.replace("ProcessName", pro)
-                line = line.replace("Tag_JetEta_JetPt", Directory)
-                out.write(line)
 
-        os.system("condor_submit " + cond_file)
+    for pu in PileUps:
+        for pro in Projects:
+            cond_file = pro + "_" + pu + "_condor"
+            print cond_file
+            with open(cond_file, "wt") as out:
+                for line in open("Delphes_condor", "r"):
+                    line = line.replace("USER@FNAL.GOV", UserEMAIL)
+                    line = line.replace("ProcessName", pro)
+                    line = line.replace("Tag_JetEta_JetPt", Directory)
+                    line = line.replace("PileUp", pu)
+                    out.write(line)
+
+            os.system("condor_submit " + cond_file)
 
 
 def my_CheckFile():

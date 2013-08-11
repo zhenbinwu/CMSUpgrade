@@ -2,12 +2,12 @@
 
 set PRO       = $1
 set DIR       = $2
+set PUs       = $3
 
 set HTSplit   = 1 
 set SplitLine = 100
 set DEL       = DELDIR
 set EXE       = ${DEL}/DELEXE
-set PUs       = PILEUPS
 
 #set PRO=WJETS_13TEV
 #set DIR=TEST_5_30
@@ -129,35 +129,37 @@ end
 #echo $toru
 
 echo "------------ " $count "jobs in total ------------"
-echo $toru | xargs -n 4 -P8  sh -c  $EXE' $0 $1 $2 > $3'
+echo $toru | xargs -n 4 -P4  sh -c  $EXE' $0 $1 $2 > $3'
 
 
 
 #============================================================================#
 #---------------------------------   HTadd   --------------------------------#
 #============================================================================#
-foreach PU (NoPileUp 50PileUp 140PileUp)
+foreach PU (`echo $PUs`)
   foreach Pro (`ls *${PU}.root | cut -f 1 -d '_' | uniq`)
     set NewPro = `echo $PRO | cut -f 2- -d '_'`
     set NewPro = ${Pro}_${NewPro}
     if (${HTSplit} == 1) then
       ${DEL}/../BWTool/HTadd  ${NewPro}_${PU}.root ${NewPro}_*_${PU}.root
       if ($? == 0) then
-        tar -rf ${PRO}.tar ${NewPro}_*_${PU}.root
+        tar -rf ${PRO}_${PU}.tar ${NewPro}_*_${PU}.root
       endif
       if ($? == 0) then
         rm ${NewPro}_*_${PU}.root
       endif
     endif
   end
+
+  if ($? == 0) then
+    tar -rf ${PRO}_${PU}.tar *.log
+    tar -czf ${PRO}_${PU}.tgz ${PRO}_${PU}.tar
+  endif
+
+  if ($? == 0) then
+    rm *.log
+    rm -rf ${PRO}_${PU}.tar
+  endif
 end
 
-if ($? == 0) then
-  tar -rf ${PRO}.tar *.log
-  tar -czf ${PRO}.tgz ${PRO}.tar
-endif
 
-if ($? == 0) then
-  rm *.log
-  rm -rf ${PRO}.tar
-endif

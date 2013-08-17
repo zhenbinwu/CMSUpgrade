@@ -65,6 +65,7 @@ int main ( int argc, char *argv[] )
 
   std::string env  = getenv("DELPHES");
   TString TreeList = "";
+  TChain chain("Delphes");
 
   if (env.find("3.0.9") != std::string::npos) //For Delphes 3.0.9 
   {
@@ -75,7 +76,6 @@ int main ( int argc, char *argv[] )
   } else TreeList = "./FileList/"+Process+"_"+Pileup+".list";
   std::cout << "Files to be run on : " << TreeList  << std::endl;
 
-  TChain chain("Delphes");
   if(TreeList.Contains("FileList"))
   {
     std::fstream input(TreeList.Data());
@@ -98,13 +98,14 @@ int main ( int argc, char *argv[] )
   //chain.Add("./Bjj-vbf-4p-2300-3400-v1510_14TEV_NoPileUp_96938081.root");
   //chain.Add("./Bj-4p-1800-2700-v1510_14TEV_NoPileUp_291444200.root");
   //chain.Add("./ZJETS_13TEV_50PileUp_46978.root");
+  //chain.Add("~/nobackup/Bj-4p-1800-2700-v1510_14TEV_NoPileUp_291444200.root");
+  //chain.Add("~/nobackup/DYNOPU_Phase1.root");
 
   if (chain.GetListOfFiles()->GetEntries() == 0)
   {
     std::cout << "No files attached! Exiting ...."  << std::endl;
     return EXIT_FAILURE;
   }
-
 
   // To remove the warning from TFile::Append
   // -->  Replacing existing TH1: CrossSection (Potential memory leak)

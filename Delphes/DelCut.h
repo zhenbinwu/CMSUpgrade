@@ -66,6 +66,8 @@ class DelCut
     bool CheckDMCut(std::bitset<20> cutflag);
     bool CheckHiggsCut(std::bitset<20> cutflag);
 
+    bool CheckSysLep() const;
+    double SysMet() const;
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;

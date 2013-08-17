@@ -48,6 +48,7 @@ class DelAna
     bool MetDiLepton();
 
     bool METMHTAsys() const;
+    TVector2 SystemMet() const;
     /* ====================  MUTATORS      ======================================= */
 
     /* ====================  OPERATORS     ======================================= */
@@ -75,6 +76,7 @@ class DelAna
     double Mjj;
     double Met;
     double Weight;
+    TVector2 SysMet;
 
     // For Met Study
     TVector2 RawMet;
@@ -90,13 +92,13 @@ class DelAna
     double UTJetsPT;
     double UTPhotonsPT;
 
+    std::string PileUp;
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
 
   private:
-    std::string PileUp;
     std::string CurrentTag;
 
 }; /* -----  end of class DelAna  ----- */

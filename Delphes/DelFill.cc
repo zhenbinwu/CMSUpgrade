@@ -204,16 +204,16 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
     DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu);
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    //MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Higgs+Jets ~~~~~
-    tempname = ModifiedPreName(name, "B", "H");
-    MDelCut["H"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "H");
+    //MDelCut["H"] = new DelCut(ANA, tempname.Data());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ W + Jets ~~~~~
-    tempname = ModifiedPreName(name, "B", "W");
-    MDelCut["W"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "W");
+    //MDelCut["W"] = new DelCut(ANA, tempname.Data());
 
     tempname = ModifiedPreName(name, "B", "Wev");
     MDelCut["Wev"] = new DelCut(ANA, tempname.Data());
@@ -227,41 +227,51 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     tempname = ModifiedPreName(name, "B", "Wlv");
     MDelCut["Wlv"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Whad");
-    MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Whad");
+    //MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
 
+    tempname = ModifiedPreName(name, "B", "SysWev");
+    MDelCut["SysWev"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "B", "SysWmv");
+    MDelCut["SysWmv"] = new DelCut(ANA, tempname.Data());
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z + Jets ~~~~~
-    tempname = ModifiedPreName(name, "B", "Z");
-    MDelCut["Z"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Z");
+    //MDelCut["Z"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Zee");
-    MDelCut["Zee"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Zee");
+    //MDelCut["Zee"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Zmm");
-    MDelCut["Zmm"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Zmm");
+    //MDelCut["Zmm"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Ztt");
-    MDelCut["Ztt"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Ztt");
+    //MDelCut["Ztt"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Zll");
-    MDelCut["Zll"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Zll");
+    //MDelCut["Zll"] = new DelCut(ANA, tempname.Data());
 
     tempname = ModifiedPreName(name, "B", "Zvv");
     MDelCut["Zvv"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "Zhad");
-    MDelCut["Zhad"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Zhad");
+    //MDelCut["Zhad"] = new DelCut(ANA, tempname.Data());
 
+    tempname = ModifiedPreName(name, "B", "SysZee");
+    MDelCut["SysZee"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "B", "SysZmm");
+    MDelCut["SysZmm"] = new DelCut(ANA, tempname.Data());
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Photon + Jets ~~~~~
-    tempname = ModifiedPreName(name, "B", "Photon");
-    MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "Photon");
+    //MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
-    tempname = ModifiedPreName(name, "B", "MetDiMuon");
-    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
+    //tempname = ModifiedPreName(name, "B", "MetDiMuon");
+    //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
-    tempname = ModifiedPreName(name, "B", "MetDiEle");
-    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    //tempname = ModifiedPreName(name, "B", "MetDiEle");
+    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }

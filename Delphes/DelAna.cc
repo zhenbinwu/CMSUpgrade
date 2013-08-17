@@ -80,6 +80,10 @@ DelAna::operator = ( const DelAna &other )
 bool DelAna::CheckFlag(std::string name)
 {
   CurrentTag = name;
+  if (name.find("Sys") == std::string::npos)
+    Met   = PUCorMet->Mod();
+  else
+    Met   = SysMet.Mod();
   if (name == "Default") return true;
   return DEV->CheckFlag(name);
 }       // -----  end of function DelAna::CheckFlag  -----
@@ -107,6 +111,7 @@ bool DelAna::Clear()
   J3 = 0;
   Weight = 1.0;
   RawMet.Set(0.0, 0.0);
+  SysMet.Set(0.0, 0.0);
   RHT = 0.0;
   Met = -999;
   METAsys = -99;
@@ -123,6 +128,7 @@ int DelAna::GetBasic()
   Met   = PUCorMet->Mod();
   RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
   METAsys = std::fabs(Met - RawMet.Mod())/(Met + RawMet.Mod());
+  SysMet = SystemMet();
 
   if (vJet->size() > 0) J1 = &vJet->at(0);
   if (vJet->size() > 1) 
@@ -253,3 +259,30 @@ bool DelAna::METMHTAsys() const
   assert(AsysCut != -99.);
   return METAsys < AsysCut;
 }       // -----  end of function DelAna::METMHTAsys  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::SystemMet
+//  Description:  Met from control region, which faking leptons as neutrinos
+// ===========================================================================
+TVector2 DelAna::SystemMet() const
+{
+  
+  TLorentzVector temp = *MHT;
+
+  for (int i = 0; i < vElectron->size(); ++i)
+  {
+    temp -= vElectron->at(i).P4();
+  }
+
+  for (int i = 0; i < vMuon->size(); ++i)
+  {
+    temp -= vMuon->at(i).P4();
+  }
+  
+  double met_x = -temp.Px();
+  double met_y = -temp.Py();
+
+  TVector2 NewMet(met_x, met_y);
+
+  return NewMet;
+}       // -----  end of function DelAna::SystemMet  -----

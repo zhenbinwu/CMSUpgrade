@@ -23,16 +23,12 @@
 #include "TError.h"
 #include <cstdio>
 
-using namespace std;
-
-const std::string Path = "dcache:/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.7/";
-
 int main ( int argc, char *argv[] )
 {
 
   if (argc < 4)
   {
-    std::cout << "Please enter the pileup, process name and Dir_Eta_PT to be run on ! " <<  std::endl;
+    std::cout << "Please enter the pileup, process name,  Dir_Eta_PT and Detector to be run on ! " <<  std::endl;
     return EXIT_FAILURE;
   }
 
@@ -46,9 +42,10 @@ int main ( int argc, char *argv[] )
   //const std::string Outdir = "test_5_30";
 
 
-  const std::string Pileup  = argv[1];
-  const std::string Process = argv[2];
-  const std::string Outdir  = argv[3];
+  const std::string Pileup   = argv[1];
+  const std::string Process  = argv[2];
+  const std::string Outdir   = argv[3];
+  const std::string Detector = argv[4];
 
 
   double PUCorJetEta = -99;
@@ -67,14 +64,22 @@ int main ( int argc, char *argv[] )
   TString TreeList = "";
   TChain chain("Delphes");
 
-  if (env.find("3.0.9") != std::string::npos) //For Delphes 3.0.9 
+  if (Detector == "Snowmass")
   {
-    if (Process.find("HT") != std::string::npos) //For HTBin samples 
-      TreeList = "./FileList/HTBin/"+Process+"_"+Pileup+".list";
-    else
-      TreeList = "./FileList/DEL309/"+Process+"_"+Pileup+".list";
-  } else TreeList = "./FileList/"+Process+"_"+Pileup+".list";
+    TreeList = "./FileList/Snowmass/"+Process+"_"+Pileup+".list";
+  } else if (Detector == "PhaseI")
+  {
+    TreeList = "./FileList/PhaseI/"+Process+"_"+Pileup+".list";
+  } else if (Detector == "PhaseII3")
+  {
+    TreeList = "./FileList/PhaseII3/"+Process+"_"+Pileup+".list";
+  } else if (Detector == "PhaseII4")
+  {
+    TreeList = "./FileList/PhaseII4/"+Process+"_"+Pileup+".list";
+  }
   std::cout << "Files to be run on : " << TreeList  << std::endl;
+
+
 
   if(TreeList.Contains("FileList"))
   {

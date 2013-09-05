@@ -7,14 +7,21 @@ import shutil
 
 DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
 DelExe    = 'DelFill'
-Directory = 'SUSY_5_30'
+Directory = 'PhaseII_5_30'
 UserEMAIL = 'benwu@fnal.gov'
+Detectors = [
+    #'Snowmass',
+    #'PhaseI',
+    'PhaseII3',
+    'PhaseII4'
+]
 PileUps   = [
-    'NoPileUp',
-    '50PileUp',
+    #'NoPileUp',
+    #'50PileUp',
     '140PileUp',
 ]
 Projects  = [
+    'Wino100_14TeV',
     'Wino200_14TeV',
     'Wino500_14TeV',
     #'WJETS_13TEV',
@@ -153,19 +160,21 @@ def my_process():
     os.chdir(outdir)
     os.system("tar -czf FileList.tgz ../FileList")
 
-    for pu in PileUps:
-        for pro in Projects:
-            cond_file = pro + "_" + pu + "_condor"
-            print cond_file
-            with open(cond_file, "wt") as out:
-                for line in open("Delphes_condor", "r"):
-                    line = line.replace("USER@FNAL.GOV", UserEMAIL)
-                    line = line.replace("ProcessName", pro)
-                    line = line.replace("Tag_JetEta_JetPt", Directory)
-                    line = line.replace("PileUp", pu)
-                    out.write(line)
+    for dec in Detectors:
+        for pu in PileUps:
+            for pro in Projects:
+                cond_file = pro + "_" + pu + "_" + dec + "_condor"
+                print cond_file
+                with open(cond_file, "wt") as out:
+                    for line in open("Delphes_condor", "r"):
+                        line = line.replace("USER@FNAL.GOV", UserEMAIL)
+                        line = line.replace("ProcessName", pro)
+                        line = line.replace("Tag_JetEta_JetPt", Directory)
+                        line = line.replace("PileUp", pu)
+                        line = line.replace("DETECTOR", dec)
+                        out.write(line)
 
-            os.system("condor_submit " + cond_file)
+                os.system("condor_submit " + cond_file)
 
 
 def my_CheckFile():

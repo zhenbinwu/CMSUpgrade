@@ -291,6 +291,12 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     tempname = ModifiedPreName(name, "LL", "Lep");
     MDelCut["Lep"] = new DelCut(ANA, tempname.Data());
 
+    tempname = ModifiedPreName(name, "LL", "SysEE");
+    MDelCut["SysEE"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "LL", "SysMM");
+    MDelCut["SysMM"] = new DelCut(ANA, tempname.Data());
+
     return 1;
   }
 

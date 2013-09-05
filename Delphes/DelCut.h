@@ -82,7 +82,7 @@ class DelCut
 
     // Filling variables globally
     int FillJets() const;
-    int FillLepton() const;
+    int FillLepton(int NCut) const;
     bool BookLeptonEff();
 
     // Filling variables for each cut

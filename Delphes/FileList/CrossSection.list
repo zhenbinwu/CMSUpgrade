@@ -1,61 +1,130 @@
 #============================================================================#
-#-----------------------------   Delphes-3.0.7   ----------------------------#
+#--------------------   Delphes-3.0.9.1  8TEV Inclusive   -------------------#
 #============================================================================#
-Wino200_14TeV            0.01147       0.00001          #99% Wino at 200 GeV at 14TeV
-Wino500_14TeV            0.00045       0.00001          #99% Wino at 500 GeV at 14TeV
-WJETS_13TEV              63066         1075.5           #Inclusive W(lv) + jets at 14TeV
-ZJETS_13TEV              12930         213              #Inclusive Z(vv) + jets at 14TeV
-TTBAR_13TEV              882.29        117.38           #Inclusive TTbar + jets at 14TeV
+TT_8TEV                  234                 0.001
+ZJETS_8TEV_HT1           381.2               0.001            ## Z->vv + jets ( 50 < HT < 100 GeV)
+ZJETS_8TEV_HT2           160.3               0.001            ## Z->vv + jets (100 < HT < 200 GeV )
+ZJETS_8TEV_HT3           41.49               0.001            ## Z->vv + jets (200 < HT < 400 GeV )
+ZJETS_8TEV_HT4           5.274               0.001            ## Z->vv + jets (400 < HT < inf GeV )
+W1Jet_8TEV               6662.78             0.001            ##
+W2Jet_8TEV               2159.24             0.001            ##
+W3Jet_8TEV               640.37              0.001            ##
+W4Jet_8TEV               264.0               0.001            ##
 
 #============================================================================#
-#--------------------------   Delphes-3.0.9 HTBin   -------------------------#
+#--------------------   Delphes-3.0.9.1 14TEV Inclusive   -------------------#
 #============================================================================#
-B_14TEV_HT1              200944.68129  25.15587         #Boson (photon, W, Z) + Jets
-BJ_14TEV_HT1             34409.92339   10.65700         #Boson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
-BJ_14TEV_HT2             2642.85309    1.13482          #Boson (photon, W, Z) + Jets, 300 < HT (GeV) < 600
-BJ_14TEV_HT3             294.12311     0.13649          #Boson (photon, W, Z) + Jets, 600 < HT (GeV) < 1100
-BJ_14TEV_HT4             25.95000      0.01344          #Boson (photon, W, Z) + Jets, 1100 < HT (GeV) < 1800
-BJ_14TEV_HT5             2.42111       0.00129          #Boson (photon, W, Z) + Jets, 1800 < HT (GeV) < 2700
-BJ_14TEV_HT6             0.22690       0.00016          #Boson (photon, W, Z) + Jets, 2700 < HT (GeV) < 3700
-BJ_14TEV_HT7             0.02767       0.00001          #Boson (photon, W, Z) + Jets, 3700 < HT (GeV) < 100000
-BJJ_14TEV_HT1            86.45604      0.02382          #Boson (photon, W, Z, h) + >= 2Jets, 0 < HT (GeV) < 700
-BJJ_14TEV_HT2            4.34869       0.00166          #Boson (photon, W, Z, h) + >= 2Jets, 700 < HT (GeV) < 14000
-BJJ_14TEV_HT3            0.32465       0.00015          #Boson (photon, W, Z, h) + >= 2Jets, 1400 < HT (GeV) < 2300
-BJJ_14TEV_HT4            0.03032       0.00004          #Boson (photon, W, Z, h) + >= 2Jets, 2300 < HT (GeV) < 3400
-BJJ_14TEV_HT5            0.00313       0.00001          #Boson (photon, W, Z, h) + >= 2Jets, 2300 < HT (GeV) < 3400
-BB_14TEV_HT1             249.97710     0.05919          #Diboson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
-BB_14TEV_HT2             35.23062      0.01132          #Diboson (photon, W, Z) + Jets, 300 < HT (GeV) < 700
-BB_14TEV_HT3             4.13743       0.00150          #Diboson (photon, W, Z) + Jets, 700 < HT (GeV) < 1300
-BB_14TEV_HT4             0.41702       0.00019          #Diboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 2100
-BB_14TEV_HT5             0.04770       0.00005          #Diboson (photon, W, Z) + Jets, 2100 GeV < HT (GeV) < 100000
-BBB_14TEV_HT1            2.57304       0.00071          #Triboson (photon, W, Z) + Jets, 0 < HT (GeV) < 600
-BBB_14TEV_HT2            0.14935       0.00005          #Triboson (photon, W, Z) + Jets, 600 < HT (GeV) < 1300
-BBB_14TEV_HT3            0.01274       0.00001          #Triboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 100000
-H_14TEV_HT1              21.55990      0.00696          #Higgs + Jets, 0 < HT (GeV) < 300
-H_14TEV_HT2              1.11282       0.00068          #Higgs + Jets, 300 < HT (GeV) < 800
-H_14TEV_HT3              0.09188       0.00006          #Higgs + Jets, 800 < HT (GeV) < 1500
-H_14TEV_HT4              0.01009       0.00001          #Higgs + Jets, 1500 < HT (GeV) < 100000
-LL_14TEV_HT1             1341.36923    0.17120          #dileptons + jets, mll > 20 GeV, 0 < HT (GeV) < 100
-LL_14TEV_HT2             156.29534     0.04388          #dileptons + jets, mll > 20 GeV, 100 < HT (GeV) < 200
-LL_14TEV_HT3             42.40132      0.01301          #dileptons + jets, mll > 20 GeV, 200 < HT (GeV) < 500
-LL_14TEV_HT4             2.84373       0.00228          #dileptons + jets, mll > 20 GeV, 500 < HT (GeV) < 900
-LL_14TEV_HT5             0.20914       0.00011          #dileptons + jets, mll > 20 GeV, 900 < HT (GeV) < 1400
-LL_14TEV_HT6             0.02891       0.00004          #dileptons + jets, mll > 20 GeV, 1400 < HT (GeV) < 100000
-LLB_14TEV_HT1            2.97380       0.00084          #dileptons + boson + jets, mll > 20 GeV, 0 < HT (GeV) < 400
-LLB_14TEV_HT2            0.22854       0.00006          #dileptons + boson + jets, mll > 20 GeV, 400 < HT (GeV) < 900
-LLB_14TEV_HT3            0.02080       0.00001          #dileptons + boson + jets, mll > 20 GeV, 900 < HT (GeV) < 100000
-TB_14TEV_HT1             63.88923      0.01952          #single top + boson + jets, 0 < HT (GeV) < 500
-TB_14TEV_HT2             7.12172       0.00278          #single top + boson + jets, 500 < HT (GeV) < 900
-TB_14TEV_HT3             0.98030       0.00034          #single top + boson + jets, 900 < HT (GeV) < 1500
-TB_14TEV_HT4             0.08391       0.00004          #single top + boson + jets, 1500 < HT (GeV) < 2200
-TB_14TEV_HT5             0.00953       0.00000          #single top + boson + jets, 2200 < HT (GeV) < 100000
-TJ_14TEV_HT1             109.73602     0.02046          #single top + jets, 0 < HT (GeV) < 500
-TJ_14TEV_HT2             5.99325       0.00225          #single top + jets, 500 < HT (GeV) < 1000
-TJ_14TEV_HT3             0.37680       0.00016          #single top + jets, 1000 < HT (GeV) < 1600
-TJ_14TEV_HT4             0.03462       0.00002          #single top + jets, 1600 < HT (GeV) < 2400
-TJ_14TEV_HT5             0.00312       0.00000          #single top + jets, 2400 < HT (GeV) < 100000
-TT_14TEV_HT1             530.89358     0.15615          #ttbar + jets, 0 < HT (GeV) < 600
-TT_14TEV_HT2             42.55351      0.01367          #ttbar + jets, 600 < HT (GeV) < 1100
-TT_14TEV_HT3             4.48209       0.00164          #ttbar + jets, 1100 < HT (GeV) < 1700
-TT_14TEV_HT4             0.52795       0.00019          #ttbar + jets, 1700 < HT (GeV) < 2500
-TT_14TEV_HT5             0.05449       0.00002          #ttbar + jets, 2500 < HT (GeV) < 100000
+Wino100_14TeV            0.046               0.00001          #99% Wino at 100 GeV at 14TeV
+Wino200_14TeV            0.01147             0.00001          #99% Wino at 200 GeV at 14TeV
+Wino500_14TeV            0.00045             0.00001          #99% Wino at 500 GeV at 14TeV
+WJETS_13TEV              63066               1075.5           #Inclusive W(lv) + jets at 14TeV
+ZJETS_13TEV              12930               213              #Inclusive Z(vv) + jets at 14TeV
+TTBAR_13TEV              882.29              117.38           #Inclusive TTbar + jets at 14TeV
+
+#============================================================================#
+#----------------------   Delphes-3.0.9.1 14TEV HTBin   ---------------------#
+#============================================================================#
+B_14TEV_HT1              200944.68129        25.15587         #Boson (photon, W, Z) + Jets
+BJ_14TEV_HT1             34409.92339         10.65700         #Boson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
+BJ_14TEV_HT2             2642.85309          1.13482          #Boson (photon, W, Z) + Jets, 300 < HT (GeV) < 600
+BJ_14TEV_HT3             294.12311           0.13649          #Boson (photon, W, Z) + Jets, 600 < HT (GeV) < 1100
+BJ_14TEV_HT4             25.95000            0.01344          #Boson (photon, W, Z) + Jets, 1100 < HT (GeV) < 1800
+BJ_14TEV_HT5             2.42111             0.00129          #Boson (photon, W, Z) + Jets, 1800 < HT (GeV) < 2700
+BJ_14TEV_HT6             0.22690             0.00016          #Boson (photon, W, Z) + Jets, 2700 < HT (GeV) < 3700
+BJ_14TEV_HT7             0.02767             0.00001          #Boson (photon, W, Z) + Jets, 3700 < HT (GeV) < 100000
+BJJ_14TEV_HT1            86.45604            0.02382          #Boson (photon, W, Z, h) + >= 2Jets, 0 < HT (GeV) < 700
+BJJ_14TEV_HT2            4.34869             0.00166          #Boson (photon, W, Z, h) + >= 2Jets, 700 < HT (GeV) < 14000
+BJJ_14TEV_HT3            0.32465             0.00015          #Boson (photon, W, Z, h) + >= 2Jets, 1400 < HT (GeV) < 2300
+BJJ_14TEV_HT4            0.03032             0.00004          #Boson (photon, W, Z, h) + >= 2Jets, 2300 < HT (GeV) < 3400
+BJJ_14TEV_HT5            0.00313             0.00001          #Boson (photon, W, Z, h) + >= 2Jets, 2300 < HT (GeV) < 3400
+BB_14TEV_HT1             249.97710           0.05919          #Diboson (photon, W, Z) + Jets, 0 < HT (GeV) < 300
+BB_14TEV_HT2             35.23062            0.01132          #Diboson (photon, W, Z) + Jets, 300 < HT (GeV) < 700
+BB_14TEV_HT3             4.13743             0.00150          #Diboson (photon, W, Z) + Jets, 700 < HT (GeV) < 1300
+BB_14TEV_HT4             0.41702             0.00019          #Diboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 2100
+BB_14TEV_HT5             0.04770             0.00005          #Diboson (photon, W, Z) + Jets, 2100 GeV < HT (GeV) < 100000
+BBB_14TEV_HT1            2.57304             0.00071          #Triboson (photon, W, Z) + Jets, 0 < HT (GeV) < 600
+BBB_14TEV_HT2            0.14935             0.00005          #Triboson (photon, W, Z) + Jets, 600 < HT (GeV) < 1300
+BBB_14TEV_HT3            0.01274             0.00001          #Triboson (photon, W, Z) + Jets, 1300 < HT (GeV) < 100000
+H_14TEV_HT1              21.55990            0.00696          #Higgs + Jets, 0 < HT (GeV) < 300
+H_14TEV_HT2              1.11282             0.00068          #Higgs + Jets, 300 < HT (GeV) < 800
+H_14TEV_HT3              0.09188             0.00006          #Higgs + Jets, 800 < HT (GeV) < 1500
+H_14TEV_HT4              0.01009             0.00001          #Higgs + Jets, 1500 < HT (GeV) < 100000
+LL_14TEV_HT1             1341.36923          0.17120          #dileptons + jets, mll > 20 GeV, 0 < HT (GeV) < 100
+LL_14TEV_HT2             156.29534           0.04388          #dileptons + jets, mll > 20 GeV, 100 < HT (GeV) < 200
+LL_14TEV_HT3             42.40132            0.01301          #dileptons + jets, mll > 20 GeV, 200 < HT (GeV) < 500
+LL_14TEV_HT4             2.84373             0.00228          #dileptons + jets, mll > 20 GeV, 500 < HT (GeV) < 900
+LL_14TEV_HT5             0.20914             0.00011          #dileptons + jets, mll > 20 GeV, 900 < HT (GeV) < 1400
+LL_14TEV_HT6             0.02891             0.00004          #dileptons + jets, mll > 20 GeV, 1400 < HT (GeV) < 100000
+LLB_14TEV_HT1            2.97380             0.00084          #dileptons + boson + jets, mll > 20 GeV, 0 < HT (GeV) < 400
+LLB_14TEV_HT2            0.22854             0.00006          #dileptons + boson + jets, mll > 20 GeV, 400 < HT (GeV) < 900
+LLB_14TEV_HT3            0.02080             0.00001          #dileptons + boson + jets, mll > 20 GeV, 900 < HT (GeV) < 100000
+TB_14TEV_HT1             63.88923            0.01952          #single top + boson + jets, 0 < HT (GeV) < 500
+TB_14TEV_HT2             7.12172             0.00278          #single top + boson + jets, 500 < HT (GeV) < 900
+TB_14TEV_HT3             0.98030             0.00034          #single top + boson + jets, 900 < HT (GeV) < 1500
+TB_14TEV_HT4             0.08391             0.00004          #single top + boson + jets, 1500 < HT (GeV) < 2200
+TB_14TEV_HT5             0.00953             0.00000          #single top + boson + jets, 2200 < HT (GeV) < 100000
+TJ_14TEV_HT1             109.73602           0.02046          #single top + jets, 0 < HT (GeV) < 500
+TJ_14TEV_HT2             5.99325             0.00225          #single top + jets, 500 < HT (GeV) < 1000
+TJ_14TEV_HT3             0.37680             0.00016          #single top + jets, 1000 < HT (GeV) < 1600
+TJ_14TEV_HT4             0.03462             0.00002          #single top + jets, 1600 < HT (GeV) < 2400
+TJ_14TEV_HT5             0.00312             0.00000          #single top + jets, 2400 < HT (GeV) < 100000
+TT_14TEV_HT1             530.89358           0.15615          #ttbar + jets, 0 < HT (GeV) < 600
+TT_14TEV_HT2             42.55351            0.01367          #ttbar + jets, 600 < HT (GeV) < 1100
+TT_14TEV_HT3             4.48209             0.00164          #ttbar + jets, 1100 < HT (GeV) < 1700
+TT_14TEV_HT4             0.52795             0.00019          #ttbar + jets, 1700 < HT (GeV) < 2500
+TT_14TEV_HT5             0.05449             0.00002          #ttbar + jets, 2500 < HT (GeV) < 100000
+
+#============================================================================#
+#----------------------   Delphes-3.0.9.1 33TEV HTBin   ---------------------#
+#============================================================================#
+B_33TEV_HT1              537755.09879        0.001            #B-4p-0-1_33TEV              
+BJ_33TEV_HT1             129824.79383        0.001            #Bj-4p-0-400_33TEV           
+BJ_33TEV_HT2             6598.37529          0.001            #Bj-4p-400-1000_33TEV        
+BJ_33TEV_HT3             325.55814           0.001            #Bj-4p-1000-1800_33TEV       
+BJ_33TEV_HT4             32.45249            0.001            #Bj-4p-1800-3000_33TEV       
+BJ_33TEV_HT5             3.16778             0.001            #Bj-4p-3000-4600_33TEV       
+BJ_33TEV_HT6             0.32737             0.001            #Bj-4p-4600-6600_33TEV       
+BJ_33TEV_HT7             0.04045             0.001            #Bj-4p-6600-100000_33TEV     
+BJJ_33TEV_HT1            302.55913           0.001            #Bjj-vbf-4p-0-800_33TEV      
+BJJ_33TEV_HT2            1.73825             0.001            #Bjj-vbf-4p-1600-3000_33TEV  
+BJJ_33TEV_HT3            0.13606             0.001            #Bjj-vbf-4p-3000-4800_33TEV  
+BJJ_33TEV_HT4            0.01623             0.001            #Bjj-vbf-4p-4800-100000_33TEV
+BJJ_33TEV_HT5            16.41152            0.001            #Bjj-vbf-4p-800-1600_33TEV   
+BB_33TEV_HT1             776.00399           0.001            #BB-4p-0-400_33TEV           
+BB_33TEV_HT2             106.85023           0.001            #BB-4p-400-1000_33TEV        
+BB_33TEV_HT3             10.16835            0.001            #BB-4p-1000-2000_33TEV       
+BB_33TEV_HT4             0.86136             0.001            #BB-4p-2000-3400_33TEV       
+BB_33TEV_HT5             0.09507             0.001            #BB-4p-3400-100000_33TEV     
+BBB_33TEV_HT1            8.68026             0.001            #BBB-4p-0-800_33TEV          
+BBB_33TEV_HT2            0.44927             0.001            #BBB-4p-800-2000_33TEV       
+BBB_33TEV_HT3            0.02699             0.001            #BBB-4p-2000-3600_33TEV      
+BBB_33TEV_HT4            0.00246             0.001            #BBB-4p-3600-100000_33TEV    
+H_33TEV_HT1              96.32472            0.001            #H-4p-0-400_33TEV            
+H_33TEV_HT2              5.83112             0.001            #H-4p-400-1200_33TEV         
+H_33TEV_HT3              0.42712             0.001            #H-4p-1200-2400_33TEV        
+H_33TEV_HT4              0.04353             0.001            #H-4p-2400-4200_33TEV        
+H_33TEV_HT5              0.00458             0.001            #H-4p-4200-100000_33TEV      
+LL_33TEV_HT1             3060.08132          0.001            #LL-4p-0-200_33TEV           
+LL_33TEV_HT2             139.42418           0.001            #LL-4p-200-600_33TEV         
+LL_33TEV_HT3             6.46065             0.001            #LL-4p-600-1200_33TEV        
+LL_33TEV_HT4             0.24278             0.001            #LL-4p-1200-1800_33TEV       
+LL_33TEV_HT5             0.06880             0.001            #LL-4p-1800-100000_33TEV     
+LLB_33TEV_HT1            8.19004             0.001            #LLB-4p-0-800_33TEV          
+LLB_33TEV_HT2            0.16401             0.001            #LLB-4p-800-2000_33TEV       
+LLB_33TEV_HT3            0.00722             0.001            #LLB-4p-2000-100000_33TEV    
+TB_33TEV_HT1             432.35695           0.001            #tB-4p-0-600_33TEV           
+TB_33TEV_HT2             53.97997            0.001            #tB-4p-600-1200_33TEV        
+TB_33TEV_HT3             5.60692             0.001            #tB-4p-1200-2000_33TEV       
+TB_33TEV_HT4             0.62643             0.001            #tB-4p-2000-3200_33TEV       
+TB_33TEV_HT5             0.05937             0.001            #tB-4p-3200-100000_33TEV     
+TJ_33TEV_HT1             493.50469           0.001            #tj-4p-0-600_33TEV           
+TJ_33TEV_HT2             23.51848            0.001            #tj-4p-600-1200_33TEV        
+TJ_33TEV_HT3             1.97369             0.001            #tj-4p-1200-2200_33TEV       
+TJ_33TEV_HT4             0.13199             0.001            #tj-4p-2200-3600_33TEV       
+TJ_33TEV_HT5             0.01099             0.001            #tj-4p-3600-100000_33TEV     
+TT_33TEV_HT1             3438.70635          0.001            #tt-4p-0-600_33TEV           
+TT_33TEV_HT2             505.82210           0.001            #tt-4p-600-1200_33TEV        
+TT_33TEV_HT3             61.81892            0.001            #tt-4p-1200-2000_33TEV       
+TT_33TEV_HT4             7.65752             0.001            #tt-4p-2000-3200_33TEV       
+TT_33TEV_HT5             0.72643             0.001            #tt-4p-3200-4800_33TEV       
+TT_33TEV_HT6             0.07147             0.001            #tt-4p-4800-100000_33TEV     

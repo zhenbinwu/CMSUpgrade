@@ -74,15 +74,15 @@ bool DelHTB::CheckFlag(const std::string flag)
   if (flag == "Photon") return Boson == 4;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating W decay mode ~~~~~
-  if (flag == "Wev")  return WMode == 1;
-  if (flag == "Wmv")  return WMode == 2;
+  if (flag == "Wev" || flag == "SysWev") return WMode == 1;
+  if (flag == "Wmv" || flag == "SysWmv")  return WMode == 2;
   if (flag == "Wtv")  return WMode == 3;
   if (flag == "Wlv")  return WMode >  0;
   if (flag == "Whad") return WMode == 0;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating Z decay mode ~~~~~
-  if (flag == "Zee") return ZMode == 1;
-  if (flag == "Zmm") return ZMode == 2;
+  if (flag == "Zee" || flag == "SysZee") return ZMode == 1;
+  if (flag == "Zmm" || flag == "SysZmm") return ZMode == 2;
   if (flag == "Ztt") return ZMode == 3;
   if (flag == "Zll") return ZMode > 0;
   if (flag == "Zvv") return ZMode == 0;

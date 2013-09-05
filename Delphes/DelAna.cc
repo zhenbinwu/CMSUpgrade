@@ -80,6 +80,10 @@ DelAna::operator = ( const DelAna &other )
 bool DelAna::CheckFlag(std::string name)
 {
   CurrentTag = name;
+  if (name.find("Sys") == std::string::npos)
+    Met   = PUCorMet->Mod();
+  else
+    Met   = SysMet.Mod();
   if (name == "Default") return true;
   return DEV->CheckFlag(name);
 }       // -----  end of function DelAna::CheckFlag  -----
@@ -107,10 +111,13 @@ bool DelAna::Clear()
   J3 = 0;
   Weight = 1.0;
   RawMet.Set(0.0, 0.0);
+  SysMet.Set(0.0, 0.0);
   RHT = 0.0;
   Met = -999;
   METAsys = -99;
   DelHT = -999.;
+
+  GenZvv.SetPxPyPzE(0, 0, 0, 0);
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -123,6 +130,7 @@ int DelAna::GetBasic()
   Met   = PUCorMet->Mod();
   RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
   METAsys = std::fabs(Met - RawMet.Mod())/(Met + RawMet.Mod());
+  SysMet = SystemMet();
 
   if (vJet->size() > 0) J1 = &vJet->at(0);
   if (vJet->size() > 1) 
@@ -149,6 +157,8 @@ int DelAna::GetBasic()
   {
     RHT += vPhoton->at(i).P4().Mag();
   }
+
+  CalGenZvv();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -253,3 +263,60 @@ bool DelAna::METMHTAsys() const
   assert(AsysCut != -99.);
   return METAsys < AsysCut;
 }       // -----  end of function DelAna::METMHTAsys  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::SystemMet
+//  Description:  Met from control region, which faking leptons as neutrinos
+// ===========================================================================
+TVector2 DelAna::SystemMet() const
+{
+  
+  TLorentzVector temp = *MHT;
+
+  for (int i = 0; i < vElectron->size(); ++i)
+  {
+    temp -= vElectron->at(i).P4();
+  }
+
+  for (int i = 0; i < vMuon->size(); ++i)
+  {
+    temp -= vMuon->at(i).P4();
+  }
+  
+  double met_x = -temp.Px();
+  double met_y = -temp.Py();
+
+  TVector2 NewMet(met_x, met_y);
+
+  return NewMet;
+}       // -----  end of function DelAna::SystemMet  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::GenZvv
+//  Description:  
+// ===========================================================================
+bool DelAna::CalGenZvv()
+{
+  int GenSize = vGenParticle->size();
+  std::vector<int> vNv;
+  for (int i = 0; i < vGenParticle->size(); ++i)
+  {
+    GenParticle p = vGenParticle->at(i);
+    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+    if (std::fabs(p.PID) == 12 || std::fabs(p.PID) == 14 ||
+        std::fabs(p.PID) == 16 )
+    vNv.push_back(i);
+  }
+  
+  if (vNv.size() == 2)
+  {
+
+    for (int i = 0; i < vNv.size(); ++i)
+    {
+      GenZvv += vGenParticle->at(vNv.at(i)).P4();
+    }
+  }
+
+  return true;
+}       // -----  end of function DelAna::GenZvv  -----

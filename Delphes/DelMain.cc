@@ -15,7 +15,7 @@
 // ===========================================================================
 
 #include <cstdlib>
-#include "DelFill.h"
+#include "DelLoop.h"
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -76,7 +76,12 @@ int main ( int argc, char *argv[] )
   } else if (Detector == "PhaseII4")
   {
     TreeList = "./FileList/PhaseII4/"+Process+"_"+Pileup+".list";
+  } else if (Detector == "Test")
+  {
+    //TreeList = "./Sample/Bj-4p-300-600-v1510_14TEV_NoPileUp_99966708.root";
+    TreeList = "./Sample/LL-4p-100-200-v1510_14TEV_96382643_PhaseII_Conf4_140PileUp.root";
   }
+
   std::cout << "Files to be run on : " << TreeList  << std::endl;
 
 
@@ -94,18 +99,6 @@ int main ( int argc, char *argv[] )
   else
     chain.Add(TreeList);  
 
-
-  //chain.Add("test/tt-4p-1700-2500-v1510_14TEV_140PileUp_99660663.root");
-  //chain.Add("test/TTBARW_13TEV_50PileUp_6351.root");
-  //chain.Add("test/ZJETS_13TEV_NoPileUp_9850.root");
-  //chain.Add("./Bjj-vbf-4p-700-1400-v1510_14TEV_140PileUp_36404679.root");
-  //chain.Add("./Bj-4p-1100-1800-v1510_14TEV_140PileUp_95160070.root");
-  //chain.Add("./Bjj-vbf-4p-2300-3400-v1510_14TEV_NoPileUp_96938081.root");
-  //chain.Add("./Bj-4p-1800-2700-v1510_14TEV_NoPileUp_291444200.root");
-  //chain.Add("./ZJETS_13TEV_50PileUp_46978.root");
-  //chain.Add("~/nobackup/Bj-4p-1800-2700-v1510_14TEV_NoPileUp_291444200.root");
-  //chain.Add("~/nobackup/DYNOPU_Phase1.root");
-
   if (chain.GetListOfFiles()->GetEntries() == 0)
   {
     std::cout << "No files attached! Exiting ...."  << std::endl;
@@ -119,7 +112,7 @@ int main ( int argc, char *argv[] )
 
   DPhes DP(&chain);
   DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);
-  DP.InitDelPhes(Process, Pileup, "");
+  DP.InitDelPhes(Process, Pileup, Detector);
   DP.ReadDelPhes();
   DP.PreLooping();
   DP.Looping();

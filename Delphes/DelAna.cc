@@ -116,6 +116,8 @@ bool DelAna::Clear()
   Met = -999;
   METAsys = -99;
   DelHT = -999.;
+
+  GenZvv.SetPxPyPzE(0, 0, 0, 0);
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -155,6 +157,8 @@ int DelAna::GetBasic()
   {
     RHT += vPhoton->at(i).P4().Mag();
   }
+
+  CalGenZvv();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -286,3 +290,33 @@ TVector2 DelAna::SystemMet() const
 
   return NewMet;
 }       // -----  end of function DelAna::SystemMet  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::GenZvv
+//  Description:  
+// ===========================================================================
+bool DelAna::CalGenZvv()
+{
+  int GenSize = vGenParticle->size();
+  std::vector<int> vNv;
+  for (int i = 0; i < vGenParticle->size(); ++i)
+  {
+    GenParticle p = vGenParticle->at(i);
+    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+    if (std::fabs(p.PID) == 12 || std::fabs(p.PID) == 14 ||
+        std::fabs(p.PID) == 16 )
+    vNv.push_back(i);
+  }
+  
+  if (vNv.size() == 2)
+  {
+
+    for (int i = 0; i < vNv.size(); ++i)
+    {
+      GenZvv += vGenParticle->at(vNv.at(i)).P4();
+    }
+  }
+
+  return true;
+}       // -----  end of function DelAna::GenZvv  -----

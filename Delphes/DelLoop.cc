@@ -16,7 +16,7 @@
  * ===========================================================================
  */
 
-#include "DelFill.h"
+#include "DelLoop.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //       Class:  DPhes
 //      Method:  DPhes
@@ -86,7 +86,7 @@ bool DPhes::SetPUCorMet(double JetPT, double JetEta)
 //         Name:  DPhes::InitDelPhes
 //  Description:  
 // ===========================================================================
-int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
+int DPhes::InitDelPhes(std::string process, std::string pu, std::string detector)
 {
   // Get the intreface for Delphes tree
   treeReader       = 0;
@@ -106,7 +106,7 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
   GetCrossSection(process);
 
   // Set the output name
-  SetPreName(process, pu, outdir);
+  SetPreName(process, pu, detector);
 
   return 1;
 }       // -----  end of function DPhes::InitDelPhes  -----
@@ -115,22 +115,10 @@ int DPhes::InitDelPhes(std::string process, std::string pu, std::string outdir)
 //         Name:  DPhes::SetPreName
 //  Description:  Get the process and sample name for output files
 // ===========================================================================
-int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
+int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 {
 
-  TString name;
-  if (outdir != "")
-  {
-    struct stat st;
-    if (stat(outdir.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
-      ;
-    else
-      mkdir(outdir.c_str(), S_IRWXU);
-    name = outdir + "/" +process+"_"+pu;
-  }
-  else
-    name = process+"_"+pu;
-
+  TString name = process+"_"+pu+"_"+detector;
 
   //----------------------------------------------------------------------------
   //  For Z+Jets sample
@@ -266,12 +254,42 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string outdir)
     //tempname = ModifiedPreName(name, "B", "Photon");
     //MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
 
-////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
     //tempname = ModifiedPreName(name, "B", "MetDiMuon");
     //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
     //tempname = ModifiedPreName(name, "B", "MetDiEle");
     //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+
+    return 1;
+  }
+
+//----------------------------------------------------------------------------
+//  For HTBin LL sample
+//  TODO: The process find LL is not optimized. There are LLB etc process,
+//  thus this need to be improved
+//----------------------------------------------------------------------------
+  if (process.find("LL") != std::string::npos)
+  {
+    DEV = new DelLL(PUCorJetEta, PUCorJetPt);
+    ANA = new DelAna(DEV, pu);
+    MDelCut["Default"] = new DelCut(ANA, name.Data());
+
+    TString tempname = name;
+    tempname = ModifiedPreName(name, "LL", "EleEle");
+    MDelCut["EleEle"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "LL", "MuMu");
+    MDelCut["MuMu"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "LL", "NvNv");
+    MDelCut["NvNv"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "LL", "TauTau");
+    MDelCut["TauTau"] = new DelCut(ANA, tempname.Data());
+
+    tempname = ModifiedPreName(name, "LL", "Lep");
+    MDelCut["Lep"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }
@@ -323,6 +341,13 @@ int DPhes::PreLooping()
     it->second->BookHistogram();
     it->second->FillSampleXS(CrossSection, CrossSectionError);
   } 
+  
+//----------------------------------------------------------------------------
+//  Enable TTree Cache for speeding
+//----------------------------------------------------------------------------
+  fChain->SetCacheSize(20*1024*1024);
+  TTreeCache::SetLearnEntries(1);
+
   return 1;
 
 }       // -----  end of function DPhes::PreLooping  -----
@@ -344,45 +369,6 @@ int DPhes::Looping()
     // Load selected branches with data from specified event
     if (! treeReader->ReadEntry(entry)) break;
     entry++;
-
-/*
- *      std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++" << entry << std::endl;
- *    std::cout << "All EFlowTower without cut -------------------------------------------" << std::endl;
- *    for (int i = 0; i < branchEFlowTower->GetEntries(); ++i)
- *    {
- *      Tower *p = (Tower*)branchEFlowTower->At(i);
- *
- *      std::cout
- *        << std::setw(5) << " i:  "   << std::setw(3) << i
- *        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
- *        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
- *        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
- *        << std::setw(5) << " E  " << std::setw(8) << p->E
- *        << std::setw(5) << " PT  "   << std::setw(8) << p->P4().Pt()
- *        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
- *        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
- *        << std::endl;
- *
- *    }
- *
- *    std::cout << "All EFlowTrack without cut -------------------------------------------" << std::endl;
- *    for (int i = 0; i < branchEFlowTrack->GetEntries(); ++i)
- *    {
- *      Track *p = (Track*)branchEFlowTrack->At(i);
- *
- *      std::cout
- *        << std::setw(5) << " i:  "   << std::setw(3) << i
- *        << std::setw(5) << " Px "    << std::setw(8) << p->P4().Px()
- *        << std::setw(5) << " Py "    << std::setw(8) << p->P4().Py()
- *        << std::setw(5) << " Pz "    << std::setw(8) << p->P4().Pz()
- *        << std::setw(5) << " PID  " << std::setw(8) << p->PID
- *        << std::setw(5) << " PT  "   << std::setw(8) << p->PT
- *        << std::setw(5) << " Phi "   << std::setw(8) << p->Phi
- *        << std::setw(5) << " Eta "   << std::setw(8) << p->Eta
- *        << std::endl;
- *
- *    }
- */
 
     //----------------------------------------------------------------------------
     //  Loading the current event and perform general calculations in DelAna.
@@ -458,16 +444,15 @@ bool DPhes::GetCrossSection(const std::string process_)
     int  idx = process.find_last_of('_');
     if (idx != std::string::npos && process.find("HT") < idx)
     {
-      process.erase(process.find_last_of("_"), process.length());
+      process.erase(process.find_first_of("_", process.find("HT")), process.length());
     }
   } else { //For splited inclusive sample 
 
     int  idx = process.find_last_of('_');
     if (idx != std::string::npos && process.find("V") < idx)
     {
-      process.erase(process.find_last_of("_"), process.length());
+      process.erase(process.find_first_of("_", process.find("TeV")), process.length());
     }
-
   }
 
 //----------------------------------------------------------------------------

@@ -35,12 +35,14 @@
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TProfile.h"
+#include "TTreeCache.h"
 
 // Classes from Ben
 #include "DelEvent.h"
 #include "DelWino.h"
 #include "DelZJJ.h"
 #include "DelTT.h"
+#include "DelLL.h"
 #include "DelAna.h"
 #include "DelHTB.h"
 #include "DelCut.h"

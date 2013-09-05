@@ -46,6 +46,7 @@ class DelAna
     bool Clear();
     int GetBasic();
     bool MetDiLepton();
+    bool CalGenZvv();
 
     bool METMHTAsys() const;
     TVector2 SystemMet() const;
@@ -92,6 +93,7 @@ class DelAna
     double UTJetsPT;
     double UTPhotonsPT;
 
+    TLorentzVector GenZvv;
     std::string PileUp;
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;

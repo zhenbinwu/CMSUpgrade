@@ -129,6 +129,7 @@ int DelLL::CheckLeptonMode()
   if (vTau.size() == 2) return 3;
   if (vNv.size() == 2) return 0;
 
+  //PrintGen();
   return -99;
 }       // -----  end of function DelLL::CheckLeptonMode  -----
 
@@ -157,5 +158,22 @@ bool DelLL::PrintGen() const
       << std::setw(5) << " Eta "    << std::setw(8) << p.Eta
       << std::endl;
   }
+
+  std::cout <<  " Printing Reconstructed GenJet: " << std::endl;
+  for (int i = 0; i < vGenJet.size(); ++i)
+  {
+    Jet p = vGenJet.at(i);
+    std::cout
+      << std::setw(5) << " i:  "   << std::setw(3) << i
+      << std::setw(5) << " Px "    << std::setw(8) << p.P4().Px()
+      << std::setw(5) << " Py "    << std::setw(8) << p.P4().Py()
+      << std::setw(5) << " Pz "    << std::setw(8) << p.P4().Pz()
+      << std::setw(5) << " Mass  " << std::setw(8) << p.Mass
+      << std::setw(5) << " PT  "   << std::setw(8) << p.PT
+      << std::setw(5) << " Phi "   << std::setw(8) << p.Phi
+      << std::setw(5) << " Eta "   << std::setw(8) << p.Eta
+      << std::endl;
+  }
+
 }       // -----  end of function DelLL::PrintGen  -----
 

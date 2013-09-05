@@ -309,6 +309,7 @@ int DelCut::FillCut()
 // Filling jets Globally
 //----------------------------------------------------------------------------
    FillJets();
+   FillLepton();
    His->FillTH1("ZMass", Ana->GenZvv.M());
    His->FillTH1("GenMet", Ana->GenZvv.Pt());
 
@@ -727,6 +728,22 @@ int DelCut::FillJets() const
   {
     His->FillTH1("JetEta", Ana->vJet->at(i).Eta);
   }
+
+//----------------------------------------------------------------------------
+//  Fill in the jet eff. 
+//----------------------------------------------------------------------------
+/*
+ *   for (int i = 0; i < Ana->DEV->vGenJet.size(); ++i)
+ *   {
+ *     His->FillTH2("GenJet", Ana->DEV->vGenJet.at(i).Eta, Ana->DEV->vGenJet.at(i).PT);
+ *   }
+ *
+ *   for (int i = 0; i < Ana->MatchedJet.size(); ++i)
+ *   {
+ *     His->FillTH2("RecoJet", Ana->MatchedJet.at(i).Eta(), Ana->MatchedJet.at(i).Pt());
+ *   }
+ */
+
   return 1;
 }       // -----  end of function DelCut::FillJets  -----
 
@@ -797,19 +814,19 @@ int DelCut::FillJets(int NCut)
    {
      His->FillTH1(NCut, "GenJetPt", Ana->DEV->vGenJet.at(i).PT);
      His->FillTH1(NCut, "GenJetEta", Ana->DEV->vGenJet.at(i).Eta);
-     His->FillTH2(NCut, "GenJet", Ana->DEV->vGenJet.at(i).Eta, Ana->DEV->vGenJet.at(i).PT);
+     //His->FillTH2(NCut, "GenJet", Ana->DEV->vGenJet.at(i).Eta, Ana->DEV->vGenJet.at(i).PT);
    }
 
    for (int i = 0; i < Ana->MatchedJet.size(); ++i)
    {
      His->FillTH1(NCut, "JetPt", Ana->MatchedJet.at(i).Pt());
      His->FillTH1(NCut, "JetEta", Ana->MatchedJet.at(i).Eta());
-     His->FillTH2(NCut, "RecoJet", Ana->MatchedJet.at(i).Eta(), Ana->MatchedJet.at(i).Pt());
+     //His->FillTH2(NCut, "RecoJet", Ana->MatchedJet.at(i).Eta(), Ana->MatchedJet.at(i).Pt());
    }
 
    for (int i = 0; i < Ana->JetPtScale.size(); ++i)
    {
-     His->FillTH1(NCut, "JetPtScale", Ana->JetPtScale.at(i));
+     His->FillTH1(NCut, "JetPTScale", Ana->JetPtScale.at(i));
    }
 
    return 1;
@@ -1083,12 +1100,12 @@ bool DelCut::BookLeptonEff()
   His->AddTH1C("MuonEta", "MuonEta", "#eta_{m}", "Events",  50, -5, 5 );
   His->AddTH1C("TauEta", "TauEta", "#eta_{t}", "Events",  50, -5, 5 );
 
-  His->AddTH2C("GenEle", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("GenMuon", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("GenTau", "Gen Tau", "#eta_{Gen t}", "Pt_{Gen t}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoEle", "Reco Electron", "#eta_{e}", "Pt_{e}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoMuon", "Reco Muon", "#eta_{m}", "Pt_{m}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoTau", "Reco Tau", "#eta_{t}", "Pt_{t}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("GenEle", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("GenMuon", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("GenTau", "Gen Tau", "#eta_{Gen t}", "Pt_{Gen t}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("RecoEle", "Reco Electron", "#eta_{e}", "Pt_{e}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("RecoMuon", "Reco Muon", "#eta_{m}", "Pt_{m}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2("RecoTau", "Reco Tau", "#eta_{t}", "Pt_{t}", 50, -5, -5, 200, 0, 800);
 
   return true;
 }       // -----  end of function DelCut::BookLeptonEff  -----
@@ -1103,9 +1120,9 @@ bool DelCut::BookJetEff()
   His->AddTH1C("GenJetEta", "GenJetEta", "#eta_{Gen Jet}", "Events",  50, -5, 5 );
   His->AddTH1C("JetPt", "JetPt", "Pt_{Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
   His->AddTH1C("JetEta", "JetEta", "#eta_{Jet}", "Events", 50, -5, 5 );
-  His->AddTH1C("JetPTScale", "JetPTScale", "Reco Jet / Gen Jet", "Events", 40, -2, 2 );
-  His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet}", 50, -5, -5, 200, 0, 1000);
-  His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 50, -5, -5, 200, 0, 1000);
+  His->AddTH1C("JetPTScale", "JetPTScale", "Reco Jet / Gen Jet", "Events", 200, -2, 2 );
+  //His->AddTH2("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet}", 50, -5, -5, 200, 0, 1000);
+  //His->AddTH2("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 50, -5., -5., 200, 0., 1000.);
   return true;
 }       // -----  end of function DelCut::BookJetEff  -----
 
@@ -1118,57 +1135,92 @@ int DelCut::FillLepton(int NCut) const
 //----------------------------------------------------------------------------
 //  Fill in Gen Lepton
 //----------------------------------------------------------------------------
-  int GenSize =Ana->vGenParticle->size(); 
-  for (int i = 0; i < GenSize; ++i)
+ 
+  for (int i = 0; i < Ana->GenEle.size(); ++i)
   {
-    GenParticle p = Ana->vGenParticle->at(i);
-    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
-    if (std::fabs(p.PID) == 11) //Electron 
-    {
-      His->FillTH1(NCut, "GenElePt", p.PT);
-      His->FillTH1(NCut, "GenEleEta", p.Eta);
-      His->FillTH2(NCut, "GenEle", p.Eta, p.PT);
-    }
-    if (std::fabs(p.PID) == 13) //Muon
-    {
-      His->FillTH1(NCut, "GenMuonPt", p.PT);
-      His->FillTH1(NCut, "GenMuonEta", p.Eta);
-      His->FillTH2(NCut, "GenMuon", p.Eta, p.PT);
-    }
-    if (std::fabs(p.PID) == 15) //Muon
-    {
-      His->FillTH1(NCut, "GenTauPt", p.PT);
-      His->FillTH1(NCut, "GenTauEta", p.Eta);
-      His->FillTH2(NCut, "GenTau", p.Eta, p.PT);
-    }
+      His->FillTH1(NCut, "GenElePt", Ana->GenEle.at(i).Pt());
+      His->FillTH1(NCut, "GenEleEta", Ana->GenEle.at(i).Eta());
+      //His->FillTH2(NCut, "GenEle", Ana->GenEle.at(i).Eta(), Ana->GenEle.at(i).Pt());
   }
 
-//----------------------------------------------------------------------------
-//  Fill in Reco Leptons
-//----------------------------------------------------------------------------
-  for (int i = 0; i < Ana->vElectron->size(); ++i)
+  for (int i = 0; i < Ana->GenMuon.size(); ++i)
   {
-    His->FillTH1(NCut, "ElePt", Ana->vElectron->at(i).PT);
-    His->FillTH1(NCut, "EleEta", Ana->vElectron->at(i).Eta);
-    His->FillTH2(NCut, "RecoEle", Ana->vElectron->at(i).Eta, Ana->vElectron->at(i).PT);
+      His->FillTH1(NCut, "GenMuonPt", Ana->GenMuon.at(i).Pt());
+      His->FillTH1(NCut, "GenMuonEta", Ana->GenMuon.at(i).Eta());
+      //His->FillTH2(NCut, "GenMuon", Ana->GenMuon.at(i).Eta(), Ana->GenMuon.at(i).Pt());
   }
 
-  for (int i = 0; i < Ana->vMuon->size(); ++i)
+  for (int i = 0; i < Ana->GenTau.size(); ++i)
   {
-    His->FillTH1(NCut, "MuonPt", Ana->vMuon->at(i).PT);
-    His->FillTH1(NCut, "MuonEta", Ana->vMuon->at(i).Eta);
-    His->FillTH2(NCut, "RecoMuon", Ana->vMuon->at(i).Eta, Ana->vMuon->at(i).PT);
+      His->FillTH1(NCut, "GenTauPt", Ana->GenTau.at(i).Pt());
+      His->FillTH1(NCut, "GenTauEta", Ana->GenTau.at(i).Eta());
+      //His->FillTH2(NCut, "GenTau", Ana->GenTau.at(i).Eta(), Ana->GenTau.at(i).Pt());
   }
 
-  for (int i = 0; i < Ana->vJet->size(); ++i)
+  for (int i = 0; i < Ana->MatchedEle.size(); ++i)
   {
-    Jet j = Ana->vJet->at(i);
-    if (j.TauTag)
-    {
-      His->FillTH1(NCut, "TauPt", j.PT);
-      His->FillTH1(NCut, "TauEta", j.Eta);
-      His->FillTH2(NCut, "RecoTau", j.Eta, j.PT);
-    }
+      His->FillTH1(NCut, "ElePt", Ana->MatchedEle.at(i).Pt());
+      His->FillTH1(NCut, "EleEta", Ana->MatchedEle.at(i).Eta());
+      //His->FillTH2(NCut, "RecoEle", Ana->MatchedEle.at(i).Eta(), Ana->MatchedEle.at(i).Pt());
   }
+
+  for (int i = 0; i < Ana->MatchedMuon.size(); ++i)
+  {
+      His->FillTH1(NCut, "MuonPt", Ana->MatchedMuon.at(i).Pt());
+      His->FillTH1(NCut, "MuonEta", Ana->MatchedMuon.at(i).Eta());
+      //His->FillTH2(NCut, "RecoMuon", Ana->MatchedMuon.at(i).Eta(), Ana->MatchedMuon.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->MatchedTau.size(); ++i)
+  {
+      His->FillTH1(NCut, "TauPt", Ana->MatchedTau.at(i).Pt());
+      His->FillTH1(NCut, "TauEta", Ana->MatchedTau.at(i).Eta());
+      //His->FillTH2(NCut, "RecoTau", Ana->MatchedTau.at(i).Eta(), Ana->MatchedTau.at(i).Pt());
+  }
+
   return true;
 }       // -----  end of function DelCut::FillLepton  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillLepton
+//  Description:  
+// ===========================================================================
+bool DelCut::FillLepton()
+{
+//----------------------------------------------------------------------------
+//  Fill in Gen Lepton
+//----------------------------------------------------------------------------
+ 
+  for (int i = 0; i < Ana->GenEle.size(); ++i)
+  {
+      His->FillTH2("GenEle", Ana->GenEle.at(i).Eta(), Ana->GenEle.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->GenMuon.size(); ++i)
+  {
+      His->FillTH2("GenMuon", Ana->GenMuon.at(i).Eta(), Ana->GenMuon.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->GenTau.size(); ++i)
+  {
+      His->FillTH2("GenTau", Ana->GenTau.at(i).Eta(), Ana->GenTau.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->MatchedEle.size(); ++i)
+  {
+      His->FillTH2("RecoEle", Ana->MatchedEle.at(i).Eta(), Ana->MatchedEle.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->MatchedMuon.size(); ++i)
+  {
+      His->FillTH2("RecoMuon", Ana->MatchedMuon.at(i).Eta(), Ana->MatchedMuon.at(i).Pt());
+  }
+
+  for (int i = 0; i < Ana->MatchedTau.size(); ++i)
+  {
+      His->FillTH2("RecoTau", Ana->MatchedTau.at(i).Eta(), Ana->MatchedTau.at(i).Pt());
+  }
+
+  return true;
+}
+       // -----  end of function DelCut::FillLepton  -----

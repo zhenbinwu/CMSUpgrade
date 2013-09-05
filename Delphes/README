@@ -14,8 +14,26 @@
 
 This is meant to be a standalone code that can analysis the Delphes samples
 for CMS phase 2 upgrade. The codes are based on the examples that come with
-Delphes.
+Delphes. 
 
-Below are some functionalities to be implemented:
-1. Read in delphes files and make hist.
-2. Making reasonable stacking plots.
+Below is the code structure:
+
+DelMain  -> Main function, getting input from users
+|
+DelLoop  -> Looping over the TChain
+|
+DelEvent -> For each event in the Delphes sample, load a local DelEvent
+|  \=> DelTT   -> Inherited class for ttbar sample
+|  \=> DelWino -> Inherited class for SUSY Wino sample
+|  \=> DelZJJ  -> Inherited class for Z + jets sample
+|  \=> DelHTB  -> Inherited class for HTbin single boson sample
+|  \=> DelLL   -> Inherited class for LL sample
+|
+DelAna   -> Constructed higher level variables based on DelEvent
+|
+DelCut   -> Each class will create a root file, storing histograms
+
+HistTool -> A tool class for histogram managerment. Used by DelCut
+
+
+

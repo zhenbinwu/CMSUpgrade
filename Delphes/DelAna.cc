@@ -329,6 +329,7 @@ bool DelAna::CalGenZvv()
 bool DelAna::FindMatchedJet()
 {
   MatchedJet.clear();
+  JetPtScale.clear();
 
   //Get the default GenJet in Delphes
   std::vector<TLorentzVector> vGen;
@@ -347,6 +348,7 @@ bool DelAna::FindMatchedJet()
       if (jet.P4().DeltaR(vGen.at(j)) < 0.4)
       {
         MatchedJet.push_back(jet.P4());
+        JetPtScale.push_back(jet.PT/vGen.at(j).Pt());
         vGen.erase(vGen.begin()+j);
         break;
       }

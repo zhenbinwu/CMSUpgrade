@@ -151,6 +151,20 @@ bool DelCut::BookHistogram()
   His->AddTH1C("dEtaJJ", "#Delta #eta_{J1, J2}", 14, -7, 7 );
   His->AddTH1C("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
 
+  His->AddTH1C("dPtMHTJ1", "#Delta Pt_{#slash{H}_{T}, J1}", 40, 0, 1200 );
+  His->AddTH1C("dPhiMHTJ1", "#Delta #phi_{#slash{H}_{T}, J1}", 14, -7, 7 );
+  His->AddTH1C("dEtaMHTJ1", "#Delta #eta_{#slash{H}_{T}, J1}", 14, -7, 7 );
+  His->AddTH1C("dRMHTJ1", "#Delta R_{#slash{H}_{T}, J1}", 20, 0, 10.0 );
+
+  His->AddTH1C("dPtMHTJ2", "#Delta Pt_{#slash{H}_{T}, J2}", 40, 0, 1200 );
+  His->AddTH1C("dPhiMHTJ2", "#Delta #phi_{#slash{H}_{T}, J2}", 14, -7, 7 );
+  His->AddTH1C("dEtaMHTJ2", "#Delta #eta_{#slash{H}_{T}, J2}", 14, -7, 7 );
+  His->AddTH1C("dRMHTJ2", "#Delta R_{#slash{H}_{T}, J2}", 20, 0, 10.0 );
+
+  His->AddTH1C("dPtMHTJ3", "#Delta Pt_{#slash{H}_{T}, J3}", 40, 0, 1200 );
+  His->AddTH1C("dPhiMHTJ3", "#Delta #phi_{#slash{H}_{T}, J3}", 14, -7, 7 );
+  His->AddTH1C("dEtaMHTJ3", "#Delta #eta_{#slash{H}_{T}, J3}", 14, -7, 7 );
+  His->AddTH1C("dRMHTJ3", "#Delta R_{#slash{H}_{T}, J3}", 20, 0, 10.0 );
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
   //His->AddTH1("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   //His->AddTH1("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
@@ -738,6 +752,10 @@ int DelCut::FillJets(int NCut)
   His->FillTH1(NCut, "J1Eta", Ana->J1->Eta);
   His->FillTH1(NCut, "J1Phi", Ana->J1->Phi);
   
+  His->FillTH1(NCut, "dPtMHTJ1", Ana->MHT->Pt() - Ana->J1->PT);
+  His->FillTH1(NCut, "dPhiMHTJ1", Ana->J1->P4().DeltaPhi(*Ana->MHT));
+  His->FillTH1(NCut, "dEtaMHTJ1", Ana->J1->Eta - Ana->MHT->Eta());
+  His->FillTH1(NCut, "dRMHTJ1", Ana->J1->P4().DeltaR(*Ana->MHT));
   if (Ana->J2 != 0)
   {
     His->FillTH1(NCut, "J2Pt", Ana->J2->PT);
@@ -752,6 +770,11 @@ int DelCut::FillJets(int NCut)
     His->FillTH1(NCut, "dEtaJJ", Ana->J1->Eta - Ana->J2->Eta);
     His->FillTH1(NCut, "dRJJ", Ana->J1->P4().DeltaR(Ana->J2->P4()));
     His->FillTH2(NCut, "MJJMHT", Ana->Mjj, Ana->Met);
+
+    His->FillTH1(NCut, "dPtMHTJ2", Ana->MHT->Pt() - Ana->J2->PT);
+    His->FillTH1(NCut, "dPhiMHTJ2", Ana->J2->P4().DeltaPhi(*Ana->MHT));
+    His->FillTH1(NCut, "dEtaMHTJ2", Ana->J2->Eta - Ana->MHT->Eta());
+    His->FillTH1(NCut, "dRMHTJ2", Ana->J2->P4().DeltaR(*Ana->MHT));
   }
 
   
@@ -761,7 +784,10 @@ int DelCut::FillJets(int NCut)
     His->FillTH1(NCut, "J3Eta", Ana->J3->Eta);
     His->FillTH1(NCut, "J3Phi", Ana->J3->Phi);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1J2 ~~~~~
-
+    His->FillTH1(NCut, "dPtMHTJ3", Ana->MHT->Pt() - Ana->J3->PT);
+    His->FillTH1(NCut, "dPhiMHTJ3", Ana->J3->P4().DeltaPhi(*Ana->MHT));
+    His->FillTH1(NCut, "dEtaMHTJ3", Ana->J3->Eta - Ana->MHT->Eta());
+    His->FillTH1(NCut, "dRMHTJ3", Ana->J3->P4().DeltaR(*Ana->MHT));
   }
 
 //----------------------------------------------------------------------------
@@ -780,6 +806,13 @@ int DelCut::FillJets(int NCut)
      His->FillTH1(NCut, "JetEta", Ana->MatchedJet.at(i).Eta());
      His->FillTH2(NCut, "RecoJet", Ana->MatchedJet.at(i).Eta(), Ana->MatchedJet.at(i).Pt());
    }
+
+   for (int i = 0; i < Ana->JetPtScale.size(); ++i)
+   {
+     His->FillTH1(NCut, "JetPtScale", Ana->JetPtScale.at(i));
+   }
+
+   return 1;
     
 }       // -----  end of function DelCut::FillJets  -----
 
@@ -1070,6 +1103,7 @@ bool DelCut::BookJetEff()
   His->AddTH1C("GenJetEta", "GenJetEta", "#eta_{Gen Jet}", "Events",  50, -5, 5 );
   His->AddTH1C("JetPt", "JetPt", "Pt_{Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
   His->AddTH1C("JetEta", "JetEta", "#eta_{Jet}", "Events", 50, -5, 5 );
+  His->AddTH1C("JetPTScale", "JetPTScale", "Reco Jet / Gen Jet", "Events", 40, -2, 2 );
   His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet}", 50, -5, -5, 200, 0, 1000);
   His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 50, -5, -5, 200, 0, 1000);
   return true;

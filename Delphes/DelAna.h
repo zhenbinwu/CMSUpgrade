@@ -97,6 +97,7 @@ class DelAna
     // For Jet Study
     //std::vector<TLorentzVector> GenJet;
     std::vector<TLorentzVector> MatchedJet;
+    std::vector<double> JetPtScale;
 
     
     TLorentzVector GenZvv;

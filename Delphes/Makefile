@@ -9,8 +9,8 @@ LIBS = $(shell root-config --glibs)
 LIBS += -L../$(DEL) -lDelphes
 
 
-OBJS          = DelFill.o DelHist.o DelEvent.o DelWino.o DelTT.o DelZJJ.o DelAna.o DelCut.o HistTool.o
-OBJS         += DelHTB.o
+OBJS          = DelMain.o DelLoop.o DelEvent.o DelWino.o DelTT.o DelZJJ.o DelAna.o DelCut.o HistTool.o
+OBJS         += DelHTB.o DelLL.o
 PROGRAM       = DelFill
 
 ifneq (, $(findstring cmslpc, $(shell hostname)))

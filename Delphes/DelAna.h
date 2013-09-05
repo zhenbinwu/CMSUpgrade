@@ -48,6 +48,7 @@ class DelAna
     bool MetDiLepton();
     bool CalGenZvv();
     bool FindMatchedJet();
+    bool FindMatchedLep();
 
     bool METMHTAsys() const;
     TVector2 SystemMet() const;
@@ -99,6 +100,12 @@ class DelAna
     std::vector<TLorentzVector> MatchedJet;
     std::vector<double> JetPtScale;
 
+    std::vector<TLorentzVector> GenEle;
+    std::vector<TLorentzVector> GenMuon;
+    std::vector<TLorentzVector> GenTau;
+    std::vector<TLorentzVector> MatchedEle;
+    std::vector<TLorentzVector> MatchedMuon;
+    std::vector<TLorentzVector> MatchedTau;
     
     TLorentzVector GenZvv;
     std::string PileUp;

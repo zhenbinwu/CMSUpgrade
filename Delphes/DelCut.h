@@ -86,6 +86,7 @@ class DelCut
     bool BookLeptonEff();
     bool BookJetEff();
 
+    bool FillLepton();
     // Filling variables for each cut
     int FillJets(int NCut);
     int FillEle(int NCut);

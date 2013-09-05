@@ -160,6 +160,7 @@ int DelAna::GetBasic()
 
   CalGenZvv();
   FindMatchedJet();
+  FindMatchedLep();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -359,3 +360,89 @@ bool DelAna::FindMatchedJet()
   
   return true;
 }       // -----  end of function DelAna::FindMatchedJet  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::FindMatchedLep
+//  Description:  
+// ===========================================================================
+bool DelAna::FindMatchedLep()
+{
+  GenEle.clear();
+  GenMuon.clear();
+  GenTau.clear();
+  MatchedEle.clear();
+  MatchedMuon.clear();
+  MatchedTau.clear();
+    
+
+//----------------------------------------------------------------------------
+//  Gen leptons
+//----------------------------------------------------------------------------
+  int GenSize = vGenParticle->size(); 
+  for (int i = 0; i < GenSize; ++i)
+  {
+    GenParticle p = vGenParticle->at(i);
+    if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+    if (std::fabs(p.PID) == 11) //Electron 
+    {
+      GenEle.push_back(p.P4());
+    }
+    if (std::fabs(p.PID) == 13) //Muon
+    {
+      GenMuon.push_back(p.P4());
+    }
+    if (std::fabs(p.PID) == 15) //Muon
+    {
+      GenTau.push_back(p.P4());
+    }
+  }
+
+//----------------------------------------------------------------------------
+//  Matched Electron
+//----------------------------------------------------------------------------
+  for (int i = 0; i < vElectron->size(); ++i)
+  {
+    Electron e = vElectron->at(i);
+    for (int j = 0; j < GenEle.size(); ++j)
+    {
+      if (GenEle.at(j).DeltaR(e.P4())<0.4)
+      {
+        MatchedEle.push_back(e.P4());
+      }
+    }
+  }
+
+
+//----------------------------------------------------------------------------
+//  Matched Muon
+//----------------------------------------------------------------------------
+  for (int i = 0; i < vMuon->size(); ++i)
+  {
+    Muon m = vMuon->at(i);
+    for (int j = 0; j < GenMuon.size(); ++j)
+    {
+      if (GenMuon.at(j).DeltaR(m.P4())<0.4)
+      {
+        MatchedMuon.push_back(m.P4());
+      }
+    }
+  }
+
+//----------------------------------------------------------------------------
+//  Matched Tau
+//----------------------------------------------------------------------------
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    Jet jet = vJet->at(i);
+    if (!jet.TauTag) continue;
+    for (int j = 0; j < GenTau.size(); ++j)
+    {
+      if (GenTau.at(j).DeltaR(jet.P4())<0.4)
+      {
+        MatchedTau.push_back(jet.P4());
+      }
+    }
+  }
+
+  return true;
+}       // -----  end of function DelAna::FindMatchedLep  -----

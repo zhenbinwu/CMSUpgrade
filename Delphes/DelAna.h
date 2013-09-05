@@ -47,6 +47,7 @@ class DelAna
     int GetBasic();
     bool MetDiLepton();
     bool CalGenZvv();
+    bool FindMatchedJet();
 
     bool METMHTAsys() const;
     TVector2 SystemMet() const;
@@ -93,6 +94,11 @@ class DelAna
     double UTJetsPT;
     double UTPhotonsPT;
 
+    // For Jet Study
+    //std::vector<TLorentzVector> GenJet;
+    std::vector<TLorentzVector> MatchedJet;
+
+    
     TLorentzVector GenZvv;
     std::string PileUp;
     /* ====================  DATA MEMBERS  ======================================= */

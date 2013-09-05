@@ -215,8 +215,8 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     tempname = ModifiedPreName(name, "B", "Wlv");
     MDelCut["Wlv"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "Whad");
-    //MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "Whad");
+    MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
 
     tempname = ModifiedPreName(name, "B", "SysWev");
     MDelCut["SysWev"] = new DelCut(ANA, tempname.Data());
@@ -255,11 +255,11 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     //MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
-    //tempname = ModifiedPreName(name, "B", "MetDiMuon");
-    //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "MetDiMuon");
+    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
 
-    //tempname = ModifiedPreName(name, "B", "MetDiEle");
-    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    tempname = ModifiedPreName(name, "B", "MetDiEle");
+    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
 
     return 1;
   }

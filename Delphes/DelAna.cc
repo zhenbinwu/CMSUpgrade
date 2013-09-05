@@ -159,6 +159,7 @@ int DelAna::GetBasic()
   }
 
   CalGenZvv();
+  FindMatchedJet();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -320,3 +321,39 @@ bool DelAna::CalGenZvv()
 
   return true;
 }       // -----  end of function DelAna::GenZvv  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::FindMatchedJet
+//  Description:  
+// ===========================================================================
+bool DelAna::FindMatchedJet()
+{
+  MatchedJet.clear();
+
+  //Get the default GenJet in Delphes
+  std::vector<TLorentzVector> vGen;
+  for (int i = 0; i < DEV->vGenJet.size(); ++i)
+  {
+    Jet j = DEV->vGenJet.at(i);
+    vGen.push_back(j.P4());
+  }
+
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    Jet jet = vJet->at(i);
+    
+    for (int j = 0; j < vGen.size(); ++j)
+    {
+      if (jet.P4().DeltaR(vGen.at(j)) < 0.4)
+      {
+        MatchedJet.push_back(jet.P4());
+        vGen.erase(vGen.begin()+j);
+        break;
+      }
+    }
+  }
+
+  //std::cout << " vGEn size " << vGen.size() << " vGenJet " << DEV->vGenJet.size() << " MatchedJet "<< MatchedJet.size()<< std::endl;
+  
+  return true;
+}       // -----  end of function DelAna::FindMatchedJet  -----

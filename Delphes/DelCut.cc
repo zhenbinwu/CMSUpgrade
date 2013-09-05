@@ -71,6 +71,7 @@ bool DelCut::BookHistogram()
 {
   
   BookLeptonEff();
+  BookJetEff();
 //----------------------------------------------------------------------------
 //  Booking global histogram
 //----------------------------------------------------------------------------
@@ -762,6 +763,24 @@ int DelCut::FillJets(int NCut)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1J2 ~~~~~
 
   }
+
+//----------------------------------------------------------------------------
+//  Fill in the jet eff. 
+//----------------------------------------------------------------------------
+   for (int i = 0; i < Ana->DEV->vGenJet.size(); ++i)
+   {
+     His->FillTH1(NCut, "GenJetPt", Ana->DEV->vGenJet.at(i).PT);
+     His->FillTH1(NCut, "GenJetEta", Ana->DEV->vGenJet.at(i).Eta);
+     His->FillTH2(NCut, "GenJet", Ana->DEV->vGenJet.at(i).Eta, Ana->DEV->vGenJet.at(i).PT);
+   }
+
+   for (int i = 0; i < Ana->MatchedJet.size(); ++i)
+   {
+     His->FillTH1(NCut, "JetPt", Ana->MatchedJet.at(i).Pt());
+     His->FillTH1(NCut, "JetEta", Ana->MatchedJet.at(i).Eta());
+     His->FillTH2(NCut, "RecoJet", Ana->MatchedJet.at(i).Eta(), Ana->MatchedJet.at(i).Pt());
+   }
+    
 }       // -----  end of function DelCut::FillJets  -----
 
 
@@ -1017,19 +1036,19 @@ double DelCut::SysMet() const
 // ===========================================================================
 bool DelCut::BookLeptonEff()
 {
-  His->AddTH1C("GenElePt", "Pt_{Gen e}", 200, 0, 800.0 );
-  His->AddTH1C("GenMuonPt", "Pt_{Gen m}", 200, 0, 800.0 );
-  His->AddTH1C("GenTauPt", "Pt_{Gen t}", 200, 0, 800.0 );
-  His->AddTH1C("ElePt", "Pt_{e}", 200, 0, 800.0 );
-  His->AddTH1C("MuonPt", "Pt_{m}", 200, 0, 800.0 );
-  His->AddTH1C("TauPt", "Pt_{t}", 200, 0, 800.0 );
+  His->AddTH1C("GenElePt", "GenElePt", "Pt_{Gen e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
+  His->AddTH1C("GenMuonPt", "GenMuonPt", "Pt_{Gen m} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("GenTauPt", "GenTauPt", "Pt_{Gen t} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("ElePt", "ElePt", "Pt_{e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
+  His->AddTH1C("MuonPt", "MuonPt", "Pt_{m} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
+  His->AddTH1C("TauPt", "TauPt", "Pt_{t} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
 
-  His->AddTH1C("GenEleEta", "#eta_{Gen e}", 56, -7, 7 );
-  His->AddTH1C("GenMuonEta", "#eta_{Gen m}", 56, -7, 7 );
-  His->AddTH1C("GenTauEta", "#eta_{Gen t}", 56, -7, 7 );
-  His->AddTH1C("EleEta", "#eta_{e}", 56, -7, 7 );
-  His->AddTH1C("MuonEta", "#eta_{m}", 56, -7, 7 );
-  His->AddTH1C("TauEta", "#eta_{t}", 56, -7, 7 );
+  His->AddTH1C("GenEleEta", "GenEleEta", "#eta_{Gen e}", "Events",  50, -5, 5 );
+  His->AddTH1C("GenMuonEta", "GenMuonEta", "#eta_{Gen m}","Events",   50, -5, 5 );
+  His->AddTH1C("GenTauEta", "GenTauEta", "#eta_{Gen t}","Events",   50, -5, 5 );
+  His->AddTH1C("EleEta", "EleEta", "#eta_{e}", "Events",  50, -5, 5 );
+  His->AddTH1C("MuonEta", "MuonEta", "#eta_{m}", "Events",  50, -5, 5 );
+  His->AddTH1C("TauEta", "TauEta", "#eta_{t}", "Events",  50, -5, 5 );
 
   His->AddTH2C("GenEle", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e}", 50, -5, -5, 200, 0, 800);
   His->AddTH2C("GenMuon", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 50, -5, -5, 200, 0, 800);
@@ -1040,6 +1059,21 @@ bool DelCut::BookLeptonEff()
 
   return true;
 }       // -----  end of function DelCut::BookLeptonEff  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::BookJetEff
+//  Description:  
+// ===========================================================================
+bool DelCut::BookJetEff()
+{
+  His->AddTH1C("GenJetPt", "GenJetPt", "Pt_{Gen Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("GenJetEta", "GenJetEta", "#eta_{Gen Jet}", "Events",  50, -5, 5 );
+  His->AddTH1C("JetPt", "JetPt", "Pt_{Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("JetEta", "JetEta", "#eta_{Jet}", "Events", 50, -5, 5 );
+  His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet}", 50, -5, -5, 200, 0, 1000);
+  His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 50, -5, -5, 200, 0, 1000);
+  return true;
+}       // -----  end of function DelCut::BookJetEff  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::FillLepton

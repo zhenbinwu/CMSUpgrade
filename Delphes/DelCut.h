@@ -21,7 +21,7 @@
 #include "DelAna.h"
 #include "HistTool.hh"
 
-
+#include <sstream>
 #include <bitset>
 /*
  * ===========================================================================

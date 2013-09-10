@@ -33,6 +33,7 @@ DelAna::DelAna (DelEvent *DE, std::string pileup_)
   vMuon = &DEV->vMuon;
   vElectron = &DEV->vElectron;
   vJet = &DEV->vJet;
+  vGenJet = &DEV->vGenJet;
   vMissingET = &DEV->vMissingET;
 
   PUCorMet = &DE->PUCorMet;
@@ -117,7 +118,7 @@ bool DelAna::Clear()
   METAsys = -99;
   DelHT = -999.;
 
-  GenZvv.SetPxPyPzE(0, 0, 0, 0);
+  GenMet.SetPxPyPzE(0, 0, 0, 0);
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -158,9 +159,10 @@ int DelAna::GetBasic()
     RHT += vPhoton->at(i).P4().Mag();
   }
 
-  CalGenZvv();
+  CalGenMet();
   FindMatchedJet();
   FindMatchedLep();
+  FindJetLepton();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -295,10 +297,10 @@ TVector2 DelAna::SystemMet() const
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelAna::GenZvv
+//         Name:  DelAna::GenMet
 //  Description:  
 // ===========================================================================
-bool DelAna::CalGenZvv()
+bool DelAna::CalGenMet()
 {
   int GenSize = vGenParticle->size();
   std::vector<int> vNv;
@@ -311,17 +313,13 @@ bool DelAna::CalGenZvv()
     vNv.push_back(i);
   }
   
-  if (vNv.size() == 2)
+  for (int i = 0; i < vNv.size(); ++i)
   {
-
-    for (int i = 0; i < vNv.size(); ++i)
-    {
-      GenZvv += vGenParticle->at(vNv.at(i)).P4();
-    }
+    GenMet += vGenParticle->at(vNv.at(i)).P4();
   }
 
   return true;
-}       // -----  end of function DelAna::GenZvv  -----
+}       // -----  end of function DelAna::GenMet  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelAna::FindMatchedJet
@@ -330,33 +328,62 @@ bool DelAna::CalGenZvv()
 bool DelAna::FindMatchedJet()
 {
   MatchedJet.clear();
-  JetPtScale.clear();
+  PileUpJet.clear();
 
+//----------------------------------------------------------------------------
+//  GenJet selection
+//----------------------------------------------------------------------------
   //Get the default GenJet in Delphes
-  std::vector<TLorentzVector> vGen;
-  for (int i = 0; i < DEV->vGenJet.size(); ++i)
+  for (int i = 0; i < vGenJet->size(); ++i)
   {
-    Jet j = DEV->vGenJet.at(i);
-    vGen.push_back(j.P4());
-  }
-
-  for (int i = 0; i < vJet->size(); ++i)
-  {
-    Jet jet = vJet->at(i);
-    
-    for (int j = 0; j < vGen.size(); ++j)
+    Jet jet = vGenJet->at(i);
+    int GenSize = vGenParticle->size();
+    bool isGenJet = true;
+    for (int j = 0; j < GenSize; ++j)
     {
-      if (jet.P4().DeltaR(vGen.at(j)) < 0.4)
+      GenParticle p = vGenParticle->at(j);
+      if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
+      if ( std::fabs(p.PID) == 11 ||  std::fabs(p.PID) == 12  //Electron 
+          || std::fabs(p.PID) == 13 ||  std::fabs(p.PID) == 14  //Muons 
+          || std::fabs(p.PID) == 16 ||  std::fabs(p.PID) == 22 ) //Tau Nv or photon
       {
-        MatchedJet.push_back(jet.P4());
-        JetPtScale.push_back(jet.PT/vGen.at(j).Pt());
-        vGen.erase(vGen.begin()+j);
-        break;
+        if (p.P4().DeltaR(jet.P4()) < 0.4)
+        {
+          isGenJet = false;
+            break;
+        }
       }
+    }
+    if (isGenJet)
+    {
+      MatchedJet[i] = -1;
     }
   }
 
-  //std::cout << " vGEn size " << vGen.size() << " vGenJet " << DEV->vGenJet.size() << " MatchedJet "<< MatchedJet.size()<< std::endl;
+//----------------------------------------------------------------------------
+//  Matched to reco jet
+//----------------------------------------------------------------------------
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    Jet jet = vJet->at(i);
+    bool matched = false;
+    
+    // If not matched to GenJet, then this is a pileup jet
+    for (int j = 0; j < vGenJet->size(); ++j)
+    {
+      if (vGenJet->at(j).P4().DeltaR(jet.P4()) < 0.6)
+      {
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched)
+    {
+      PileUpJet.push_back(i);
+    }
+  }
+
   
   return true;
 }       // -----  end of function DelAna::FindMatchedJet  -----
@@ -367,14 +394,10 @@ bool DelAna::FindMatchedJet()
 // ===========================================================================
 bool DelAna::FindMatchedLep()
 {
-  GenEle.clear();
-  GenMuon.clear();
-  GenTau.clear();
   MatchedEle.clear();
   MatchedMuon.clear();
   MatchedTau.clear();
     
-
 //----------------------------------------------------------------------------
 //  Gen leptons
 //----------------------------------------------------------------------------
@@ -385,15 +408,15 @@ bool DelAna::FindMatchedLep()
     if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
     if (std::fabs(p.PID) == 11) //Electron 
     {
-      GenEle.push_back(p.P4());
+      MatchedEle[i] = -1;
     }
     if (std::fabs(p.PID) == 13) //Muon
     {
-      GenMuon.push_back(p.P4());
+      MatchedMuon[i] = -1;
     }
     if (std::fabs(p.PID) == 15) //Muon
     {
-      GenTau.push_back(p.P4());
+      MatchedTau[i] = -1;
     }
   }
 
@@ -403,11 +426,12 @@ bool DelAna::FindMatchedLep()
   for (int i = 0; i < vElectron->size(); ++i)
   {
     Electron e = vElectron->at(i);
-    for (int j = 0; j < GenEle.size(); ++j)
+    for ( auto& x: MatchedEle)
     {
-      if (GenEle.at(j).DeltaR(e.P4())<0.4)
+      if (vGenParticle->at(x.first).P4().DeltaR(e.P4())<0.4)
       {
-        MatchedEle.push_back(e.P4());
+        x.second = i;
+        break;
       }
     }
   }
@@ -419,11 +443,12 @@ bool DelAna::FindMatchedLep()
   for (int i = 0; i < vMuon->size(); ++i)
   {
     Muon m = vMuon->at(i);
-    for (int j = 0; j < GenMuon.size(); ++j)
+    for (auto& x: MatchedMuon)
     {
-      if (GenMuon.at(j).DeltaR(m.P4())<0.4)
+      if (vGenParticle->at(x.first).P4().DeltaR(m.P4())<0.4)
       {
-        MatchedMuon.push_back(m.P4());
+        x.second = i;
+        break;
       }
     }
   }
@@ -435,14 +460,81 @@ bool DelAna::FindMatchedLep()
   {
     Jet jet = vJet->at(i);
     if (!jet.TauTag) continue;
-    for (int j = 0; j < GenTau.size(); ++j)
+    for (auto& x: MatchedTau)
     {
-      if (GenTau.at(j).DeltaR(jet.P4())<0.4)
+      if (vGenParticle->at(x.first).P4().DeltaR(jet.P4())<0.4)
       {
-        MatchedTau.push_back(jet.P4());
+        x.second = i;
+        break;
       }
     }
   }
 
   return true;
 }       // -----  end of function DelAna::FindMatchedLep  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::FindJetLepton
+//  Description:  Find out whether there is a jet matched to GenLepton
+// ===========================================================================
+bool DelAna::FindJetLepton()
+{
+
+  MatchedEleJet.clear();
+  MatchedMuonJet.clear();
+//----------------------------------------------------------------------------
+//  Get the lost electron
+//----------------------------------------------------------------------------
+  for (auto& x: MatchedEle)
+  {
+    if (x.second == -1)
+    {
+      MatchedEleJet[x.first] = -1;
+    }
+  }
+
+//----------------------------------------------------------------------------
+//  Get the lost muon
+//----------------------------------------------------------------------------
+  for (auto x: MatchedMuon)
+  {
+    if (x.second == -1)
+    {
+      int temp = x.first;
+      MatchedMuonJet[temp] = -1;
+    }
+  }
+
+//----------------------------------------------------------------------------
+//  Find jets that matched to lost ele/muon
+//----------------------------------------------------------------------------
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    Jet jet = vJet->at(i);
+    bool matched = false;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Lost Ele ~~~~~
+    for (auto x: MatchedEleJet)
+    {
+      if (jet.P4().DeltaR(vGenParticle->at(x.first).P4())< 0.4)
+      {
+        x.second = i;
+        matched = true;
+        break;
+      }
+    }
+
+    if (matched) continue;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Lost Muon ~~~~~
+    for (auto x: MatchedMuonJet)
+    {
+      if (jet.P4().DeltaR(vGenParticle->at(x.first).P4())< 0.4)
+      {
+        x.second = i;
+        matched = true;
+        break;
+      }
+    }
+  }
+
+  return true;
+}       // -----  end of function DelAna::FindJetLepton  -----

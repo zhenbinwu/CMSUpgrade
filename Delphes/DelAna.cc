@@ -374,6 +374,7 @@ bool DelAna::FindMatchedJet()
       if (vGenJet->at(j).P4().DeltaR(jet.P4()) < 0.6)
       {
         matched = true;
+        MatchedJet[j] = i;
         break;
       }
     }

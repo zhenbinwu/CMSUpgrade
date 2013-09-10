@@ -116,11 +116,11 @@ bool DelCut::BookHistogram()
 //----------------------------------------------------------------------------
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met ~~~~~
   His->AddTH1C("MHT", "CMet", "#slash{H}_{T} [GeV]", 
-      "Events/ 5 GeV", 200, 0, 1000, 0, 1);
+      "Events / 5 GeV", 200, 0, 1000, 0, 1);
   His->AddTH1C("MHTMET", "MHT - MET", "#slash{H}_{T} - #slash{E}_{T} [GeV]", 
-      "Events/ 5 GeV", 600, -1000, 2000, 0, 1);
+      "Events / 5 GeV", 600, -1000, 2000, 0, 1);
   His->AddTH1C("MET", "CRawMet", "#slash{E}_{T} [GeV]", 
-      "Events/ 5 GeV", 200, 0, 1000, 0, 1);
+      "Events / 5 GeV", 200, 0, 1000, 0, 1);
   His->AddTH1C("MetAsys", "MetAsys", 
       "|#slash{H}_{T} - #slash{E}_{T}|/(#slash{H}_{T} + #slash{E}_{T})|[GeV]", 
       "Events",  400, 0, 1, 0, 1);
@@ -132,39 +132,44 @@ bool DelCut::BookHistogram()
       "M_{J1, J2} [GeV]", "#slash{H}_{T} [GeV]", 
       800, 0, 8000, 400, 0, 2000);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Jets ~~~~~
-  His->AddTH1C("J1Pt", "Pt_{J1}", 40, 0, 1200.0 );
-  His->AddTH1C("J1Eta", "#eta_{J1}", 14, -7, 7 );
-  His->AddTH1C("J1Phi", "#phi_{J1}", 14, -7, 7);
-  His->AddTH1C("J2Pt", "Pt_{J2}", 40, 0, 800.0 );
-  His->AddTH1C("J2Eta", "#eta_{J2}", 14, -7, 7 );
-  His->AddTH1C("J2Phi", "#phi_{J2}", 14, -7, 7);
-  His->AddTH1C("J3Pt", "Pt_{J3}", 40, 0, 800.0 );
-  His->AddTH1C("J3Eta", "#eta_{J3}", 14, -7, 7 );
-  His->AddTH1C("J3Phi", "#phi_{J3}", 14, -7, 7);
-  His->AddTH1C("JCPt", "Pt_{central jets}", 40, 0, 1200.0 );
-  His->AddTH1C("JFPt", "Pt_{forward jets}", 40, 0, 1200.0 );
+  His->AddTH1C("J1Pt",  "J1Pt",  "Pt_{J1} [GeV]", "Events / 4 GeV", 300, 0,  1200.0 );
+  His->AddTH1C("J1Eta", "J1Eta", "#eta_{J1}",     "Events",         14,  -7, 7      );
+  His->AddTH1C("J1Phi", "J1Phi", "#phi_{J1}",     "Events",         14,  -7, 7);
+  His->AddTH1C("J2Pt",  "J2Pt",  "Pt_{J2} [GeV]", "Events / 4 GeV", 200, 0,  800.0  );
+  His->AddTH1C("J2Eta", "J2Eta", "#eta_{J2}",     "Events",         14,  -7, 7      );
 
-  His->AddTH1C("MJJ", "M_{J1, J2}", 4000, 0, 8000.0 );
-  His->AddTH1C("dPtJJ", "#Delta Pt_{J1, J2}", 40, 0, 1200 );
-  His->AddTH1C("dPhiJJ", "#Delta #phi_{J1, J2}", 14, -7, 7 );
-  His->AddTH1C("ABSdPhiJJ", "|#Delta #phi_{J1, J2}|", 32, 0, 3.2 );
-  His->AddTH1C("dEtaJJ", "#Delta #eta_{J1, J2}", 14, -7, 7 );
-  His->AddTH1C("dRJJ", "#Delta R_{J1, J2}", 20, 0, 10.0 );
+  His->AddTH1C("J2Phi", "J2Phi", "#phi_{J2}",     "Events",         14,  -7, 7);
+  His->AddTH1C("J3Pt",  "J3Pt",  "Pt_{J3} [GeV]", "Events / 4 GeV", 200, 0,  800.0 );
+  His->AddTH1C("J3Eta", "J3Eta", "#eta_{J3}",     "Events",         14,  -7, 7     );
+  His->AddTH1C("J3Phi", "J3Phi", "#phi_{J3}",     "Events",         14,  -7, 7);
 
-  His->AddTH1C("dPtMHTJ1", "#Delta Pt_{#slash{H}_{T}, J1}", 40, 0, 1200 );
-  His->AddTH1C("dPhiMHTJ1", "#Delta #phi_{#slash{H}_{T}, J1}", 14, -7, 7 );
-  His->AddTH1C("dEtaMHTJ1", "#Delta #eta_{#slash{H}_{T}, J1}", 14, -7, 7 );
-  His->AddTH1C("dRMHTJ1", "#Delta R_{#slash{H}_{T}, J1}", 20, 0, 10.0 );
+  His->AddTH1C("CentralJetPt",  "CentralJetPt",  "Pt_{Central Jet3} [GeV]", "Events / 4 GeV", 200, 0,  800.0 );
+  His->AddTH1C("CentralJetEta", "CentralJetEta", "#eta_{Central Jet3}",     "Events",         14,  -7, 7     );
+  His->AddTH1C("CentralJetPhi", "CentralJetPhi", "#phi_{Central Jet3}",     "Events",         14,  -7, 7);
+  His->AddTH1C("JCPt", "JCPt", "Pt_{central jets} [GeV]", "Events / 4 GeV", 300, 0, 1200.0 );
+  His->AddTH1C("JFPt", "JFPt", "Pt_{forward jets} [GeV]", "Events / 4 GeV", 300, 0, 1200.0 );
 
-  His->AddTH1C("dPtMHTJ2", "#Delta Pt_{#slash{H}_{T}, J2}", 40, 0, 1200 );
-  His->AddTH1C("dPhiMHTJ2", "#Delta #phi_{#slash{H}_{T}, J2}", 14, -7, 7 );
-  His->AddTH1C("dEtaMHTJ2", "#Delta #eta_{#slash{H}_{T}, J2}", 14, -7, 7 );
-  His->AddTH1C("dRMHTJ2", "#Delta R_{#slash{H}_{T}, J2}", 20, 0, 10.0 );
+  His->AddTH1C("MJJ",       "MJJ",       "M_{J1, J2}",             "Events", 400, 0,  8000.0 );
+  His->AddTH1C("dPtJJ",     "dPtJJ",     "#Delta Pt_{J1, J2}",     "Events", 300,   0,  1200   );
+  His->AddTH1C("dPhiJJ",    "dPhiJJ",    "#Delta #phi_{J1, J2}",   "Events", 14,   -7, 7      );
+  His->AddTH1C("ABSdPhiJJ", "ABSdPhiJJ", "|#Delta #phi_{J1, J2}|", "Events", 32,   0,  3.2    );
+  His->AddTH1C("dEtaJJ",    "dEtaJJ",    "#Delta #eta_{J1, J2}",   "Events", 14,   -7, 7      );
+  His->AddTH1C("dRJJ",      "dRJJ",      "#Delta R_{J1, J2}",      "Events", 20,   0,  10.0   );
 
-  His->AddTH1C("dPtMHTJ3", "#Delta Pt_{#slash{H}_{T}, J3}", 40, 0, 1200 );
-  His->AddTH1C("dPhiMHTJ3", "#Delta #phi_{#slash{H}_{T}, J3}", 14, -7, 7 );
-  His->AddTH1C("dEtaMHTJ3", "#Delta #eta_{#slash{H}_{T}, J3}", 14, -7, 7 );
-  His->AddTH1C("dRMHTJ3", "#Delta R_{#slash{H}_{T}, J3}", 20, 0, 10.0 );
+  His->AddTH1C("dPtMHTJ1",  "dPtMHTJ1",  "#Delta Pt_{#slash{H}_{T}, J1}",   "Events", 300, 0,  1200 );
+  His->AddTH1C("dPhiMHTJ1", "dPhiMHTJ1", "#Delta #phi_{#slash{H}_{T}, J1}", "Events", 14, -7, 7    );
+  His->AddTH1C("dEtaMHTJ1", "dEtaMHTJ1", "#Delta #eta_{#slash{H}_{T}, J1}", "Events", 14, -7, 7    );
+  His->AddTH1C("dRMHTJ1",   "dRMHTJ1",   "#Delta R_{#slash{H}_{T}, J1}",    "Events", 20, 0,  10.0 );
+
+  His->AddTH1C("dPtMHTJ2",  "dPtMHTJ2",  "#Delta Pt_{#slash{H}_{T}, J2}",   "Events", 300, 0,  1200 );
+  His->AddTH1C("dPhiMHTJ2", "dPhiMHTJ2", "#Delta #phi_{#slash{H}_{T}, J2}", "Events", 14, -7, 7    );
+  His->AddTH1C("dEtaMHTJ2", "dEtaMHTJ2", "#Delta #eta_{#slash{H}_{T}, J2}", "Events", 14, -7, 7    );
+  His->AddTH1C("dRMHTJ2",   "dRMHTJ2",   "#Delta R_{#slash{H}_{T}, J2}",    "Events", 20, 0,  10.0 );
+
+  His->AddTH1C("dPtMHTJ3",  "dPtMHTJ3",  "#Delta Pt_{#slash{H}_{T}, J3}",   "Events", 300, 0,  1200 );
+  His->AddTH1C("dPhiMHTJ3", "dPhiMHTJ3", "#Delta #phi_{#slash{H}_{T}, J3}", "Events", 14, -7, 7    );
+  His->AddTH1C("dEtaMHTJ3", "dEtaMHTJ3", "#Delta #eta_{#slash{H}_{T}, J3}", "Events", 14, -7, 7    );
+  His->AddTH1C("dRMHTJ3",   "dRMHTJ3",   "#Delta R_{#slash{H}_{T}, J3}",    "Events", 20, 0,  10.0 );
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2D ~~~~~
   //His->AddTH1("J12D", "J1  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   //His->AddTH1("J22D", "J2  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
@@ -825,11 +830,20 @@ int DelCut::FillJets(int NCut)
     His->FillTH1(NCut, "J3Pt", Ana->J3->PT);
     His->FillTH1(NCut, "J3Eta", Ana->J3->Eta);
     His->FillTH1(NCut, "J3Phi", Ana->J3->Phi);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ J1J2 ~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MHTJ3 ~~~~~
     His->FillTH1(NCut, "dPtMHTJ3", Ana->MHT->Pt() - Ana->J3->PT);
     His->FillTH1(NCut, "dPhiMHTJ3", Ana->J3->P4().DeltaPhi(*Ana->MHT));
     His->FillTH1(NCut, "dEtaMHTJ3", Ana->J3->Eta - Ana->MHT->Eta());
     His->FillTH1(NCut, "dRMHTJ3", Ana->J3->P4().DeltaR(*Ana->MHT));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Central Jet ~~~~~
+    // Jet3 is within jet1 and jet2 
+    if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
+        (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
+    {
+      His->FillTH1(NCut, "CentralJetPt", Ana->J3->PT);
+      His->FillTH1(NCut, "CentralJetEta", Ana->J3->Eta);
+      His->FillTH1(NCut, "CentralJetPhi", Ana->J3->Phi);
+    }
   }
 
 //----------------------------------------------------------------------------

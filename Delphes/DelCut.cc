@@ -84,7 +84,7 @@ bool DelCut::BookHistogram()
   for (int i = 0; i < CutOrder.size(); ++i)
     temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
 
-  His->AddTH1("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
+  His->AddTH1C("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
   His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
@@ -298,7 +298,6 @@ int DelCut::FillCut()
   //You can over write the weight by adding the weight in Filling
   His->SetWeight(Ana->Weight); 
   His->FillTH1("Weight", Ana->Weight);
-  His->FillTH1("NJets", (int)Ana->vJet->size());
   His->FillTH1("NEle", (int)Ana->vElectron->size());
   His->FillTH1("NMuon", (int)Ana->vMuon->size());
   His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
@@ -774,7 +773,7 @@ int DelCut::FillJets(int NCut)
 //  Inclusive Jet 
 //----------------------------------------------------------------------------
   int jentries = Ana->vJet->size();
-  His->FillTH1(NCut, "NJet", jentries);
+  His->FillTH1(NCut, "NJets", jentries);
   if(jentries <= 0) return 0;
 
   for (int i = 0; i < Ana->vJet->size(); ++i)
@@ -1226,7 +1225,7 @@ bool DelCut::BookJetEff()
       ss <<"JetPTScale" << i <<"-"<<j;
       std::string name = ss.str();
       ss.str("");
-      ss << "Reco Jet / Gen Jet" << "( " << eta[i-1] << 
+      ss << "Reco Jet / Gen Jet " << "( " << eta[i-1] << 
         " < #eta < " << eta[i] << ", " << Pt[j-1] <<" < P_{T} < " << Pt[j] <<" )" ;
       His->AddTH1C(name.c_str(), name.c_str(), ss.str().c_str(), "Events", 200, -1, 3 );
     }
@@ -1266,6 +1265,7 @@ int DelCut::FillLepton(int NCut) const
         His->FillTH1(NCut, "MatchedEleEta", Ana->vGenParticle->at(i).Eta);
         His->FillTH1(NCut, "ElePt", Ana->vElectron->at(Ana->MatchedEle[i]).PT);
         His->FillTH1(NCut, "EleEta", Ana->vElectron->at(Ana->MatchedEle[i]).Eta);
+        His->FillTH2(NCut, "RecoEle", Ana->vElectron->at(Ana->MatchedEle[i]).Eta, Ana->vElectron->at(Ana->MatchedEle[i]).PT);
       }
 
     }
@@ -1283,6 +1283,7 @@ int DelCut::FillLepton(int NCut) const
         His->FillTH1(NCut, "MatchedMuonEta", Ana->vGenParticle->at(i).Eta);
         His->FillTH1(NCut, "MuonPt", Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
         His->FillTH1(NCut, "MuonEta", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta);
+        His->FillTH2(NCut, "RecoMuon", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta, Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
       }
     }
 
@@ -1299,6 +1300,7 @@ int DelCut::FillLepton(int NCut) const
         His->FillTH1(NCut, "MatchedTauEta", Ana->vGenParticle->at(i).Eta);
         His->FillTH1(NCut, "TauPt", Ana->vJet->at(Ana->MatchedTau[i]).PT);
         His->FillTH1(NCut, "TauEta", Ana->vJet->at(Ana->MatchedTau[i]).Eta);
+        His->FillTH2(NCut, "RecoTau", Ana->vJet->at(Ana->MatchedTau[i]).Eta, Ana->vJet->at(Ana->MatchedTau[i]).PT);
       }
     }
 

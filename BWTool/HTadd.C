@@ -49,7 +49,13 @@ int main ( int argc, char *argv[] )
   std::vector<std::string> vFiles;
 
    for ( int i = 2; i < argc; i++ ) {
-     vFiles.push_back(argv[i]);
+     TFile temp(argv[i]);
+     if (temp.GetSize() > 500)
+     {
+       //std::cout << " adding file " << argv[i] << std::endl;
+       vFiles.push_back(argv[i]);
+     }
+
    }
 
 //----------------------------------------------------------------------------

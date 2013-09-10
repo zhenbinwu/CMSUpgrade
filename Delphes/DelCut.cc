@@ -84,7 +84,7 @@ bool DelCut::BookHistogram()
   for (int i = 0; i < CutOrder.size(); ++i)
     temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
 
-  His->AddTH1("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
+  His->AddTH1C("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
   His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
   His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
@@ -298,7 +298,6 @@ int DelCut::FillCut()
   //You can over write the weight by adding the weight in Filling
   His->SetWeight(Ana->Weight); 
   His->FillTH1("Weight", Ana->Weight);
-  His->FillTH1("NJets", (int)Ana->vJet->size());
   His->FillTH1("NEle", (int)Ana->vElectron->size());
   His->FillTH1("NMuon", (int)Ana->vMuon->size());
   His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
@@ -774,7 +773,7 @@ int DelCut::FillJets(int NCut)
 //  Inclusive Jet 
 //----------------------------------------------------------------------------
   int jentries = Ana->vJet->size();
-  His->FillTH1(NCut, "NJet", jentries);
+  His->FillTH1(NCut, "NJets", jentries);
   if(jentries <= 0) return 0;
 
   for (int i = 0; i < Ana->vJet->size(); ++i)
@@ -856,7 +855,6 @@ int DelCut::FillJets(int NCut)
        His->FillTH1(NCut, "GenJetPt", Ana->vGenJet->at(i).PT);
        His->FillTH1(NCut, "GenJetEta", Ana->vGenJet->at(i).Eta);
        His->FillTH2(NCut, "GenJet", Ana->vGenJet->at(i).Eta, Ana->vGenJet->at(i).PT);
-       std::cout << "match ? " << Ana->MatchedJet[i] << std::endl;
 
        if (Ana->MatchedJet[i] != -1)
        {

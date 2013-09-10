@@ -46,10 +46,11 @@ class DelAna
     bool Clear();
     int GetBasic();
     bool MetDiLepton();
-    bool CalGenZvv();
+    bool CalGenMet();
     bool FindMatchedJet();
     bool FindMatchedLep();
 
+    bool FindJetLepton();
     bool METMHTAsys() const;
     TVector2 SystemMet() const;
     /* ====================  MUTATORS      ======================================= */
@@ -65,6 +66,7 @@ class DelAna
     std::vector<Electron> *vElectron;
     std::vector<Muon> *vMuon;
     std::vector<Jet> *vJet;
+    std::vector<Jet> *vGenJet;
     std::vector<MissingET> *vMissingET;
     TVector2 *PUCorMet;
     TLorentzVector *MHT;
@@ -95,19 +97,17 @@ class DelAna
     double UTJetsPT;
     double UTPhotonsPT;
 
-    // For Jet Study
-    //std::vector<TLorentzVector> GenJet;
-    std::vector<TLorentzVector> MatchedJet;
-    std::vector<double> JetPtScale;
+    // For Efficiency study
+    // map<GenParticle index, reco index> 
+    std::map<int, int> MatchedEle;
+    std::map<int, int> MatchedMuon;
+    std::map<int, int> MatchedTau;
+    std::map<int, int> MatchedJet;
+    std::map<int, int> MatchedEleJet;
+    std::map<int, int> MatchedMuonJet;
+    std::vector<int> PileUpJet; //For jets that don't match to GenJet or lost leptons
 
-    std::vector<TLorentzVector> GenEle;
-    std::vector<TLorentzVector> GenMuon;
-    std::vector<TLorentzVector> GenTau;
-    std::vector<TLorentzVector> MatchedEle;
-    std::vector<TLorentzVector> MatchedMuon;
-    std::vector<TLorentzVector> MatchedTau;
-    
-    TLorentzVector GenZvv;
+    TLorentzVector GenMet;
     std::string PileUp;
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;

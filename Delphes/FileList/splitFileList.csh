@@ -1,7 +1,11 @@
 #!/bin/csh
 
 set DIR       = $1
-set SplitLine = 100
+set SplitLine = 20
+
+rm ${DIR}/*
+rm -rf ${DIR}/ntuples
+./getFileLists.sh ${DIR}
 
 
 foreach file (`ls ${DIR}/*list`)

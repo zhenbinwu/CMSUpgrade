@@ -11,45 +11,51 @@ import re
 ###############################
 DelDir    = '/afs/cern.ch/work/b/benwu/CMSUpgrade/Delphes/'
 DelExe    = 'DelFill'
-Directory = 'TEST_5_30'
+Directory = '5KPhaseI_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 PileUps   = [
-    #'NoPileUp',
+    'NoPileUp',
     #'50PileUp',
     '140PileUp',
 ]
 
 Detector = [
-    #'PhaseI',
-    'PhaseII3',
     #'PhaseII4',
+    #'PhaseII3',
+    'PhaseI',
 ]
 
 Projects  = [
-    #'Wino100_14TeV',
-    #'Wino200_14TeV',
-    #'Wino500_14TeV',
+    'Wino100_14TeV',
+    'Wino200_14TeV',
+    'Wino500_14TeV',
     #'WJETS_13TEV',
     #'ZJETS_13TEV',
     #'TTBAR_13TEV',
     'B_14TEV_HT1' ,
-    #'BJ_14TEV_HT1',
-    #'BJ_14TEV_HT2',
-    #'BJ_14TEV_HT3',
-    #'BJ_14TEV_HT4',
-    #'BJ_14TEV_HT5',
-    #'BJ_14TEV_HT6',
-    #'BJ_14TEV_HT7',
-    #'BJJ_14TEV_HT1',
-    #'BJJ_14TEV_HT2',
-    #'BJJ_14TEV_HT3',
-    #'BJJ_14TEV_HT4',
-    #'BJJ_14TEV_HT5',
-    #'TT_14TEV_HT1',
-    #'TT_14TEV_HT2',
-    #'TT_14TEV_HT3',
-    #'TT_14TEV_HT4',
-    #'TT_14TEV_HT5',
+    'BJ_14TEV_HT1',
+    'BJ_14TEV_HT2',
+    'BJ_14TEV_HT3',
+    'BJ_14TEV_HT4',
+    'BJ_14TEV_HT5',
+    'BJ_14TEV_HT6',
+    'BJ_14TEV_HT7',
+    'BJJ_14TEV_HT1',
+    'BJJ_14TEV_HT2',
+    'BJJ_14TEV_HT3',
+    'BJJ_14TEV_HT4',
+    'BJJ_14TEV_HT5',
+    'TT_14TEV_HT1',
+    'TT_14TEV_HT2',
+    'TT_14TEV_HT3',
+    'TT_14TEV_HT4',
+    'TT_14TEV_HT5',
+    'LL_14TEV_HT1' ,
+    'LL_14TEV_HT2' ,
+    'LL_14TEV_HT3' ,
+    'LL_14TEV_HT4' ,
+    'LL_14TEV_HT5' ,
+    'LL_14TEV_HT6' ,
     
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
@@ -85,12 +91,6 @@ Projects  = [
     #'H_14TEV_HT2'  ,
     #'H_14TEV_HT3'  ,
     #'H_14TEV_HT4'  ,
-    #'LL_14TEV_HT1' ,
-    #'LL_14TEV_HT2' ,
-    #'LL_14TEV_HT3' ,
-    #'LL_14TEV_HT4' ,
-    #'LL_14TEV_HT5' ,
-    #'LL_14TEV_HT6' ,
     #'LLB_14TEV_HT1',
     #'LLB_14TEV_HT2',
     #'LLB_14TEV_HT3',

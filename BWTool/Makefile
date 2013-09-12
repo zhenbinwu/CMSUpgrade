@@ -19,6 +19,10 @@ ifneq (, $(findstring cmslpc, $(shell hostname)))
   CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
 endif
 
+ifneq (, $(findstring lxplus, $(shell hostname)))
+  CPPFLAGS += -I/afs/cern.ch/cms/slc5_amd64_gcc462/external/boost/1.47.0/include
+endif
+
 
 all: HTadd
 

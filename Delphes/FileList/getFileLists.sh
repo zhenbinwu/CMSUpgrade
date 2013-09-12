@@ -2,11 +2,24 @@
 
 ## This is the script I got from John Stupak for the Delphes HTbin sample
 
+detector=$1
 
-#baseDir=/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.9
-baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration4
-#baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration3
-#baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseI/Configuration0/
+if [[ "$detector" == "Snowmass" ]]; then
+  baseDir=/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.9
+fi
+
+if [[ "$detector" == "PhaseI" ]]; then
+  baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseI/Configuration0/
+fi
+
+if [[ "$detector" == "PhaseII3" ]]; then
+  baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration3
+fi
+
+if [[ "$detector" == "PhaseII4" ]]; then
+  baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration4
+fi
+
 #/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.1
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.1
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.2
@@ -16,16 +29,42 @@ eoscms=/afs/cern.ch/project/eos/installation/0.2.31/bin/eos.select
 mkdir -p ntuples
 
 for PU in No 50 140
-  do
+do
   for background in `${eoscms} ls ${baseDir}/${PU}PileUp`
-    do
+  do
     for file in `${eoscms} ls ${baseDir}/${PU}PileUp/${background}/`
-      do
-        if [[   "$file" == *".root" ]]; then
-          #dcachePath=dcap://cmsgridftp.fnal.gov:24125/pnfs/fnal.gov/usr/`echo ${file} | cut -d '/' -f 3-`
+    do
+      if [[   "$file" == *".root" ]]; then
+        if [[ "$detector" == "Snowmass" ]]; then
+          dcachePath=dcap://cmsgridftp.fnal.gov:24125/pnfs/fnal.gov/usr/`echo ${file} | cut -d '/' -f 3-`
+        else
           dcachePath=root://eoscms.cern.ch/${baseDir}/${PU}PileUp/${background}/${file}
-          echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
         fi
+        echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
+      fi
+    done
+  done
+done
+
+
+#----------------------------------------------------------------------------#
+#                                 SUSY_SIGNAL                                #
+#----------------------------------------------------------------------------#
+for PU in No 50 140
+do
+  #for background in `${eoscms} ls ${baseDir}/SUSY_SIGNAL/${PU}PileUp`
+  for background in Wino100 Wino200 Wino500
+  do
+    for file in `${eoscms} ls ${baseDir}/SUSY_SIGNAL/${PU}PileUp/${background}/`
+    do
+      if [[   "$file" == *".root" ]]; then
+        if [[ "$detector" == "Snowmass" ]]; then
+          dcachePath=dcap://cmsgridftp.fnal.gov:24125/pnfs/fnal.gov/usr/`echo ${file} | cut -d '/' -f 3-`
+        else
+          dcachePath=root://eoscms.cern.ch/${baseDir}/SUSY_SIGNAL/${PU}PileUp/${background}/${file}
+        fi
+        echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
+      fi
     done
   done
 done
@@ -36,6 +75,9 @@ mkdir -p HTBin
 
 for PU in No 50 140
 do
+  mv ntuples/Wino100_${PU}PileUp.list                            HTBin/Wino100_14TeV_${PU}PileUp.list
+  mv ntuples/Wino200_${PU}PileUp.list                            HTBin/Wino200_14TeV_${PU}PileUp.list
+  mv ntuples/Wino500_${PU}PileUp.list                            HTBin/Wino500_14TeV_${PU}PileUp.list
   mv ntuples/B-4p-0-1-v1510_14TEV_${PU}PileUp.list               HTBin/B_14TEV_HT1_${PU}PileUp.list
   mv ntuples/BB-4p-0-300-v1510_14TEV_${PU}PileUp.list            HTBin/BB_14TEV_HT1_${PU}PileUp.list
   mv ntuples/BB-4p-1300-2100-v1510_14TEV_${PU}PileUp.list        HTBin/BB_14TEV_HT4_${PU}PileUp.list
@@ -147,3 +189,4 @@ do
 done
 
 mv ntuples HTBin
+mv HTBin/* $detector

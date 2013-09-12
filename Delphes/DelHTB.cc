@@ -148,7 +148,7 @@ bool DelHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
 
   if (false)
   {
-
+    PrintGen();
     std::cout << "All Gen jets without cut -------------------------------------------" << std::endl;
     for (int i = 0; i < branchGenJet->GetEntries(); ++i)
     {

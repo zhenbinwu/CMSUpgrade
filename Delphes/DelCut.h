@@ -68,6 +68,7 @@ class DelCut
 
     bool CheckSysLep() const;
     double SysMet() const;
+    bool DetectorAccp(double Eta) const;
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;

@@ -36,7 +36,7 @@ class DelAna
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelAna (DelEvent *DEV, std::string PileUp);  /* constructor      */
+    DelAna (DelEvent *DEV, std::string PileUp, std::string Detector);  /* constructor      */
     DelAna (const DelAna &other ); /* copy constructor */
     ~DelAna ();                    /* destructor       */
 
@@ -53,6 +53,8 @@ class DelAna
     bool FindJetLepton();
     bool METMHTAsys() const;
     TVector2 SystemMet() const;
+    bool DetectorApp(double Eta) const;
+    int JetMatching(int GenIdx, std::vector<int>& JetIdx) const;
     /* ====================  MUTATORS      ======================================= */
 
     /* ====================  OPERATORS     ======================================= */
@@ -102,13 +104,16 @@ class DelAna
     std::map<int, int> MatchedEle;
     std::map<int, int> MatchedMuon;
     std::map<int, int> MatchedTau;
+    std::map<int, int> MatchedPhoton;
     std::map<int, int> MatchedJet;
     std::map<int, int> MatchedEleJet;
     std::map<int, int> MatchedMuonJet;
+    std::map<int, int> MatchedPhotonJet;
     std::vector<int> PileUpJet; //For jets that don't match to GenJet or lost leptons
 
     TLorentzVector GenMet;
     std::string PileUp;
+    std::string Detector;
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;
   protected:

@@ -90,8 +90,7 @@ bool DelCut::BookHistogram()
   His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
 
   His->AddTH1("ZMass", "Zmass", "M_{Z} [GeV]", "Events / 8 GeV",  50, 0, 400, 0, 1);
-  His->AddTH1("RawMet", "RawMet", "Raw #slash{E}_{T} [GeV]", "Events / 5 GeV",  280, 0, 1400, 0, 1);
-  His->AddTH1("GenMet", "GenMet", "Gen #slash{E}_{T} [GeV]", "Events / 5 GeV",  280, 0, 1400, 0, 1);
+  His->AddTH1C("GenMet", "GenMet", "Gen #slash{E}_{T} [GeV]", "Events / 5 GeV",  200, 0, 1000, 0, 1);
 
   His->AddTH1("JetEta", "#eta_{Jets}", 280, -7, 7 );
 //----------------------------------------------------------------------------i
@@ -143,9 +142,9 @@ bool DelCut::BookHistogram()
   His->AddTH1C("J3Eta", "J3Eta", "#eta_{J3}",     "Events",         14,  -7, 7     );
   His->AddTH1C("J3Phi", "J3Phi", "#phi_{J3}",     "Events",         14,  -7, 7);
 
-  His->AddTH1C("CentralJetPt",  "CentralJetPt",  "Pt_{Central Jet3} [GeV]", "Events / 4 GeV", 200, 0,  800.0 );
-  His->AddTH1C("CentralJetEta", "CentralJetEta", "#eta_{Central Jet3}",     "Events",         14,  -7, 7     );
-  His->AddTH1C("CentralJetPhi", "CentralJetPhi", "#phi_{Central Jet3}",     "Events",         14,  -7, 7);
+  His->AddTH1C("CentralJet3Pt",  "CentralJet3Pt",  "Pt_{Central Jet3} [GeV]", "Events / 4 GeV", 200, 0,  800.0 );
+  His->AddTH1C("CentralJet3Eta", "CentralJet3Eta", "#eta_{Central Jet3}",     "Events",         14,  -7, 7     );
+  His->AddTH1C("CentralJet3Phi", "CentralJet3Phi", "#phi_{Central Jet3}",     "Events",         14,  -7, 7);
   His->AddTH1C("JCPt", "JCPt", "Pt_{central jets} [GeV]", "Events / 4 GeV", 300, 0, 1200.0 );
   His->AddTH1C("JFPt", "JFPt", "Pt_{forward jets} [GeV]", "Events / 4 GeV", 300, 0, 1200.0 );
 
@@ -192,15 +191,17 @@ bool DelCut::InitCutOrder(std::string ana)
      CutOrder.clear();
      CutMap.clear();
      CutOrder.push_back("NoCut");
-     CutOrder.push_back("MetFilter");
-     CutOrder.push_back("NJet2");
-     CutOrder.push_back("Met50");
-     CutOrder.push_back("VBFJ1");
-     CutOrder.push_back("VBFJ2");
-     CutOrder.push_back("Eta2");
-     CutOrder.push_back("dEta42");
-     CutOrder.push_back("CTJ1");
-     CutOrder.push_back("CTJ2");
+     CutOrder.push_back("VBFCut");
+     //CutOrder.push_back("MetFilter");
+     //CutOrder.push_back("NJet2");
+     //CutOrder.push_back("Met50");
+     //CutOrder.push_back("VBFJ1");
+     //CutOrder.push_back("VBFJ2");
+     //CutOrder.push_back("Eta2");
+     //CutOrder.push_back("dEta42");
+     CutOrder.push_back("J1J2");
+     //CutOrder.push_back("CTJ1");
+     //CutOrder.push_back("CTJ2");
      CutOrder.push_back("CTMjj");
      CutOrder.push_back("CTJ3");
      CutOrder.push_back("CTBJ");
@@ -210,15 +211,17 @@ bool DelCut::InitCutOrder(std::string ana)
      CutOrder.push_back("AllCut");
 
      CutMap["NoCut"]     = "00000000000000000";
-     CutMap["MetFilter"] = "00000000000000001";
-     CutMap["NJet2"]     = "00000000000000011";
-     CutMap["Met50"]     = "00000000000000111";
-     CutMap["VBFJ1"]     = "00000000000001111";
-     CutMap["VBFJ2"]     = "00000000000011111";
-     CutMap["Eta2"]      = "00000000000111111";
-     CutMap["dEta42"]    = "00000000001111111";
-     CutMap["CTJ1"]      = "00000000011111111";
-     CutMap["CTJ2"]      = "00000000111111111";
+     //CutMap["MetFilter"] = "00000000000000001";
+     //CutMap["NJet2"]     = "00000000000000011";
+     //CutMap["Met50"]     = "00000000000000111";
+     //CutMap["VBFJ1"]     = "00000000000001111";
+     //CutMap["VBFJ2"]     = "00000000000011111";
+     //CutMap["Eta2"]      = "00000000000111111";
+     //CutMap["dEta42"]    = "00000000001111111";
+     CutMap["VBFCut"]    = "00000000001111111";
+     //CutMap["CTJ1"]      = "00000000011111111";
+     //CutMap["CTJ2"]      = "00000000111111111";
+     CutMap["J1J2"]      = "00000000111111111";
      CutMap["CTMjj"]     = "00000001111111111";
      CutMap["CTJ3"]      = "00000011111111111";
      CutMap["CTBJ"]      = "00000111111111111";
@@ -226,7 +229,6 @@ bool DelCut::InitCutOrder(std::string ana)
      CutMap["CTMet200"]  = "00011111111111111";
      CutMap["CTdPhi"]    = "00111111111111111";
      CutMap["AllCut"]    = "01111111111111111";
-
 
    }
 
@@ -301,7 +303,6 @@ int DelCut::FillCut()
   His->FillTH1("NEle", (int)Ana->vElectron->size());
   His->FillTH1("NMuon", (int)Ana->vMuon->size());
   His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
-  His->FillTH1("RawMet", Ana->RawMet.Mod());
   His->FillTH1("Met", Ana->Met);
   His->FillTH1("MetRelSys", Ana->METAsys);
   His->FillTPro("MHTAsys", Ana->Met, Ana->METAsys);
@@ -315,7 +316,6 @@ int DelCut::FillCut()
    FillJets();
    FillLepton();
    His->FillTH1("ZMass", Ana->GenMet.M());
-   His->FillTH1("GenMet", Ana->GenMet.Pt());
 
 //----------------------------------------------------------------------------
 //  Filling histogram for MET performance study
@@ -787,6 +787,12 @@ int DelCut::FillJets(int NCut)
 //----------------------------------------------------------------------------
 //  Jet 1
 //----------------------------------------------------------------------------
+  if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), 0) != Ana->PileUpJet.end())
+    His->FillTH1(NCut, "J1PU", 1);
+  else
+    His->FillTH1(NCut, "J1PU", 0);
+
+
   His->FillTH1(NCut, "J1Pt", Ana->J1->PT);
   His->FillTH1(NCut, "J1Eta", Ana->J1->Eta);
   His->FillTH1(NCut, "J1Phi", Ana->J1->Phi);
@@ -801,6 +807,10 @@ int DelCut::FillJets(int NCut)
 //----------------------------------------------------------------------------
   if (Ana->J2 != 0)
   {
+    if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), 1) != Ana->PileUpJet.end())
+      His->FillTH1(NCut, "J2PU", 1);
+    else
+      His->FillTH1(NCut, "J2PU", 0);
     His->FillTH1(NCut, "J2Pt", Ana->J2->PT);
     His->FillTH1(NCut, "J2Eta", Ana->J2->Eta);
     His->FillTH1(NCut, "J2Phi", Ana->J2->Phi);
@@ -826,6 +836,11 @@ int DelCut::FillJets(int NCut)
 //----------------------------------------------------------------------------
   if (Ana->J3 != 0)
   {
+    if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), 2) != Ana->PileUpJet.end())
+      His->FillTH1(NCut, "J3PU", 1);
+    else
+      His->FillTH1(NCut, "J3PU", 0);
+
     His->FillTH1(NCut, "J3Pt", Ana->J3->PT);
     His->FillTH1(NCut, "J3Eta", Ana->J3->Eta);
     His->FillTH1(NCut, "J3Phi", Ana->J3->Phi);
@@ -839,10 +854,26 @@ int DelCut::FillJets(int NCut)
     if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
     {
-      His->FillTH1(NCut, "CentralJetPt", Ana->J3->PT);
-      His->FillTH1(NCut, "CentralJetEta", Ana->J3->Eta);
-      His->FillTH1(NCut, "CentralJetPhi", Ana->J3->Phi);
+      His->FillTH1(NCut, "CentralJet3Pt", Ana->J3->PT);
+      His->FillTH1(NCut, "CentralJet3Eta", Ana->J3->Eta);
+      His->FillTH1(NCut, "CentralJet3Phi", Ana->J3->Phi);
     }
+
+    for (int i = 0; i < Ana->vJet->size(); ++i)
+    {
+      Jet jet = Ana->vJet->at(i);
+      if ( (jet.Eta > Ana->J1->Eta && jet.Eta < Ana->J2->Eta) || 
+          (jet.Eta > Ana->J2->Eta && jet.Eta < Ana->J1->Eta))
+      {
+        His->FillTH1(NCut, "CentralJetPt", jet.PT);
+        His->FillTH1(NCut, "CentralJetEta", jet.Eta);
+        His->FillTH1(NCut, "CentralJetOrder", i);
+        if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), i) != Ana->PileUpJet.end())
+          His->FillTH1(NCut, "CentralPUJetOrder", i);
+      }
+      
+    }
+
   }
 
 //----------------------------------------------------------------------------
@@ -930,6 +961,7 @@ int DelCut::FillEle(int NCut)
 // ===========================================================================
 int DelCut::FillMet(int NCut)
 {
+  His->FillTH1(NCut, "GenMet", Ana->GenMet.Pt());
   His->FillTH1(NCut, "MHT", Ana->Met);
   His->FillTH1(NCut, "MET", Ana->RawMet.Mod());
   His->FillTH1(NCut, "MHTMET", Ana->Met - Ana->RawMet.Mod());
@@ -1171,6 +1203,13 @@ bool DelCut::BookLeptonEff()
   His->AddTH1C("MatchedElePt", "MatchedElePt", "Pt_{Matched e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
   His->AddTH1C("MatchedMuonPt", "MatchedMuonPt", "Pt_{Matched m} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
   His->AddTH1C("MatchedTauPt", "MatchedTauPt", "Pt_{Matched t} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("AppGenElePt", "AppGenElePt", "Pt_{Gen e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
+  His->AddTH1C("AppGenMuonPt", "AppGenMuonPt", "Pt_{Gen m} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("AppGenTauPt", "AppGenTauPt", "Pt_{Gen t} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("AppMatchedElePt", "AppMatchedElePt", "Pt_{Matched e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
+  His->AddTH1C("AppMatchedMuonPt", "AppMatchedMuonPt", "Pt_{Matched m} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+  His->AddTH1C("AppMatchedTauPt", "AppMatchedTauPt", "Pt_{Matched t} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
+
   His->AddTH1C("ElePt", "ElePt", "Pt_{e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
   His->AddTH1C("MuonPt", "MuonPt", "Pt_{m} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
   His->AddTH1C("TauPt", "TauPt", "Pt_{t} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
@@ -1181,17 +1220,27 @@ bool DelCut::BookLeptonEff()
   His->AddTH1C("MatchedEleEta", "MatchedEleEta", "#eta_{Matched e}", "Events",  50, -5, 5 );
   His->AddTH1C("MatchedMuonEta", "MatchedMuonEta", "#eta_{Matched m}","Events",   50, -5, 5 );
   His->AddTH1C("MatchedTauEta", "MatchedTauEta", "#eta_{Matched t}","Events",   50, -5, 5 );
+  His->AddTH1C("AppGenEleEta", "AppGenEleEta", "#eta_{Gen e}", "Events",  50, -5, 5 );
+  His->AddTH1C("AppGenMuonEta", "AppGenMuonEta", "#eta_{Gen m}","Events",   50, -5, 5 );
+  His->AddTH1C("AppGenTauEta", "AppGenTauEta", "#eta_{Gen t}","Events",   50, -5, 5 );
+  His->AddTH1C("AppMatchedEleEta", "AppMatchedEleEta", "#eta_{Matched e}", "Events",  50, -5, 5 );
+  His->AddTH1C("AppMatchedMuonEta", "AppMatchedMuonEta", "#eta_{Matched m}","Events",   50, -5, 5 );
+  His->AddTH1C("AppMatchedTauEta", "AppMatchedTauEta", "#eta_{Matched t}","Events",   50, -5, 5 );
   His->AddTH1C("EleEta", "EleEta", "#eta_{e}", "Events",  50, -5, 5 );
   His->AddTH1C("MuonEta", "MuonEta", "#eta_{m}", "Events",  50, -5, 5 );
   His->AddTH1C("TauEta", "TauEta", "#eta_{t}", "Events",  50, -5, 5 );
 
-  His->AddTH2C("GenEle", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("GenMuon", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("GenTau", "Gen Tau", "#eta_{Gen t}", "Pt_{Gen t}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoEle", "Reco Electron", "#eta_{e}", "Pt_{e}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoMuon", "Reco Muon", "#eta_{m}", "Pt_{m}", 50, -5, -5, 200, 0, 800);
-  His->AddTH2C("RecoTau", "Reco Tau", "#eta_{t}", "Pt_{t}", 50, -5, -5, 200, 0, 800);
+  His->AddTH2C("GenEle", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e} [GeV]", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("GenMuon", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 120, -6., 6., 200, 0., 800.);
+  His->AddTH2C("GenTau", "Gen Tau", "#eta_{Gen t}", "Pt_{Gen t}", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("RecoEle", "Reco Electron", "#eta_{e}", "Pt_{e}", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("RecoMuon", "Reco Muon", "#eta_{m}", "Pt_{m}", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("RecoTau", "Reco Tau", "#eta_{t}", "Pt_{t}", 120, -6, 6, 200, 0, 800);
 
+  His->AddTH2C("GenEleJet", "Gen Electron", "#eta_{Gen e}", "Pt_{Gen e} [GeV]", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("GenMuonJet", "Gen Muon", "#eta_{Gen m}", "Pt_{Gen m}", 120, -6., 6., 200, 0., 800.);
+  His->AddTH2C("RecoEleJet", "Reco Electron", "#eta_{e}", "Pt_{e}", 120, -6, 6, 200, 0, 800);
+  His->AddTH2C("RecoMuonJet", "Reco Muon", "#eta_{m}", "Pt_{m}", 120, -6, 6, 200, 0, 800);
   return true;
 }       // -----  end of function DelCut::BookLeptonEff  -----
 
@@ -1206,13 +1255,13 @@ bool DelCut::BookJetEff()
 //  GenJet, Matched Jet Eff. Matched Jet
 //----------------------------------------------------------------------------
   His->AddTH1C("GenJetPt", "GenJetPt", "Pt_{Gen Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
-  His->AddTH1C("GenJetEta", "GenJetEta", "#eta_{Gen Jet}", "Events",  50, -5, 5 );
+  His->AddTH1C("GenJetEta", "GenJetEta", "#eta_{Gen Jet}", "Events",  60, -6, 6 );
   His->AddTH1C("MatchedJetPt", "MatchedJetPt", "Pt_{Matched Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
-  His->AddTH1C("MatchedJetEta", "MatchedJetEta", "#eta_{Matched Jet}", "Events",  50, -5, 5 );
+  His->AddTH1C("MatchedJetEta", "MatchedJetEta", "#eta_{Matched Jet}", "Events",  60, -6, 6 );
   His->AddTH1C("JetPt", "JetPt", "Pt_{Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
-  His->AddTH1C("JetEta", "JetEta", "#eta_{Jet}", "Events", 50, -5, 5 );
+  His->AddTH1C("JetEta", "JetEta", "#eta_{Jet}", "Events", 60, -6, 6 );
   His->AddTH1C("PUJetPt", "PUJetPt", "Pt_{PUJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
-  His->AddTH1C("PUJetEta", "PUJetEta", "#eta_{PUJet}", "Events", 50, -5, 5 );
+  His->AddTH1C("PUJetEta", "PUJetEta", "#eta_{PUJet}", "Events", 60, -6, 6 );
   His->AddTH1C("JetPTScale", "JetPTScale", "Reco Jet / Gen Jet", "Events", 200, -1, 3 );
 
   double eta[5] ={ -5, -2.5, 0, 2.5, 5 };
@@ -1232,12 +1281,31 @@ bool DelCut::BookJetEff()
   }
   
 
+  His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet} [GeV]", 120, -6, 6, 500, 0, 1000);
+  His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 120, -6, 6, 500, 0, 1000);
+  His->AddTH2C("PUJet", "PU Jet", "#eta_{PUJet}", "Pt_{PUJet}", 120, -6, 6, 500, 0, 1000);
   His->AddTPro("JetScalePT", "JetScalePT", "Pt_{Gen Jet} [GeV]", "Reco Jet / Gen Jet",  500, 0, 1000);
-  His->AddTPro("JetScaleEta", "JetScaleEta", "#eta_{Gen Jet}", "Reco Jet / Gen Jet",  50, -5, 5);
-  His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet}", 50, -5, -5, 200, 0, 1000);
-  His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 50, -5., -5., 200, 0., 1000.);
-  His->AddTH2C("PUJet", "PU Jet", "#eta_{PUJet}", "Pt_{PUJet}", 50, -5., -5., 200, 0., 1000.);
+  His->AddTPro("JetScaleEta", "JetScaleEta", "#eta_{Gen Jet}", "Reco Jet / Gen Jet",  60, -6, 6);
+
+
+//----------------------------------------------------------------------------
+//  Whether the first jet is the pileup jet
+//----------------------------------------------------------------------------
+  His->AddTH1C("J1PU", "Jet 1 Orignal", 2, 0, 1 );
+  His->AddTH1C("J2PU", "Jet 2 Orignal", 2, 0, 1 );
+  His->AddTH1C("J3PU", "Jet 3 Orignal", 2, 0, 1 );
+
+//----------------------------------------------------------------------------
+// Central Jets
+//----------------------------------------------------------------------------
+  His->AddTH1C("CentralJetPt", "CentralJetPt", "Pt_{Central Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("CentralJetEta", "CentralJetEta", "#eta_{Central Jet}", "Events",  60, -6, 6 );
+  His->AddTH1C("CentralJetOrder", "CentralJetOrder", "Order of Central Jet", "Events",  40, 0, 40);
+  His->AddTH1C("CentralPUJetOrder", "CentralPUJetOrder", "Order of Central PUJet", "Events",  40, 0, 40);
+
+
   return true;
+
 }       // -----  end of function DelCut::BookJetEff  -----
 
 // ===  FUNCTION  ============================================================
@@ -1247,11 +1315,11 @@ bool DelCut::BookJetEff()
 int DelCut::FillLepton(int NCut) const
 {
 
+//----------------------------------------------------------------------------
+//  Fill in All Gen Lepton
+//----------------------------------------------------------------------------
   for (int i = 0; i < Ana->vGenParticle->size(); ++i)
   {
-//----------------------------------------------------------------------------
-//  Fill in Gen Lepton
-//----------------------------------------------------------------------------
     if (Ana->MatchedEle.find(i) != Ana->MatchedEle.end() )
     {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
@@ -1306,6 +1374,83 @@ int DelCut::FillLepton(int NCut) const
 
   }
  
+
+//----------------------------------------------------------------------------
+//  Fill in Gen Lepton within acceptance
+//----------------------------------------------------------------------------
+  for (int i = 0; i < Ana->vGenParticle->size(); ++i)
+  {
+    if (!Ana->DetectorApp(Ana->vGenParticle->at(i).Eta) || Ana->vGenParticle->at(i).PT < 5)
+      continue;
+    if (Ana->MatchedEle.find(i) != Ana->MatchedEle.end())
+    {
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
+      His->FillTH1(NCut, "AppGenElePt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppGenEleEta", Ana->vGenParticle->at(i).Eta);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Ele ~~~~~ 
+      if (Ana->MatchedEle[i] != -1)
+      {
+        His->FillTH1(NCut, "AppMatchedElePt", Ana->vGenParticle->at(i).PT);
+        His->FillTH1(NCut, "AppMatchedEleEta", Ana->vGenParticle->at(i).Eta);
+      }
+
+    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
+    if (Ana->MatchedMuon.find(i) != Ana->MatchedMuon.end() )
+    {
+      His->FillTH1(NCut, "AppGenMuonPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppGenMuonEta", Ana->vGenParticle->at(i).Eta);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Muon ~~~~~ 
+      if (Ana->MatchedMuon[i] != -1)
+      {
+        His->FillTH1(NCut, "AppMatchedMuonPt", Ana->vGenParticle->at(i).PT);
+        His->FillTH1(NCut, "AppMatchedMuonEta", Ana->vGenParticle->at(i).Eta);
+      }
+    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Tau ~~~~~ 
+    if (Ana->MatchedTau.find(i) != Ana->MatchedTau.end() )
+    {
+      His->FillTH1(NCut, "AppGenTauPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppGenTauEta", Ana->vGenParticle->at(i).Eta);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Tau ~~~~~ 
+      if (Ana->MatchedTau[i] != -1)
+      {
+        His->FillTH1(NCut, "AppMatchedTauPt", Ana->vGenParticle->at(i).PT);
+        His->FillTH1(NCut, "AppMatchedTauEta", Ana->vGenParticle->at(i).Eta);
+      }
+    }
+  }
+
+
+//----------------------------------------------------------------------------
+//  Fill in All Gen Lepton matched to jet
+//----------------------------------------------------------------------------
+  for (int i = 0; i < Ana->vGenParticle->size(); ++i)
+  {
+    if (Ana->MatchedEleJet.find(i) != Ana->MatchedEleJet.end() )
+    {
+      if (Ana->MatchedEleJet[i] != -1)
+      {
+        His->FillTH2(NCut, "GenEleJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+        His->FillTH2(NCut, "RecoEleJet", Ana->vJet->at(Ana->MatchedEle[i]).Eta, Ana->vJet->at(Ana->MatchedEleJet[i]).PT);
+      }
+
+    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
+    if (Ana->MatchedMuonJet.find(i) != Ana->MatchedMuonJet.end() )
+    {
+      if (Ana->MatchedMuonJet[i] != -1)
+      {
+        His->FillTH2(NCut, "GenMuonJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+        His->FillTH2(NCut, "RecoMuonJet", Ana->vJet->at(Ana->MatchedEle[i]).Eta, Ana->vJet->at(Ana->MatchedEleJet[i]).PT);
+      }
+    }
+
+  }
+
   return true;
 }       // -----  end of function DelCut::FillLepton  -----
 
@@ -1350,5 +1495,4 @@ bool DelCut::FillLepton()
   //}
 
   return true;
-}
-       // -----  end of function DelCut::FillLepton  -----
+} // -----  end of function DelCut::FillLepton  -----

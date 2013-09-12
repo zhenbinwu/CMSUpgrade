@@ -128,13 +128,13 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
     DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV, pu);
+    ANA = new DelAna(DEV, pu, detector);
 
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For Met Resolution study ~~~~~
     //DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
-    //ANA = new DelAna(DEV, pu);
+    //ANA = new DelAna(DEV, pu, detector);
     //TString tempname = name;
     //tempname.ReplaceAll("ZJETS", "MetDiMuon");
     //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
@@ -152,7 +152,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   if (process.find("TT") != std::string::npos)
   {
     DEV = new DelTT(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV, pu);
+    ANA = new DelAna(DEV, pu, detector);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
@@ -177,7 +177,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   if (process.find("Wino") != std::string::npos)
   {
     DEV = new DelWino(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV, pu);
+    ANA = new DelAna(DEV, pu, detector);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
     return 1;
   }
@@ -191,7 +191,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
     DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV, pu);
+    ANA = new DelAna(DEV, pu, detector);
     //MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
@@ -272,7 +272,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   if (process.find("LL") != std::string::npos)
   {
     DEV = new DelLL(PUCorJetEta, PUCorJetPt);
-    ANA = new DelAna(DEV, pu);
+    ANA = new DelAna(DEV, pu, detector);
     MDelCut["Default"] = new DelCut(ANA, name.Data());
 
     TString tempname = name;
@@ -304,7 +304,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 //  Default
 //----------------------------------------------------------------------------
   DEV = new DelEvent(PUCorJetEta, PUCorJetPt);
-  ANA = new DelAna(DEV, pu);
+  ANA = new DelAna(DEV, pu, detector);
   MDelCut[process] = new DelCut(ANA, name.Data());
   return 1;
 }       // -----  end of function DPhes::SetPreName  -----

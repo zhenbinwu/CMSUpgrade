@@ -548,7 +548,7 @@ bool DelAna::FindJetLepton()
     {
       if (jet.P4().DeltaR(vGenParticle->at(x.first).P4())< 0.5)
       {
-        x.second = SkimJet.at(i);
+        MatchedEleJet[x.first] = SkimJet.at(i);
         matched = true;
         std::vector<int>::iterator jit = std::find(PileUpJet.begin(), PileUpJet.end(), SkimJet.at(i));
         if (jit != PileUpJet.end())
@@ -563,7 +563,7 @@ bool DelAna::FindJetLepton()
     {
       if (jet.P4().DeltaR(vGenParticle->at(x.first).P4())< 0.5)
       {
-        x.second = SkimJet.at(i);
+        MatchedMuonJet[x.first] = SkimJet.at(i);
         matched = true;
         std::vector<int>::iterator jit = std::find(PileUpJet.begin(), PileUpJet.end(), SkimJet.at(i));
         if (jit != PileUpJet.end())
@@ -578,7 +578,7 @@ bool DelAna::FindJetLepton()
     {
       if (jet.P4().DeltaR(vGenParticle->at(x.first).P4())< 0.5)
       {
-        x.second = SkimJet.at(i);
+        MatchedPhotonJet[x.first] = SkimJet.at(i);
         matched = true;
         matched = true;
         std::vector<int>::iterator jit = std::find(PileUpJet.begin(), PileUpJet.end(), SkimJet.at(i));

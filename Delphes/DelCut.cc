@@ -1318,108 +1318,109 @@ int DelCut::FillLepton(int NCut) const
 //----------------------------------------------------------------------------
 //  Fill in All Gen Lepton
 //----------------------------------------------------------------------------
-  for (int i = 0; i < Ana->vGenParticle->size(); ++i)
+  for(auto x: Ana->MatchedEle)
   {
-    if (Ana->MatchedEle.find(i) != Ana->MatchedEle.end() )
+    int i = x.first;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
+    His->FillTH1(NCut, "GenElePt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "GenEleEta", Ana->vGenParticle->at(i).Eta);
+    His->FillTH2(NCut, "GenEle", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Ele ~~~~~ 
+    if (Ana->MatchedEle[i] != -1)
     {
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
-      His->FillTH1(NCut, "GenElePt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "GenEleEta", Ana->vGenParticle->at(i).Eta);
-      His->FillTH2(NCut, "GenEle", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Ele ~~~~~ 
-      if (Ana->MatchedEle[i] != -1)
-      {
-        His->FillTH1(NCut, "MatchedElePt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "MatchedEleEta", Ana->vGenParticle->at(i).Eta);
-        His->FillTH1(NCut, "ElePt", Ana->vElectron->at(Ana->MatchedEle[i]).PT);
-        His->FillTH1(NCut, "EleEta", Ana->vElectron->at(Ana->MatchedEle[i]).Eta);
-        His->FillTH2(NCut, "RecoEle", Ana->vElectron->at(Ana->MatchedEle[i]).Eta, Ana->vElectron->at(Ana->MatchedEle[i]).PT);
-      }
-
+      His->FillTH1(NCut, "MatchedElePt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "MatchedEleEta", Ana->vGenParticle->at(i).Eta);
+      His->FillTH1(NCut, "ElePt", Ana->vElectron->at(Ana->MatchedEle[i]).PT);
+      His->FillTH1(NCut, "EleEta", Ana->vElectron->at(Ana->MatchedEle[i]).Eta);
+      His->FillTH2(NCut, "RecoEle", Ana->vElectron->at(Ana->MatchedEle[i]).Eta, Ana->vElectron->at(Ana->MatchedEle[i]).PT);
     }
+  }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
-    if (Ana->MatchedMuon.find(i) != Ana->MatchedMuon.end() )
+  for(auto x: Ana->MatchedMuon)
+  {
+    int i = x.first;
+    His->FillTH1(NCut, "GenMuonPt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "GenMuonEta", Ana->vGenParticle->at(i).Eta);
+    His->FillTH2(NCut, "GenMuon", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Muon ~~~~~ 
+    if (Ana->MatchedMuon[i] != -1)
     {
-      His->FillTH1(NCut, "GenMuonPt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "GenMuonEta", Ana->vGenParticle->at(i).Eta);
-      His->FillTH2(NCut, "GenMuon", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Muon ~~~~~ 
-      if (Ana->MatchedMuon[i] != -1)
-      {
-        His->FillTH1(NCut, "MatchedMuonPt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "MatchedMuonEta", Ana->vGenParticle->at(i).Eta);
-        His->FillTH1(NCut, "MuonPt", Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
-        His->FillTH1(NCut, "MuonEta", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta);
-        His->FillTH2(NCut, "RecoMuon", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta, Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
-      }
+      His->FillTH1(NCut, "MatchedMuonPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "MatchedMuonEta", Ana->vGenParticle->at(i).Eta);
+      His->FillTH1(NCut, "MuonPt", Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
+      His->FillTH1(NCut, "MuonEta", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta);
+      His->FillTH2(NCut, "RecoMuon", Ana->vMuon->at(Ana->MatchedMuon[i]).Eta, Ana->vMuon->at(Ana->MatchedMuon[i]).PT);
     }
+  }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Tau ~~~~~ 
-    if (Ana->MatchedTau.find(i) != Ana->MatchedTau.end() )
+  for(auto x: Ana->MatchedTau)
+  {
+    int i = x.first;
+    His->FillTH1(NCut, "GenTauPt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "GenTauEta", Ana->vGenParticle->at(i).Eta);
+    His->FillTH2(NCut, "GenTau", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Tau ~~~~~ 
+    if (Ana->MatchedTau[i] != -1)
     {
-      His->FillTH1(NCut, "GenTauPt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "GenTauEta", Ana->vGenParticle->at(i).Eta);
-      His->FillTH2(NCut, "GenTau", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Tau ~~~~~ 
-      if (Ana->MatchedTau[i] != -1)
-      {
-        His->FillTH1(NCut, "MatchedTauPt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "MatchedTauEta", Ana->vGenParticle->at(i).Eta);
-        His->FillTH1(NCut, "TauPt", Ana->vJet->at(Ana->MatchedTau[i]).PT);
-        His->FillTH1(NCut, "TauEta", Ana->vJet->at(Ana->MatchedTau[i]).Eta);
-        His->FillTH2(NCut, "RecoTau", Ana->vJet->at(Ana->MatchedTau[i]).Eta, Ana->vJet->at(Ana->MatchedTau[i]).PT);
-      }
+      His->FillTH1(NCut, "MatchedTauPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "MatchedTauEta", Ana->vGenParticle->at(i).Eta);
+      His->FillTH1(NCut, "TauPt", Ana->vJet->at(Ana->MatchedTau[i]).PT);
+      His->FillTH1(NCut, "TauEta", Ana->vJet->at(Ana->MatchedTau[i]).Eta);
+      His->FillTH2(NCut, "RecoTau", Ana->vJet->at(Ana->MatchedTau[i]).Eta, Ana->vJet->at(Ana->MatchedTau[i]).PT);
     }
-
   }
+
  
 
 //----------------------------------------------------------------------------
 //  Fill in Gen Lepton within acceptance
 //----------------------------------------------------------------------------
-  for (int i = 0; i < Ana->vGenParticle->size(); ++i)
+  for(auto x: Ana->MatchedEle)
   {
+    int i = x.first;
     if (!Ana->DetectorApp(Ana->vGenParticle->at(i).Eta) || Ana->vGenParticle->at(i).PT < 5)
       continue;
-    if (Ana->MatchedEle.find(i) != Ana->MatchedEle.end())
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
+    His->FillTH1(NCut, "AppGenElePt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "AppGenEleEta", Ana->vGenParticle->at(i).Eta);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Ele ~~~~~ 
+    if (Ana->MatchedEle[i] != -1)
     {
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Ele ~~~~~ 
-      His->FillTH1(NCut, "AppGenElePt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "AppGenEleEta", Ana->vGenParticle->at(i).Eta);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Ele ~~~~~ 
-      if (Ana->MatchedEle[i] != -1)
-      {
-        His->FillTH1(NCut, "AppMatchedElePt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "AppMatchedEleEta", Ana->vGenParticle->at(i).Eta);
-      }
-
+      His->FillTH1(NCut, "AppMatchedElePt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppMatchedEleEta", Ana->vGenParticle->at(i).Eta);
     }
+  }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
-    if (Ana->MatchedMuon.find(i) != Ana->MatchedMuon.end() )
+  for(auto x: Ana->MatchedMuon)
+  {
+    int i = x.first;
+    if (!Ana->DetectorApp(Ana->vGenParticle->at(i).Eta) || Ana->vGenParticle->at(i).PT < 5)
+      continue;
+    His->FillTH1(NCut, "AppGenMuonPt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "AppGenMuonEta", Ana->vGenParticle->at(i).Eta);
+    if (Ana->MatchedMuon[i] != -1)
     {
-      His->FillTH1(NCut, "AppGenMuonPt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "AppGenMuonEta", Ana->vGenParticle->at(i).Eta);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Muon ~~~~~ 
-      if (Ana->MatchedMuon[i] != -1)
-      {
-        His->FillTH1(NCut, "AppMatchedMuonPt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "AppMatchedMuonEta", Ana->vGenParticle->at(i).Eta);
-      }
+      His->FillTH1(NCut, "AppMatchedMuonPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppMatchedMuonEta", Ana->vGenParticle->at(i).Eta);
     }
+  }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Tau ~~~~~ 
-    if (Ana->MatchedTau.find(i) != Ana->MatchedTau.end() )
+  for(auto x: Ana->MatchedTau)
+  {
+    int i = x.first;
+    if (!Ana->DetectorApp(Ana->vGenParticle->at(i).Eta) || Ana->vGenParticle->at(i).PT < 5)
+      continue;
+    His->FillTH1(NCut, "AppGenTauPt", Ana->vGenParticle->at(i).PT);
+    His->FillTH1(NCut, "AppGenTauEta", Ana->vGenParticle->at(i).Eta);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Tau ~~~~~ 
+    if (Ana->MatchedTau[i] != -1)
     {
-      His->FillTH1(NCut, "AppGenTauPt", Ana->vGenParticle->at(i).PT);
-      His->FillTH1(NCut, "AppGenTauEta", Ana->vGenParticle->at(i).Eta);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Matched Tau ~~~~~ 
-      if (Ana->MatchedTau[i] != -1)
-      {
-        His->FillTH1(NCut, "AppMatchedTauPt", Ana->vGenParticle->at(i).PT);
-        His->FillTH1(NCut, "AppMatchedTauEta", Ana->vGenParticle->at(i).Eta);
-      }
+      His->FillTH1(NCut, "AppMatchedTauPt", Ana->vGenParticle->at(i).PT);
+      His->FillTH1(NCut, "AppMatchedTauEta", Ana->vGenParticle->at(i).Eta);
     }
   }
 
@@ -1427,29 +1428,28 @@ int DelCut::FillLepton(int NCut) const
 //----------------------------------------------------------------------------
 //  Fill in All Gen Lepton matched to jet
 //----------------------------------------------------------------------------
-  for (int i = 0; i < Ana->vGenParticle->size(); ++i)
+  for(auto x: Ana->MatchedEleJet)
   {
-    if (Ana->MatchedEleJet.find(i) != Ana->MatchedEleJet.end() )
+    int i = x.first;
+    if (Ana->MatchedEleJet[i] != -1)
     {
-      if (Ana->MatchedEleJet[i] != -1)
-      {
-        His->FillTH2(NCut, "GenEleJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
-        His->FillTH2(NCut, "RecoEleJet", Ana->vJet->at(Ana->MatchedEle[i]).Eta, Ana->vJet->at(Ana->MatchedEleJet[i]).PT);
-      }
-
-    }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
-    if (Ana->MatchedMuonJet.find(i) != Ana->MatchedMuonJet.end() )
-    {
-      if (Ana->MatchedMuonJet[i] != -1)
-      {
-        His->FillTH2(NCut, "GenMuonJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
-        His->FillTH2(NCut, "RecoMuonJet", Ana->vJet->at(Ana->MatchedEle[i]).Eta, Ana->vJet->at(Ana->MatchedEleJet[i]).PT);
-      }
+      His->FillTH2(NCut, "GenEleJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+      His->FillTH2(NCut, "RecoEleJet", Ana->vJet->at(Ana->MatchedEleJet[i]).Eta, Ana->vJet->at(Ana->MatchedEleJet[i]).PT);
     }
 
   }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gen Muon ~~~~~ 
+  for(auto x: Ana->MatchedMuonJet)
+  {
+    int i = x.first;
+    if (Ana->MatchedMuonJet[i] != -1)
+    {
+      His->FillTH2(NCut, "GenMuonJet", Ana->vGenParticle->at(i).Eta, Ana->vGenParticle->at(i).PT);
+      His->FillTH2(NCut, "RecoMuonJet", Ana->vJet->at(Ana->MatchedMuonJet[i]).Eta, Ana->vJet->at(Ana->MatchedMuonJet[i]).PT);
+    }
+  }
+
 
   return true;
 }       // -----  end of function DelCut::FillLepton  -----

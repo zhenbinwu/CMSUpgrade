@@ -76,6 +76,9 @@ int main ( int argc, char *argv[] )
   } else if (Detector == "PhaseII4")
   {
     TreeList = "./FileList/PhaseII4/"+Process+"_"+Pileup+".list";
+  } else if (Detector == "PhaseII4v2")
+  {
+    TreeList = "./FileList/PhaseII4v2/"+Process+"_"+Pileup+".list";
   } else if (Detector == "Test")
   {
     //TreeList = "./Sample/Bj-4p-300-600-v1510_14TEV_NoPileUp_99966708.root";

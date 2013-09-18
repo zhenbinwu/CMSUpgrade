@@ -311,7 +311,8 @@ bool DelAna::CalGenMet()
     GenParticle p = vGenParticle->at(i);
     if (p.Status != 3 || p.M1 > GenSize || p.M2 > GenSize )  continue;
     if (std::fabs(p.PID) == 12 || std::fabs(p.PID) == 14 ||
-        std::fabs(p.PID) == 16 )
+        std::fabs(p.PID) == 16 ||
+        std::fabs(p.PID) == 1000022 || std::fabs(p.PID) == 1000023 )
     vNv.push_back(i);
   }
   
@@ -358,7 +359,7 @@ bool DelAna::FindMatchedJet()
       }
     }
 
-    if (isGenJet && jet.PT > 10)
+    if (isGenJet && jet.PT > DEV->JetPtCut )
     {
       MatchedJet[i] = -1;
     }
@@ -601,13 +602,13 @@ bool DelAna::DetectorApp(double Eta) const
   if (Detector == "PhaseI" || Detector == "Snowmass" || Detector == "PhaseII3"
   ||  Detector == "Test")
   {
-    if (std::fabs(Eta) > 2.4)
+    if (std::fabs(Eta) > 2.5)
     {
       return false;
     }
   }
 
-  if (Detector == "PhaseII4")
+  if (Detector == "PhaseII4" || Detector == "PhaseII4v2")
   {
     if (std::fabs(Eta) > 4.0)
     {

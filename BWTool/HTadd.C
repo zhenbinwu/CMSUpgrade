@@ -47,8 +47,12 @@ int main ( int argc, char *argv[] )
 
   std::string target = argv[1]; // Output Target
   std::vector<std::string> vFiles;
+  struct stat st;
+
 
    for ( int i = 2; i < argc; i++ ) {
+     stat(argv[i], &st);
+     if (st.st_size == 0) continue;
      TFile temp(argv[i]);
      if (temp.GetSize() > 500)
      {
@@ -69,7 +73,7 @@ int main ( int argc, char *argv[] )
 //  Merging the files
 //----------------------------------------------------------------------------
   std::stringstream ss;
-  ss<< "hadd -O -f " << target;
+  ss<< "hadd -O -f6 " << target;
   BOOST_FOREACH(std::string input, vFiles)
   {
     ss<< " " << input;
@@ -90,7 +94,6 @@ int main ( int argc, char *argv[] )
 //  Now moving the merged file to a temp directory 
 //----------------------------------------------------------------------------
   std::string outdir = "splited";
-  struct stat st;
   if (stat(outdir.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
     ;
   else

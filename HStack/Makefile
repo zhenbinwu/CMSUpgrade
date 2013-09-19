@@ -3,10 +3,10 @@ ROOTBUILD=debug
 CPPFLAGS=-g
 endif
 
-LD            = g++
-LDFLAGS       = -g -O
+LD        = g++
+LDFLAGS   = -g -O
 OutPutOpt = -o
-CPPFLAGS= -g -O2 -pipe -Wall -W -Woverloaded-virtual -fPIC \
+CPPFLAGS  = -g -O2 -pipe -Wall -W -Woverloaded-virtual -fPIC \
         -D__REGEXP -DG__UNIX -DG__SHAREDLIB -DG__ROOT -DG__REDIRECTIO \
         -DG__OSFDLL -D__NO_CDFSOFT__ $(shell root-config --cflags)
 

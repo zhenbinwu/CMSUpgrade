@@ -1,13 +1,15 @@
 #!/bin/tcsh
 
+set DET       = $1
+
 mkdir -p merged
-foreach Dec (PhaseI PhaseII3 PhaseII4)
+
+foreach Dec (`echo $DET`)
   foreach PU (NoPileUp 140PileUp)
     foreach HT (1 2  3 4 5 6 7 )
       foreach pro (B W Z H Photon MetDiMuon MetDiEle \
         Wev Wmv Wtv Wlv Whad SysWmv SysWev  \
           Zee Zmm Ztt Zll Zvv Zhad SysZee SysZmm \
-          Wino100 Wino200 Wino500 \
           EleEle MuMu NvNv TauTau  LL Lep SysEE SysMM \
           TT TTFLep TTHad  TTSLep)
         foreach B ('' J JJ)
@@ -18,6 +20,15 @@ foreach Dec (PhaseI PhaseII3 PhaseII4)
           #endif
         end
       end
+    end
+  end
+end
+
+foreach Dec (`echo $DET`)
+  foreach PU (NoPileUp 140PileUp)
+    foreach pro (Wino100 Wino200 Wino500)
+      HTadd ${pro}}_14TeV_${PU}_${Dec}.root ${pro}_14TeV_*_${PU}_${Dec}.root
+      mv ${pro}_14TeV_*_${PU}_${Dec}.root merged/
     end
   end
 end

@@ -93,6 +93,14 @@ bool DelCut::BookHistogram()
   His->AddTH1C("GenMet", "GenMet", "Gen #slash{E}_{T} [GeV]", "Events / 5 GeV",  200, 0, 1000, 0, 1);
 
   His->AddTH1("JetEta", "JetEta", "#eta_{All Jets}", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta20", "JetEta20", "#eta_{jets} (P_{T}^{jet} > 20 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta30", "JetEta30", "#eta_{jets} (P_{T}^{jet} > 30 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta40", "JetEta40", "#eta_{jets} (P_{T}^{jet} > 40 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta50", "JetEta50", "#eta_{jets} (P_{T}^{jet} > 50 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta70", "JetEta70", "#eta_{jets} (P_{T}^{jet} > 70 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta100", "JetEta100", "#eta_{jets} (P_{T}^{jet} > 100 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta120", "JetEta120", "#eta_{jets} (P_{T}^{jet} > 120 GeV)", "Events", 280, -7, 7 );
+  His->AddTH1("JetEta150", "JetEta150", "#eta_{jets} (P_{T}^{jet} > 150 GeV)", "Events", 280, -7, 7 );
   His->AddTH1("JetPt", "JetPt", "Pt_{All Jet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
   His->AddTH1("EleEta", "EleEta", "#eta_{All Eles}", "Events", 280, -7, 7 );
   His->AddTH1("ElePt", "ElePt", "Pt_{All Ele} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
@@ -738,6 +746,16 @@ int DelCut::FillJets() const
   {
     His->FillTH1("JetEta", Ana->vJet->at(i).Eta);
     His->FillTH1("JetPt", Ana->vJet->at(i).PT);
+    His->FillTH2("AllJet", Ana->vJet->at(i).Eta, Ana->vJet->at(i).PT);
+
+    if (Ana->vJet->at(i).PT > 20) His->FillTH1("JetEta20", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 30) His->FillTH1("JetEta30", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 40) His->FillTH1("JetEta40", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 50) His->FillTH1("JetEta50", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 70) His->FillTH1("JetEta70", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 100) His->FillTH1("JetEta100", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 120) His->FillTH1("JetEta120", Ana->vJet->at(i).Eta);
+    if (Ana->vJet->at(i).PT > 150) His->FillTH1("JetEta150", Ana->vJet->at(i).Eta);
   }
 
 //----------------------------------------------------------------------------
@@ -1291,6 +1309,7 @@ bool DelCut::BookJetEff()
   }
   
 
+  His->AddTH2("AllJet", "All Jet", "#eta_{All Jet}", "Pt_{All Jet} [GeV]", 120, -6, 6, 500, 0, 1000);
   His->AddTH2C("GenJet", "Gen Jet", "#eta_{Gen Jet}", "Pt_{Gen Jet} [GeV]", 120, -6, 6, 500, 0, 1000);
   His->AddTH2C("RecoJet", "Reco Jet", "#eta_{Jet}", "Pt_{Jet}", 120, -6, 6, 500, 0, 1000);
   His->AddTH2C("PUJet", "PU Jet", "#eta_{PUJet}", "Pt_{PUJet}", 120, -6, 6, 500, 0, 1000);

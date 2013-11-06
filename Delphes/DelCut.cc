@@ -1104,9 +1104,9 @@ int DelCut::FillMetPerf() const
   His->FillTH1("MetY", Ana->PUCorMet->Py());
   His->FillTH1("RMetX", Ana->RawMet.Px());
   His->FillTH1("RMetY", Ana->RawMet.Py());
-  His->FillTPro("MetScale", Ana->QT, Ana->MetScale);
-  His->FillTPro("MetResP", Ana->QT, Ana->UParallel);
-  His->FillTPro("MetResT", Ana->QT, Ana->UTransverse);
+  His->FillTPro("MetScale", Ana->QT, Ana->MetScale, 1);
+  His->FillTPro("MetResP", Ana->QT, Ana->UParallel, 1);
+  His->FillTPro("MetResT", Ana->QT, Ana->UTransverse, 1);
   His->FillTPro("MetResX", *Ana->HT, Ana->PUCorMet->Px());
   His->FillTPro("MetResY", *Ana->HT, Ana->PUCorMet->Py());
   His->FillTPro("RMetResX", Ana->RHT, Ana->RawMet.Px());

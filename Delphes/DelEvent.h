@@ -72,6 +72,9 @@ class DelEvent
     TVector2 PUCorMet;
     TLorentzVector MHT;
     double HT;
+    //Flags for the selection on the event
+    double JetEtaCut;
+    double JetPtCut;
 
     // Virtual preselected for the signal sample, which is generated with the
     // preselection
@@ -99,9 +102,6 @@ class DelEvent
     bool CorLepJet(int idx, Jet *jet);
 
 
-    //Flags for the selection on the event
-    double JetEtaCut;
-    double JetPtCut;
     // The index of jets to be vetoed by the different function
     // Using set for the unique elements
     std::set<int>  RMjet;

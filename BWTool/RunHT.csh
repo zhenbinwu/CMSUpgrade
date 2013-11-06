@@ -45,7 +45,7 @@ foreach PU (`echo $PUs`)
   if (${HTSplit} == 0 || $SplitLine > $Filesize) then ## No splitting 
     set HTSplit = 0
     echo $PU $PRO $DIR $DEC
-    set toru=`echo $PU $PRO $DIR $DEC ${PRO}_${PU}.log $toru`
+    set toru=`echo $PU $PRO $DIR $DEC ${PRO}_${PU}_${DEC}.log $toru`
     @ count += 1
   else
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Splitting ~~~~~
@@ -73,20 +73,16 @@ foreach PU (`echo $PUs`)
     foreach file (`ls FileList/${DEC}/${PRO}_*_${PU}.list`)
       @ count += 1
 
-      if (`echo $PRO | grep -c "HT"`) then
-        set name = `basename $file | cut -f 1-4 -d '_'`
-      else
-        set name = `basename $file | cut -f 1-3 -d '_'`
-      endif
+      set name = `basename $file | awk -F "_${PU}" '{print $1}'`
       echo $PU $name $DIR $DEC
-      set toru=`echo $PU $name $DIR $DEC ${name}_${PU}.log $toru`
+      set toru=`echo $PU $name $DIR $DEC ${name}_${PU}_${DEC}.log $toru`
     end
   endif
 end
 #echo $toru
 
 echo "------------ " $count "jobs in total ------------"
-echo $toru | xargs -n 5 -P4  sh -c  $EXE' $0 $1 $2 $3 > $4'
+echo $toru | xargs -n 5 -P2  sh -c  $EXE' $0 $1 $2 $3 > $4'
 
 
 
@@ -118,6 +114,7 @@ foreach PU (`echo $PUs`)
   if ($? == 0) then
     rm *.log
     rm -rf ${PRO}_${PU}_${DEC}.tar
+    rm -rf ${PRO}_${PU}_${DEC}.tgz
   endif
 end
 

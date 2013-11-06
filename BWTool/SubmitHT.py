@@ -4,19 +4,20 @@
 import os
 import re
 import shutil
+import glob
 
 DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
 DelExe    = 'DelFill'
-Directory = 'PhaseII_5_30'
+Directory = 'METCUT_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 Detectors = [
     #'Snowmass',
-    #'PhaseI',
+    'PhaseI',
     'PhaseII3',
     'PhaseII4'
 ]
 PileUps   = [
-    #'NoPileUp',
+    'NoPileUp',
     #'50PileUp',
     '140PileUp',
 ]
@@ -45,6 +46,12 @@ Projects  = [
     'TT_14TEV_HT3',
     'TT_14TEV_HT4',
     'TT_14TEV_HT5',
+    'LL_14TEV_HT1' ,
+    'LL_14TEV_HT2' ,
+    'LL_14TEV_HT3' ,
+    'LL_14TEV_HT4' ,
+    'LL_14TEV_HT5' ,
+    'LL_14TEV_HT6' ,
     
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
@@ -136,45 +143,23 @@ Projects  = [
 ]
 
 
-def my_process():
-    ## Some checking first
-    my_CheckFile()
-
-    ## Create the output directory
-    outdir = DelDir + "/" + Directory
-    try:
-        os.mkdir(outdir)
-    except OSError:
-        pass
-
-    ## Update RunHT.csh with DelDir and pileups
-    RunHTFile = outdir + "/" + "RunHT.csh"
-    with open(RunHTFile, "wt") as outfile:
-        for line in open("RunHT.csh", "r"):
-            line = line.replace("DELDIR", DelDir)
-            line = line.replace("DELEXE", DelExe)
-            outfile.write(line)
-
-    ## Update condor files
-    shutil.copy2("Delphes_condor", outdir)
-    os.chdir(outdir)
-    os.system("tar -czf FileList.tgz ../FileList")
-
+def Condor_Sub():
     for dec in Detectors:
         for pu in PileUps:
             for pro in Projects:
-                cond_file = pro + "_" + pu + "_" + dec + "_condor"
-                print cond_file
-                with open(cond_file, "wt") as out:
-                    for line in open("Delphes_condor", "r"):
-                        line = line.replace("USER@FNAL.GOV", UserEMAIL)
-                        line = line.replace("ProcessName", pro)
-                        line = line.replace("Tag_JetEta_JetPt", Directory)
-                        line = line.replace("PileUp", pu)
-                        line = line.replace("DETECTOR", dec)
-                        out.write(line)
+                for splitpro in SplitPro(dec, pu, pro):
+                    cond_file = splitpro + "_" + pu + "_" + dec + "_condor"
+                    print cond_file
+                    with open(cond_file, "wt") as out:
+                        for line in open("Delphes_condor", "r"):
+                            line = line.replace("USER@FNAL.GOV", UserEMAIL)
+                            line = line.replace("ProcessName", splitpro)
+                            line = line.replace("Tag_JetEta_JetPt", Directory)
+                            line = line.replace("PileUp", pu)
+                            line = line.replace("DETECTOR", dec)
+                            out.write(line)
 
-                os.system("condor_submit " + cond_file)
+                    os.system("condor_submit " + cond_file)
 
 
 def my_CheckFile():
@@ -218,6 +203,48 @@ def my_CheckFile():
     else:
         print "Please compile HTadd"
         quit()
+
+def SplitPro(detector, pileup, pro):
+    globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (DelDir, detector, pro, pileup))
+    testout=[]
+    for out in globout:
+        file = out.split('/')[-1]
+        #print file
+        match = re.match(r'(%s.*)_%s\.list' % (pro, pileup), file)
+        #match = re.match('%s*%s' % (pro, pileup), file)
+        if match != None:
+            #print match.group(0)
+            print match.group(1)
+            testout.append(match.group(1))
+    return testout
+
+def my_process():
+    ## Some checking first
+    my_CheckFile()
+
+    ## Create the output directory
+    outdir = DelDir + "/" + Directory
+    try:
+        os.mkdir(outdir)
+    except OSError:
+        pass
+
+    ## Update RunHT.csh with DelDir and pileups
+    RunHTFile = outdir + "/" + "RunHT.csh"
+    with open(RunHTFile, "wt") as outfile:
+        for line in open("RunHT.csh", "r"):
+            line = line.replace("DELDIR", DelDir)
+            line = line.replace("DELEXE", DelExe)
+            outfile.write(line)
+
+    ## Update condor files
+    shutil.copy2("mergeHT.csh", outdir)
+    shutil.copy2("Delphes_condor", outdir)
+    os.chdir(outdir)
+    os.system("tar -czf FileList.tgz ../FileList")
+    Condor_Sub()
+
+
 
 if __name__ == "__main__":
     my_process()

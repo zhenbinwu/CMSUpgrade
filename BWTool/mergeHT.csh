@@ -27,7 +27,7 @@ end
 foreach Dec (`echo $DET`)
   foreach PU (NoPileUp 140PileUp)
     foreach pro (Wino100 Wino200 Wino500)
-      HTadd ${pro}}_14TeV_${PU}_${Dec}.root ${pro}_14TeV_*_${PU}_${Dec}.root
+      HTadd ${pro}_14TeV_${PU}_${Dec}.root ${pro}_14TeV_*_${PU}_${Dec}.root
       mv ${pro}_14TeV_*_${PU}_${Dec}.root merged/
     end
   end

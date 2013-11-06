@@ -20,6 +20,7 @@ Wino500_14TeV            0.00045             0.00001          #99% Wino at 500 G
 WJETS_13TEV              63066               1075.5           #Inclusive W(lv) + jets at 14TeV
 ZJETS_13TEV              12930               213              #Inclusive Z(vv) + jets at 14TeV
 TTBAR_13TEV              882.29              117.38           #Inclusive TTbar + jets at 14TeV
+QCD_14TeV                100000              0.00001          #99% Wino at 100 GeV at 14TeV
 
 #============================================================================#
 #----------------------   Delphes-3.0.9.1 14TEV HTBin   ---------------------#

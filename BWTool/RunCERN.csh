@@ -1,13 +1,13 @@
 #!/bin/csh
-#BSUB -M 3000000
+#============================================================================#
 
 set PRO       = $1
 set DIR       = $2
 set PUs       = $3
 set DEC       = $4
 
-set HTSplit   = 0 
-set SplitLine = 5
+set HTSplit   = 1 
+set SplitLine = 100
 set DEL       = DELDIR
 set EXE       = ${DEL}/DELEXE
 

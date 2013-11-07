@@ -72,6 +72,7 @@ bool DelCut::BookHistogram()
   
   BookLeptonEff();
   BookJetEff();
+  BookSUSYVar();
 //----------------------------------------------------------------------------
 //  Booking global histogram
 //----------------------------------------------------------------------------
@@ -352,6 +353,7 @@ int DelCut::FillCut()
     FillJets(i);
     FillMet(i);
     FillLepton(i);
+    FillSUSYVar(i);
   }
 
   return 1;
@@ -1086,6 +1088,22 @@ int DelCut::BookMetPerf() const
   return 1;
 }       // -----  end of function DelCut::BookMetPerf  -----
 
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::BookSUSYVar
+//  Description:  
+// ===========================================================================
+int DelCut::BookSUSYVar()
+{
+  His->AddTH1C("RazorMR", "Razor MR", 350, 0, 3500 );
+  His->AddTH1C("RazorR", "Razor R", 15, 0, 1.5 );
+  His->AddTH1C("RazorMRT", "Razor MRT", 200, 0, 1000);
+  His->AddTH1C("AlphaT", "AlphaT", 20, 0, 1 );
+  His->AddTH1C("MT2", "MT2", 200, 0, 2000 );
+  return 1;
+}       // -----  end of function DelCut::BookSUSYVar  -----
+
+
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::FillMetPerf
 //  Description:  filling all the histogram for the MET performance study
@@ -1525,3 +1543,18 @@ bool DelCut::FillLepton()
 
   return true;
 } // -----  end of function DelCut::FillLepton  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillSUSYVar
+//  Description:  
+// ===========================================================================
+int DelCut::FillSUSYVar(int NCut ) const
+{
+  His->FillTH1(NCut, "RazorMR", Ana->RazorMR);
+  //std::cout << " ----- MRT  " << Ana->RazorMRT << std::endl;
+  His->FillTH1(NCut, "RazorMRT", Ana->RazorMRT);
+  His->FillTH1(NCut, "RazorR", Ana->RazorR);
+  His->FillTH1(NCut, "MT2", Ana->Mt2);
+  His->FillTH1(NCut, "AlphaT", Ana->AlphaT);
+  return 1;
+}       // -----  end of function DelCut::FillSUSYVar  -----

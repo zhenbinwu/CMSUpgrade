@@ -19,7 +19,7 @@ echo "============  Running on" $HOST " ============"
 set LOCAL=`dirname $0`
 cd $LOCAL
 set LOCAL=`pwd`  
-source ${DEL}/../setup.sh 
+source ${DEL}/../setup.csh 
 cd $LOCAL
 tar -xzf FileList.tgz
 

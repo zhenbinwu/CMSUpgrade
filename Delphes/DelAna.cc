@@ -118,9 +118,23 @@ bool DelAna::Clear()
   RHT = 0.0;
   Met = -999;
   METAsys = -99;
+  Mjj = 0.0;
   DelHT = -999.;
 
   GenMet.SetPxPyPzE(0, 0, 0, 0);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Razor ~~~~~
+  RazorJets.clear();
+  RazorMR = 0.0;
+  RazorMRT = 0.0;
+  RazorR = 0.0;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MT2 ~~~~~
+  MT2sides.clear();
+  Mt2 = 0.0;
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AlphaT ~~~~~
+  AlphaT = 0.0;
+
 }       // -----  end of function DelAna::Clear  -----
 
 // ===  FUNCTION  ============================================================
@@ -165,6 +179,19 @@ int DelAna::GetBasic()
   FindMatchedJet();
   FindMatchedLep();
   FindJetLepton();
+
+//**************************************************************************//
+//                              SUSY Variables                              //
+//**************************************************************************//
+  Razor_CombineJets();
+  Razor_CalcMR();
+  Razor_CalcMRT();
+  Razor_CalcR();
+
+  MT2sides = MT2_2SideEta0();
+  assert(MT2sides.size() == 2);
+  Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
+  AlphaT = CalcAlphaT();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
 
@@ -651,6 +678,227 @@ int DelAna::JetMatching(int GenIdx, std::vector<int>& JetIdx) const
       JetIdx.erase(jit);
     }
   }
-
   return matchedIdx;
 }       // -----  end of function DelAna::JetMatching  -----
+
+
+//----------------------------------------------------------------------------
+//  Razor
+//----------------------------------------------------------------------------
+
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::Razor_CombineJets
+//  Description:  Calculate the jets using a hemishere algorithm as explained
+//  in https://twiki.cern.ch/twiki/bin/view/CMSPublic/RazorLikelihoodHowTo
+// ===========================================================================
+std::vector<TLorentzVector> DelAna::Razor_CombineJets()
+{
+  RazorJets.clear();
+
+  TLorentzVector j1, j2;
+  bool foundGood = false;
+  int N_comb = 1;
+
+  for(int i = 0; i < vJet->size(); i++){
+    N_comb *= 2;
+  }
+
+  double M_min = 9999999999.0;
+  int j_count;
+  for(int i = 1; i < N_comb-1; i++){
+    TLorentzVector j_temp1, j_temp2;
+    int itemp = i;
+    j_count = N_comb/2;
+    int count = 0;
+    while(j_count > 0){
+      if(itemp/j_count == 1){
+        j_temp1 += vJet->at(count).P4();
+      } else {
+        j_temp2 += vJet->at(count).P4();
+      }
+      itemp -= j_count*(itemp/j_count);
+      j_count /= 2;
+      count++;
+    }
+    double M_temp = j_temp1.M2()+j_temp2.M2();
+    // smallest mass
+    if(M_temp < M_min){
+      M_min = M_temp;
+      j1 = j_temp1;
+      j2 = j_temp2;
+    }
+  }  
+  if(j2.Pt() > j1.Pt()){
+    TLorentzVector temp = j1;
+    j1 = j2;
+    j2 = temp;
+  }
+  
+  RazorJets.push_back(j1);
+  RazorJets.push_back(j2);
+  return RazorJets;
+}       // -----  end of function DelAna::Razor_CombineJets  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::Razor_CalcMR
+//  Description:  
+// ===========================================================================
+double DelAna::Razor_CalcMR()
+{
+  assert(RazorJets.size() == 2);
+  TLorentzVector ja = RazorJets.at(0);
+  TLorentzVector jb = RazorJets.at(1);
+  
+  double A = ja.P();
+  double B = jb.P();
+  double az = ja.Pz();
+  double bz = jb.Pz();
+  TVector3 jaT, jbT;
+  jaT.SetXYZ(ja.Px(),ja.Py(),0.0);
+  jbT.SetXYZ(jb.Px(),jb.Py(),0.0);
+  double ATBT = (jaT+jbT).Mag2();
+  double temp = sqrt((A+B)*(A+B)-(az+bz)*(az+bz)-
+                     (jbT.Dot(jbT)-jaT.Dot(jaT))*(jbT.Dot(jbT)-jaT.Dot(jaT))/(jaT+jbT).Mag2());
+  double mybeta = (jbT.Dot(jbT)-jaT.Dot(jaT))/sqrt(ATBT*((A+B)*(A+B)-(az+bz)*(az+bz)));
+  double mygamma = 1./sqrt(1.-mybeta*mybeta);
+  //gamma times MRstar                                                                                                                                                         \
+  temp *= mygamma;
+  RazorMR = temp;
+  return temp;
+}       // -----  end of function DelAna::Razor_CalcMR  ----- = ja.P();
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::Razor_CalcMRT
+//  Description:  
+// ===========================================================================
+double DelAna::Razor_CalcMRT()
+{
+  assert(RazorJets.size() == 2);
+  TLorentzVector ja = RazorJets.at(0);
+  TLorentzVector jb = RazorJets.at(1);
+  TVector3 Met3V(PUCorMet->X(), PUCorMet->Y(), 0.0);
+  double temp = Met3V.Mag()*(ja.Pt()+jb.Pt()) - Met3V.Dot(ja.Vect()+jb.Vect());
+  temp /= 2.;
+  temp = sqrt(temp);
+  RazorMRT = temp;
+  return temp;
+}       // -----  end of function DelAna::Razor_CalcMRT  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::Razor_CalcR
+//  Description:  
+// ===========================================================================
+double DelAna::Razor_CalcR()
+{
+  RazorR = RazorMRT / RazorMR;
+  return RazorR;
+}       // -----  end of function DelAna::Razor_CalcR  -----
+
+//----------------------------------------------------------------------------
+//  AlphaT
+//----------------------------------------------------------------------------
+
+//// ===  FUNCTION  ============================================================
+////         Name:  DelAna::CalcAlphaT
+////  Description:  
+//// ===========================================================================
+//double DelAna::CalcAlphaT()
+//{
+  
+
+//}       // -----  end of function DelAna::CalcAlphaT  -----
+//
+
+//----------------------------------------------------------------------------
+//  Mt2
+//----------------------------------------------------------------------------
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::MT2_2SideEta0
+//  Description:  Calculate the two sides by two hemisphear, separated by Eta0
+// ===========================================================================
+std::vector<TLorentzVector> DelAna::MT2_2SideEta0()
+{
+  std::vector<TLorentzVector> Twosides;
+  TLorentzVector sidea;
+  TLorentzVector sideb;
+
+  for (int j = 0; j < vJet->size(); ++j)
+  {
+    Jet jet = vJet->at(j);
+    if (jet.Eta >= 0) sidea += jet.P4();
+    else sideb += jet.P4();
+  }
+
+  Twosides.push_back(sidea);
+  Twosides.push_back(sideb);
+  
+  return Twosides;
+}       // -----  end of function DelAna::MT2_2SideEta0  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::MT2_CalcMT2
+//  Description: 
+// ===========================================================================
+double DelAna::MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb)
+{
+  // First we create the object that is going to do the calculation
+  // of MT2 for us.  You can do this once early on, and re-use it
+  // multiple times.
+  //
+  // For this example we will use the "Basic_Mt2_332_Calculator" which is
+  // the algorithm we recommend people use by default.
+  Mt2::ChengHanBisect_Mt2_332_Calculator mt2Calculator;
+  //Mt2::Basic_Mt2_332_Calculator mt2Calculator;
+
+  
+  // Could tell the MT2 calculating object to be verbose, and print out
+  // debug messages while it is thinking ... but we won't:
+  
+ //mt2Calculator.setDebug(true);
+
+
+  // The mass of the "inivisible" particle presumed to have
+  // been produced at the end of the decay chain in each
+  // "half" of the event:
+  const double invis_mass    = 100; // GeV
+  
+  Mt2::LorentzTransverseVector  vis_A(Mt2::TwoVector(sidea.Px(), sidea.Py()), sidea.M());
+  Mt2::LorentzTransverseVector  vis_B(Mt2::TwoVector(sideb.Px(), sideb.Py()), sideb.M());
+  Mt2::TwoVector                pT_Miss(PUCorMet->Px(), PUCorMet->Py());
+
+  //std::cout << "Going to calculate MT2 with\n"
+    //<< "   ltv_Vis_A  = " << vis_A  << "\n"
+    //<< "   ltv_Vis_B  = " << vis_B  << "\n"
+    //<< "   pT_Miss    = " << pT_Miss    << "\n"
+    //<< "   invis_mass = " << invis_mass << std::endl;
+
+  // Now that we have some visiable momenta and some missing transverse
+  // momentum we can calculate MT2.
+
+  const double mt2 
+    = mt2Calculator.mt2_332(vis_A, vis_B, pT_Miss, invis_mass);
+
+  // Now we print out the result:
+  //std::cout << "ANSWER: mt2 = " << mt2 
+    //<< " for " << mt2Calculator.algorithmName() << " algorithm"
+    //<< std::endl; 
+  
+  return mt2;
+
+}       // -----  end of function DelAna::MT2_CalcMT2  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::CalcAlphaT
+//  Description:  
+// ===========================================================================
+double DelAna::CalcAlphaT()
+{
+  if (vJet->size() < 2) return 0.0;
+  assert( Mjj != 0.0 );
+  return J2->PT/Mjj;
+
+}       // -----  end of function DelAna::CalcAlphaT  -----

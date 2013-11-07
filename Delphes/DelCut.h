@@ -94,6 +94,8 @@ class DelCut
     int FillMet(int NCut);
 
     
+    int BookSUSYVar();
+    int FillSUSYVar(int NCut ) const;
     // For MET Performance study
     int BookMetPerf() const;
     int FillMetPerf() const;

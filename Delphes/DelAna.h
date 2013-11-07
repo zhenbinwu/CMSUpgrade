@@ -22,6 +22,7 @@
 
 #include <assert.h>
 #include "DelEvent.h"
+#include "Mt2/ChengHanBisect_Mt2_332_Calculator.h"
 
 /*
  * ===========================================================================
@@ -56,7 +57,14 @@ class DelAna
     bool DetectorApp(double Eta) const;
     int JetMatching(int GenIdx, std::vector<int>& JetIdx) const;
     /* ====================  MUTATORS      ======================================= */
+    double Razor_CalcR();
+    double Razor_CalcMRT();
+    double Razor_CalcMR();
+    std::vector<TLorentzVector> Razor_CombineJets();
 
+    double MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb);
+    std::vector<TLorentzVector> MT2_2SideEta0();
+    double CalcAlphaT();
     /* ====================  OPERATORS     ======================================= */
 
     DelAna& operator = ( const DelAna &other ); /* assignment operator */
@@ -116,6 +124,20 @@ class DelAna
     std::string Detector;
     /* ====================  DATA MEMBERS  ======================================= */
     DelEvent* DEV;
+
+    /* ====================  SUSY Variables  ======================================= */
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Razor ~~~~~
+    std::vector<TLorentzVector> RazorJets;
+    double RazorMR;
+    double RazorMRT;
+    double RazorR;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MT2 ~~~~~
+    std::vector<TLorentzVector> MT2sides;
+    double Mt2;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AlphaT ~~~~~
+    double AlphaT;
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
 

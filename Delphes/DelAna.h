@@ -62,8 +62,9 @@ class DelAna
     double Razor_CalcMR();
     std::vector<TLorentzVector> Razor_CombineJets();
 
-    double MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb);
+    double MT2_CalcMT2(double Inv_mass, TLorentzVector sidea, TLorentzVector sideb);
     std::vector<TLorentzVector> MT2_2SideEta0();
+    std::vector<TLorentzVector> MT2_2SideJ1J2();
     double CalcAlphaT();
     /* ====================  OPERATORS     ======================================= */
 

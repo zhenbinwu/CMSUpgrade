@@ -188,9 +188,9 @@ int DelAna::GetBasic()
   Razor_CalcMRT();
   Razor_CalcR();
 
-  MT2sides = MT2_2SideEta0();
-  assert(MT2sides.size() == 2);
-  Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
+  //MT2sides = MT2_2SideEta0();
+  //assert(MT2sides.size() == 2);
+  //Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
   AlphaT = CalcAlphaT();
   return 1;
 }       // -----  end of function DelAna::GetBasic  -----
@@ -840,10 +840,36 @@ std::vector<TLorentzVector> DelAna::MT2_2SideEta0()
 
 
 // ===  FUNCTION  ============================================================
+//         Name:  DelAna::MT2_2SideJ1J2
+//  Description:  Calculate the two sides separated by the J1 J2 Eta
+// ===========================================================================
+std::vector<TLorentzVector> DelAna::MT2_2SideJ1J2()
+{
+  std::vector<TLorentzVector> Twosides;
+  if(vJet->size() < 2) return Twosides;
+
+  TLorentzVector sidea;
+  TLorentzVector sideb;
+
+  double EtaThreshold = (J1->Eta + J2->Eta )/2;
+  for (int j = 0; j < vJet->size(); ++j)
+  {
+    Jet jet = vJet->at(j);
+    if (jet.Eta >= EtaThreshold) sidea += jet.P4();
+    else sideb += jet.P4();
+  }
+
+  Twosides.push_back(sidea);
+  Twosides.push_back(sideb);
+  
+  return Twosides;
+}       // -----  end of function DelAna::MT2_2SideJ1J2  -----
+
+// ===  FUNCTION  ============================================================
 //         Name:  DelAna::MT2_CalcMT2
 //  Description: 
 // ===========================================================================
-double DelAna::MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb)
+double DelAna::MT2_CalcMT2(double Inv_mass, TLorentzVector sidea, TLorentzVector sideb)
 {
   // First we create the object that is going to do the calculation
   // of MT2 for us.  You can do this once early on, and re-use it
@@ -864,7 +890,7 @@ double DelAna::MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb)
   // The mass of the "inivisible" particle presumed to have
   // been produced at the end of the decay chain in each
   // "half" of the event:
-  const double invis_mass    = 100; // GeV
+  const double invis_mass    = Inv_mass; // GeV
   
   Mt2::LorentzTransverseVector  vis_A(Mt2::TwoVector(sidea.Px(), sidea.Py()), sidea.M());
   Mt2::LorentzTransverseVector  vis_B(Mt2::TwoVector(sideb.Px(), sideb.Py()), sideb.M());

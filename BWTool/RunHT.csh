@@ -21,7 +21,7 @@ cd $LOCAL
 set LOCAL=`pwd`  
 source ${DEL}/../setup.csh 
 cd $LOCAL
-tar -xzf FileList.tgz
+tar -xzf FileList.tgz --strip-components 6 
 
 #============================================================================#
 #--------------------------   To Run the Process   --------------------------#

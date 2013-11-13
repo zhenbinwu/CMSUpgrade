@@ -129,7 +129,8 @@ bool DelAna::Clear()
   RazorMRT = 0.0;
   RazorR = 0.0;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MT2 ~~~~~
-  MT2sides.clear();
+  MT2sidesEta.clear();
+  MT2sidesJ1J2.clear();
   Mt2 = 0.0;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AlphaT ~~~~~
@@ -188,7 +189,8 @@ int DelAna::GetBasic()
   Razor_CalcMRT();
   Razor_CalcR();
 
-  //MT2sides = MT2_2SideEta0();
+  MT2sidesEta = MT2_2SideEta0();
+  MT2sidesJ1J2 = MT2_2SideJ1J2();
   //assert(MT2sides.size() == 2);
   //Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
   AlphaT = CalcAlphaT();
@@ -822,6 +824,7 @@ double DelAna::Razor_CalcR()
 std::vector<TLorentzVector> DelAna::MT2_2SideEta0()
 {
   std::vector<TLorentzVector> Twosides;
+  if(vJet->size() < 2) return Twosides;
   TLorentzVector sidea;
   TLorentzVector sideb;
 

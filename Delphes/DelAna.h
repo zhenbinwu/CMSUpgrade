@@ -134,7 +134,8 @@ class DelAna
     double RazorR;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MT2 ~~~~~
-    std::vector<TLorentzVector> MT2sides;
+    std::vector<TLorentzVector> MT2sidesEta;
+    std::vector<TLorentzVector> MT2sidesJ1J2;
     double Mt2;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AlphaT ~~~~~

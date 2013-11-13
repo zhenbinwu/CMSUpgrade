@@ -1102,6 +1102,8 @@ int DelCut::BookSUSYVar()
   His->AddTH1C("MT2_Eta", "MT2", 200, 0, 2000 );
   His->AddTH1C("MT2_J1J2", "MT2", 200, 0, 2000 );
   His->AddTH1C("MT2_Razor", "MT2", 200, 0, 2000 );
+  His->AddTH1C("MHTHT", "MHT/#sqrt(HT)", 200, 0, 5 );
+  His->AddTH1C("METHT", "MET/#sqrt(HT)", 200, 0, 5 );
   return 1;
 }       // -----  end of function DelCut::BookSUSYVar  -----
 
@@ -1557,15 +1559,16 @@ int DelCut::FillSUSYVar(int NCut ) const
   His->FillTH1(NCut, "RazorMRT", Ana->RazorMRT);
   His->FillTH1(NCut, "RazorR", Ana->RazorR);
 
-  std::vector<TLorentzVector> MT2sidesEta = Ana->MT2_2SideEta0();
-  std::vector<TLorentzVector> MT2sidesJ1J2 = Ana->MT2_2SideJ1J2();
   //assert(MT2sides.size() == 2);
   //Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
-  if (MT2sidesEta.size() >= 2)
-    His->FillTH1(NCut, "MT2_Eta", Ana->MT2_CalcMT2(0, MT2sidesEta.at(0), MT2sidesEta.at(1)));
-  if (MT2sidesJ1J2.size() >= 2)
-    His->FillTH1(NCut, "MT2_J1J2", Ana->MT2_CalcMT2(0, MT2sidesJ1J2.at(0), MT2sidesJ1J2.at(1)));
+  if (Ana->MT2sidesEta.size() >= 2)
+    His->FillTH1(NCut, "MT2_Eta", Ana->MT2_CalcMT2(0, Ana->MT2sidesEta.at(0), Ana->MT2sidesEta.at(1)));
+  if (Ana->MT2sidesJ1J2.size() >= 2)
+    His->FillTH1(NCut, "MT2_J1J2", Ana->MT2_CalcMT2(0, Ana->MT2sidesJ1J2.at(0), Ana->MT2sidesJ1J2.at(1)));
   if (Ana->RazorJets.size() >= 2)
     His->FillTH1(NCut, "MT2_Razor", Ana->MT2_CalcMT2(0, Ana->RazorJets.at(0), Ana->RazorJets.at(1)));
+
+  His->FillTH1(NCut, "MHTHT", Ana->PUCorMet->Mod()/sqrt(*Ana->HT));
+  His->FillTH1(NCut, "METHT", Ana->RawMet.Mod()/sqrt(*Ana->HT));
   return 1;
 }       // -----  end of function DelCut::FillSUSYVar  -----

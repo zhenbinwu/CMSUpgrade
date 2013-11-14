@@ -1097,7 +1097,9 @@ int DelCut::BookSUSYVar()
 {
   His->AddTH1C("RazorMR", "Razor MR", 350, 0, 3500 );
   His->AddTH1C("RazorR", "Razor R", 15, 0, 1.5 );
+  His->AddTH1C("RazorR2", "Razor R^2", 15, 0, 1.5 );
   His->AddTH1C("RazorMRT", "Razor MRT", 200, 0, 1000);
+  His->AddTH2C("RazorR_MR", "Razor R vs MR", 200, 0, 1000, 15, 0, 1.5);
   His->AddTH1C("AlphaT", "AlphaT", 20, 0, 1 );
   His->AddTH1C("MT2_Eta", "MT2", 200, 0, 2000 );
   His->AddTH1C("MT2_J1J2", "MT2", 200, 0, 2000 );
@@ -1560,6 +1562,8 @@ int DelCut::FillSUSYVar(int NCut ) const
   His->FillTH1(NCut, "RazorMR", Ana->RazorMR);
   His->FillTH1(NCut, "RazorMRT", Ana->RazorMRT);
   His->FillTH1(NCut, "RazorR", Ana->RazorR);
+  His->FillTH1(NCut, "RazorR2", Ana->RazorR*Ana->RazorR);
+  His->FillTH2(NCut, "RazorR_MR", Ana->RazorMR, Ana->RazorR);
 
   //assert(MT2sides.size() == 2);
   //Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));

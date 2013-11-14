@@ -931,3 +931,46 @@ double DelAna::CalcAlphaT()
   return J2->PT/Mjj;
 
 }       // -----  end of function DelAna::CalcAlphaT  -----
+
+
+//----------------------------------------------------------------------------
+//  Boost framework
+//----------------------------------------------------------------------------
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::VBFBoostMET
+//  Description:  
+// ===========================================================================
+double DelAna::VBFBoostMET()
+{
+  if (J1 == 0 || J2 == 0) return 0.0;
+  TLorentzVector dijet = J1->P4()+J2->P4();
+  TVector3 dijetV3 = dijet.BoostVector();
+  TLorentzVector MET(PUCorMet->X(), PUCorMet->Y(), 0.0 , 0.0);
+  MET.Boost(-dijetV3);
+
+  return MET.Et();
+}       // -----  end of function DelAna::VBFBoostMET  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::VBFBoostHT
+//  Description:  
+// ===========================================================================
+double DelAna::VBFBoostHT()
+{
+  
+  if (J1 == 0 || J2 == 0) return 0.0;
+  TLorentzVector dijet = J1->P4()+J2->P4();
+  TVector3 dijetV3 = dijet.BoostVector();
+  TLorentzVector BoostHT(0, 0, 0, 0);
+
+  for (int i = 0; i < vJet->size(); ++i)
+  {
+    TLorentzVector jet = vJet->at(i).P4();
+    jet.Boost(-dijetV3);
+    std::cout <<  " " << i << "  " << BoostHT.Pt() << " " << std::endl;
+    BoostHT += jet;
+  }
+
+  return BoostHT.Pt();
+}       // -----  end of function DelAna::VBFBoostHT  -----

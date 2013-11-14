@@ -1104,6 +1104,8 @@ int DelCut::BookSUSYVar()
   His->AddTH1C("MT2_Razor", "MT2", 200, 0, 2000 );
   His->AddTH1C("MHTHT", "MHT/#sqrt(HT)", 200, 0, 5 );
   His->AddTH1C("METHT", "MET/#sqrt(HT)", 200, 0, 5 );
+  His->AddTH1C("BoostMHT", "MHT w.r.t dijet", 200, 0, 1000 );
+  His->AddTH1C("BoostHT", "HT w.r.t dijet", 200, 0, 1000 );
   return 1;
 }       // -----  end of function DelCut::BookSUSYVar  -----
 
@@ -1570,5 +1572,7 @@ int DelCut::FillSUSYVar(int NCut ) const
 
   His->FillTH1(NCut, "MHTHT", Ana->PUCorMet->Mod()/sqrt(*Ana->HT));
   His->FillTH1(NCut, "METHT", Ana->RawMet.Mod()/sqrt(*Ana->HT));
+  His->FillTH1(NCut, "BoostMHT", Ana->VBFBoostMET());
+  His->FillTH1(NCut, "BoostHT", Ana->VBFBoostHT());
   return 1;
 }       // -----  end of function DelCut::FillSUSYVar  -----

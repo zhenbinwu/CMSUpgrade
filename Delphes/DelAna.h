@@ -67,6 +67,8 @@ class DelAna
     std::vector<TLorentzVector> MT2_2SideJ1J2();
     double CalcAlphaT();
     /* ====================  OPERATORS     ======================================= */
+    double VBFBoostMET();
+    double VBFBoostHT();
 
     DelAna& operator = ( const DelAna &other ); /* assignment operator */
 

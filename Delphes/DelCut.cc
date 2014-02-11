@@ -73,6 +73,7 @@ bool DelCut::BookHistogram()
   BookLeptonEff();
   BookJetEff();
   BookSUSYVar();
+  BookBJet();
 //----------------------------------------------------------------------------
 //  Booking global histogram
 //----------------------------------------------------------------------------
@@ -970,6 +971,30 @@ int DelCut::FillJets(int NCut)
       }
     }
   }
+//----------------------------------------------------------------------------
+//  Fill in BJet information
+//----------------------------------------------------------------------------
+  His->FillTH1(NCut, "NBJets", int(Ana->vBJet.size()));
+  int centralb = 0;
+   for (int i = 0; i < Ana->vBJet.size(); ++i)
+   {
+     Jet bjet = Ana->vBJet.at(i);
+     His->FillTH1(NCut, "BJetPt", bjet.PT);
+     His->FillTH1(NCut, "BJetEta", bjet.Eta);
+     if ( (bjet.Eta > Ana->J1->Eta && bjet.Eta < Ana->J2->Eta) || 
+         (bjet.Eta > Ana->J2->Eta && bjet.Eta < Ana->J1->Eta))
+     {
+       His->FillTH1(NCut, "CentralBJetPt", bjet.PT);
+       His->FillTH1(NCut, "CentralBJetEta", bjet.Eta);
+       centralb++;
+       His->FillTH1(NCut, "CentralBJetOrder", i);
+     }
+     if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), i) != Ana->PileUpJet.end())
+       His->FillTH1(NCut, "CentralPUBJetOrder", i);
+   }
+
+   His->FillTH1(NCut, "NCentralBJets", centralb);
+
    return 1;
 }       // -----  end of function DelCut::FillJets  -----
 
@@ -1580,3 +1605,28 @@ int DelCut::FillSUSYVar(int NCut ) const
   His->FillTH1(NCut, "BoostHT", Ana->VBFBoostHT());
   return 1;
 }       // -----  end of function DelCut::FillSUSYVar  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::BookBJet
+//  Description:  
+// ===========================================================================
+bool DelCut::BookBJet()
+{
+
+  His->AddTH1C("NGenBJets", "Num. of GenBJets", "Number of GenBJets", "Events", 10, 0, 10 );
+  His->AddTH1C("GenBJetPt", "GenBJetPt", "Pt_{Gen BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("GenBJetEta", "GenBJetEta", "#eta_{Gen BJet}", "Events",  60, -6, 6 );
+  His->AddTH1C("NBJets", "Num. of BJets", "Number of BJets", "Events", 10, 0, 10 );
+  His->AddTH1C("BJetPt", "BJetPt", "Pt_{BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("BJetEta", "BJetEta", "#eta_{BJet}", "Events", 60, -6, 6 );
+//----------------------------------------------------------------------------
+// Central BJets
+//----------------------------------------------------------------------------
+  His->AddTH1C("NCentralBJets", "Num. of CentralBJets", "Number of CentralBJets", "Events", 10, 0, 10 );
+  His->AddTH1C("CentralBJetPt", "CentralBJetPt", "Pt_{Central BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("CentralBJetEta", "CentralBJetEta", "#eta_{Central BJet}", "Events",  60, -6, 6 );
+  His->AddTH1C("CentralBJetOrder", "CentralBJetOrder", "Order of Central BJet", "Events",  10, 0, 10);
+  His->AddTH1C("CentralPUBJetOrder", "CentralPUBJetOrder", "Order of Central PUBJet", "Events",  10, 0, 10);
+  return true;
+}       // -----  end of function DelCut::BookBJet  -----

@@ -150,13 +150,44 @@ int DelAna::GetBasic()
   METAsys = std::fabs(Met - RawMet.Mod())/(Met + RawMet.Mod());
   SysMet = SystemMet();
 
-  if (vJet->size() > 0) J1 = &vJet->at(0);
-  if (vJet->size() > 1) 
+//----------------------------------------------------------------------------
+//  Removing bJet from the jet list 
+//----------------------------------------------------------------------------
+  int jetcount=0;
+  vBJet.clear();
+  for (int i = 0; i < vJet->size(); ++i)
   {
-    J2 = &vJet->at(1);
-    Mjj = (J1->P4() + J2->P4()).M();
+    if (vJet->at(i).BTag & (1<<0)) 
+    {
+      vBJet.push_back(vJet->at(i));
+      continue;
+    }
+    if (jetcount == 0)
+    {
+      J1 = &vJet->at(i); 
+      jetcount++;
+    }
+    if (jetcount == 1)
+    {
+      J2 = &vJet->at(i); 
+      Mjj = (J1->P4() + J2->P4()).M();
+      jetcount++;
+    }
+    if (jetcount == 2)
+    {
+      J3 = &vJet->at(i);
+      jetcount++;
+    }
+    
   }
-  if (vJet->size() > 2) J3 = &vJet->at(2);
+
+  //if (vJet->size() > 0) 
+  //if (vJet->size() > 1) 
+  //{
+    //J2 = &vJet->at(1);
+    //Mjj = (J1->P4() + J2->P4()).M();
+  //}
+  //if (vJet->size() > 2) J3 = &vJet->at(2);
   Weight = vEvent->at(0).Weight;
 
   for (int i = 0; i < vJet->size(); ++i)

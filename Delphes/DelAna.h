@@ -79,6 +79,7 @@ class DelAna
     std::vector<Electron> *vElectron;
     std::vector<Muon> *vMuon;
     std::vector<Jet> *vJet;
+    std::vector<Jet> vBJet;
     std::vector<Jet> *vGenJet;
     std::vector<MissingET> *vMissingET;
     TVector2 *PUCorMet;

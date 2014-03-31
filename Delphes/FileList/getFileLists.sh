@@ -5,7 +5,7 @@
 detector=$1
 
 if [[ "$detector" == "Snowmass" ]]; then
-  baseDir=/pnfs/cms/WAX/11/store/user/snowmass/Delphes-3.0.9
+  baseDir=/eos/uscms/store/user/snowmass/noreplica/HTBinned/Delphes-3.0.9.1/
 fi
 
 if [[ "$detector" == "PhaseI" ]]; then
@@ -24,7 +24,8 @@ fi
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.1
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.2
 
-eoscms=/afs/cern.ch/project/eos/installation/0.2.31/bin/eos.select
+eoscms=''
+#eoscms=/afs/cern.ch/project/eos/installation/0.2.31/bin/eos.select
 
 mkdir -p ntuples
 
@@ -40,12 +41,31 @@ do
         else
           dcachePath=root://eoscms.cern.ch/${baseDir}/${PU}PileUp/${background}/${file}
         fi
+        dcachePath=${baseDir}/${PU}PileUp/${background}/${file}
         echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
       fi
     done
   done
 done
 
+if [[ "$detector" == "Snowmass" ]]; then
+  baseDir=/eos/uscms/store/user/benwu/Delphes-3.0.9/
+fi
+
+if [[ "$detector" == "PhaseI" ]]; then
+  baseDir=/eos/uscms/store/user/benwu/PhaseI/
+  #baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseI/Configuration0/
+fi
+
+if [[ "$detector" == "PhaseII3" ]]; then
+  baseDir=/eos/uscms/store/user/benwu/PhaseII3/
+  #baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration3
+fi
+
+if [[ "$detector" == "PhaseII4" ]]; then
+  baseDir=/eos/uscms/store/user/benwu/PhaseII4/
+  #baseDir=/eos/cms/store/group/phys_higgs/upgrade/PhaseII/Configuration4
+fi
 
 #----------------------------------------------------------------------------#
 #                                 SUSY_SIGNAL                                #
@@ -53,9 +73,11 @@ done
 for PU in No 50 140
 do
   #for background in `${eoscms} ls ${baseDir}/SUSY_SIGNAL/${PU}PileUp`
-  for background in Wino100 Wino200 Wino500
+  #for background in Wino100 Wino200 Wino500
+  for background in Wino100_14TeV Wino200_14TeV Wino500_14TeV Sbottom15_14TeV Sbottom100_14TeV Sbottom150_14TeV Sbottom200_14TeV Sbottom50_14TeV Sbottom300_14TeV  Sbottom400_14TeV 
   do
-    for file in `${eoscms} ls ${baseDir}/SUSY_SIGNAL/${PU}PileUp/${background}/`
+    #for file in `${eoscms} ls ${baseDir}/SUSY_SIGNAL/${PU}PileUp/${background}/`
+    for file in `${eoscms} ls ${baseDir}/${PU}PileUp/${background}/`
     do
       if [[   "$file" == *".root" ]]; then
         if [[ "$detector" == "Snowmass" ]]; then
@@ -63,6 +85,7 @@ do
         else
           dcachePath=root://eoscms.cern.ch/${baseDir}/SUSY_SIGNAL/${PU}PileUp/${background}/${file}
         fi
+        dcachePath=${baseDir}/${PU}PileUp/${background}/${file}
         echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
       fi
     done
@@ -75,6 +98,16 @@ mkdir -p HTBin
 
 for PU in No 50 140
 do
+  mv ntuples/Wino100_14TeV_${PU}PileUp.list                      HTBin/Wino100_14TeV_${PU}PileUp.list
+  mv ntuples/Wino200_14TeV_${PU}PileUp.list                      HTBin/Wino200_14TeV_${PU}PileUp.list
+  mv ntuples/Wino500_14TeV_${PU}PileUp.list                      HTBin/Wino500_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom15_14TeV_${PU}PileUp.list                    HTBin/Sbottom15_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom50_14TeV_${PU}PileUp.list                    HTBin/Sbottom50_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom100_14TeV_${PU}PileUp.list                    HTBin/Sbottom100_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom150_14TeV_${PU}PileUp.list                    HTBin/Sbottom150_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom200_14TeV_${PU}PileUp.list                    HTBin/Sbottom200_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom300_14TeV_${PU}PileUp.list                    HTBin/Sbottom300_14TeV_${PU}PileUp.list
+  mv ntuples/Sbottom400_14TeV_${PU}PileUp.list                    HTBin/Sbottom400_14TeV_${PU}PileUp.list
   mv ntuples/Wino100_${PU}PileUp.list                            HTBin/Wino100_14TeV_${PU}PileUp.list
   mv ntuples/Wino200_${PU}PileUp.list                            HTBin/Wino200_14TeV_${PU}PileUp.list
   mv ntuples/Wino500_${PU}PileUp.list                            HTBin/Wino500_14TeV_${PU}PileUp.list

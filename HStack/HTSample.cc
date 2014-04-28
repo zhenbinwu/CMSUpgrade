@@ -21,8 +21,8 @@
 //      Method:  HTSample
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-HTSample::HTSample(std::string dir_, std::string sample_, std::string pileup_) :
-  dir(dir_), sample(sample_), pileup(pileup_)
+HTSample::HTSample(std::string dir_, std::string sample_, std::string pileup_, std::string detector_) :
+  dir(dir_), sample(sample_), pileup(pileup_), detector(detector_)
 {
     isHT = false;
     isSignal = false;
@@ -74,12 +74,12 @@ bool HTSample::InitSample(const int Lumi)
 {
   if (sample.find("HT") != std::string::npos)
   {
-    HT = new HTHis(dir, sample, pileup);
+    HT = new HTHis(dir, sample, pileup, detector);
     HT->GetScale(Lumi);
     isHT = true;
   }
   else{
-    MC = new MCHis(dir, sample, pileup);
+    MC = new MCHis(dir, sample, pileup, detector);
     MC->GetScale(Lumi);
     isHT = false;
   }
@@ -123,3 +123,15 @@ TH1F* HTSample::GetTH1(std::string hname, int NCut, bool WithScale) const
     return MC->GetTH1(hname, NCut, WithScale);
 
 }       // -----  end of function HTSample::GetTH1  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HTSample::GetTH2D
+//  Description:  
+// ===========================================================================
+TH2D* HTSample::GetTH2D(std::string hname, int NCut, bool WithScale) const
+{
+  if (isHT)
+    return  HT->GetTH2D(hname, NCut, WithScale);
+  else
+    return NULL;
+}       // -----  end of function HTSample::GetTH2D  -----

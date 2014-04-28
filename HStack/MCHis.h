@@ -36,8 +36,7 @@ class MCHis
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    MCHis (std::string dir_, std::string sample_,
-           std::string pileup_);                  /* constructor      */
+    MCHis (std::string dir_, std::string sample_, std::string pileup_, std::string detector);                  /* constructor      */
     MCHis ( const MCHis &other );                 /* copy constructor */
     ~MCHis ();                                    /* destructor       */
 
@@ -62,6 +61,7 @@ class MCHis
     std::string dir;
     std::string sample;
     std::string pileup;
+    std::string detector;
     TFile* File;
     TH1F* Hist;
     double Scale;

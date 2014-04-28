@@ -20,8 +20,8 @@
 //      Method:  MCHis
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-MCHis::MCHis(std::string dir_, std::string sample_, std::string pileup_) :
-  dir(dir_), sample(sample_), pileup(pileup_)
+MCHis::MCHis(std::string dir_, std::string sample_, std::string pileup_, std::string detector_):
+  dir(dir_), sample(sample_), pileup(pileup_),detector(detector_)
 {
   GetFile();
 }  // ~~~~~  end of method MCHis::MCHis  (constructor)  ~~~~~
@@ -65,7 +65,7 @@ MCHis::operator = ( const MCHis &other )
 bool MCHis::GetFile()
 {
   char pat[100];
-  sprintf(pat, "%s/%s_%s.root", dir.c_str(), sample.c_str(), pileup.c_str());
+  sprintf(pat, "%s/%s_%s_%s.root", dir.c_str(), sample.c_str(), pileup.c_str(), detector.c_str());
   File = new TFile(pat, "R");
   return true;
 }       // -----  end of function MCHis::GetFile  -----
@@ -81,8 +81,8 @@ bool MCHis::GetScale(const int Lumi)
   double xs = hisxs->GetBinContent(hisxs->FindBin(1));
   TH1F* hisevt = (TH1F*)File->Get("NEVT");
   double evt = hisevt->GetEntries();
+  std::cout << " File name " << File->GetName() << " event " << evt << " Cross " << xs <<" scale " << xs/evt<< std::endl;
   Scale = Lumi*xs/evt;
-  //std::cout << " File name " << File->GetName() << " event " << evt << " scale " << xs/evt<< std::endl;
   return true;
 
 }       // -----  end of function MCHis::GetScale  -----

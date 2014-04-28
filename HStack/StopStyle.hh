@@ -22,3 +22,15 @@
 void StopStyle();
 void TopStyle();
 void SetTitleLumi(std::string title, double lumi);
+void HiggsPaperStyle();
+
+const Color_t color_data  = kBlack;
+const Color_t color_higgs = kRed;
+const Color_t color_WW    = kAzure-9;
+const Color_t color_tt    = kYellow;
+const Color_t color_Wj    = kGray+1;
+const Color_t color_Zj    = kGreen+2;
+const Color_t color_WZ    = kAzure-2;
+
+
+const std::vector<Color_t> vHiggsColor;

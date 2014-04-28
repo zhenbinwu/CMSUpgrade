@@ -73,8 +73,8 @@ void StopStyle()
   SStyle->SetPadRightMargin(0.05);
   SStyle->SetPadTopMargin(0.05); 
   SStyle->SetPadBottomMargin(0.13);      
-  SStyle->SetPadTickX(0); //1:ticks on upper,2: ticks+labels on upper xaxis
-  SStyle->SetPadTickY(0); //1:ticks on right side
+  SStyle->SetPadTickX(1); //1:ticks on upper,2: ticks+labels on upper xaxis
+  SStyle->SetPadTickY(1); //1:ticks on right side
 
   //Frames
   SStyle->SetFrameLineWidth(3);
@@ -110,7 +110,7 @@ void StopStyle()
   SStyle->SetTickLength ( 0.015,"Y");
   SStyle->SetTitleSize  ( 0.07,"Y");
   SStyle->SetLabelSize  ( 0.05,"Y");
-  SStyle->SetTitleOffset( 1.3,"Y");
+  SStyle->SetTitleOffset( 0.8,"Y");
   SStyle->SetNdivisions ( 505   ,"Y");
   //SStyle->SetLabelOffset( 0.01,"Y");
   //SStyle->SetLabelFont  ( 42   ,"Y");

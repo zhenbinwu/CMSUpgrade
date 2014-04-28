@@ -34,7 +34,7 @@ class HTSample
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    HTSample(std::string dir_, std::string sample_, std::string pileup_);
+    HTSample(std::string dir_, std::string sample_, std::string pileup_, std::string detector);
     HTSample ( const HTSample &other );   /* copy constructor */
     ~HTSample ();                            /* destructor       */
 
@@ -46,6 +46,7 @@ class HTSample
     TH1F* GetTH1(std::string hname, bool WithScale=true) const;
     TH1F* GetTH1(std::string hname, int NCut, bool WithScale=true) const;
 
+    TH2D* GetTH2D(std::string hname, int NCut, bool WithScale=true) const;
     /* ====================  OPERATORS     ======================================= */
 
     HTSample& operator = ( const HTSample &other ); /* assignment operator */
@@ -61,6 +62,7 @@ class HTSample
     std::string dir;
     std::string sample;
     std::string pileup;
+    std::string detector;
 
 
     // For inclusive or exclusive sample during the initialization

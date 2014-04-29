@@ -8,50 +8,50 @@ import glob
 
 DelDir    = '/uscms/home/benwu/work/CMSUpgrade/Delphes'
 DelExe    = 'DelFill'
-Directory = 'METCUT_5_30'
+Directory = '/uscms_data/d3/benwu/Delphes_Output/PhaseI3_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 Detectors = [
     #'Snowmass',
     'PhaseI',
-    'PhaseII3',
-    'PhaseII4'
+    #'PhaseII3',
+    #'PhaseII4'
 ]
 PileUps   = [
     'NoPileUp',
     #'50PileUp',
-    '140PileUp',
+    #'140PileUp',
 ]
 Projects  = [
     'Wino100_14TeV',
-    'Wino200_14TeV',
-    'Wino500_14TeV',
-    #'WJETS_13TEV',
-    #'ZJETS_13TEV',
-    #'TTBAR_13TEV',
-    'B_14TEV_HT1' ,
-    'BJ_14TEV_HT1',
-    'BJ_14TEV_HT2',
-    'BJ_14TEV_HT3',
-    'BJ_14TEV_HT4',
-    'BJ_14TEV_HT5',
-    'BJ_14TEV_HT6',
-    'BJ_14TEV_HT7',
-    'BJJ_14TEV_HT1',
-    'BJJ_14TEV_HT2',
-    'BJJ_14TEV_HT3',
-    'BJJ_14TEV_HT4',
-    'BJJ_14TEV_HT5',
-    'TT_14TEV_HT1',
-    'TT_14TEV_HT2',
-    'TT_14TEV_HT3',
-    'TT_14TEV_HT4',
-    'TT_14TEV_HT5',
-    'LL_14TEV_HT1' ,
-    'LL_14TEV_HT2' ,
-    'LL_14TEV_HT3' ,
-    'LL_14TEV_HT4' ,
-    'LL_14TEV_HT5' ,
-    'LL_14TEV_HT6' ,
+    #'Wino200_14TeV',
+    #'Wino500_14TeV',
+    ##'WJETS_13TEV',
+    ##'ZJETS_13TEV',
+    ##'TTBAR_13TEV',
+    #'B_14TEV_HT1' ,
+    #'BJ_14TEV_HT1',
+    #'BJ_14TEV_HT2',
+    #'BJ_14TEV_HT3',
+    #'BJ_14TEV_HT4',
+    #'BJ_14TEV_HT5',
+    #'BJ_14TEV_HT6',
+    #'BJ_14TEV_HT7',
+    #'BJJ_14TEV_HT1',
+    #'BJJ_14TEV_HT2',
+    #'BJJ_14TEV_HT3',
+    #'BJJ_14TEV_HT4',
+    #'BJJ_14TEV_HT5',
+    #'TT_14TEV_HT1',
+    #'TT_14TEV_HT2',
+    #'TT_14TEV_HT3',
+    #'TT_14TEV_HT4',
+    #'TT_14TEV_HT5',
+    #'LL_14TEV_HT1',
+    #'LL_14TEV_HT2',
+    #'LL_14TEV_HT3',
+    #'LL_14TEV_HT4',
+    #'LL_14TEV_HT5',
+    #'LL_14TEV_HT6',
     
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
@@ -154,7 +154,7 @@ def Condor_Sub():
                         for line in open("Delphes_condor", "r"):
                             line = line.replace("USER@FNAL.GOV", UserEMAIL)
                             line = line.replace("ProcessName", splitpro)
-                            line = line.replace("Tag_JetEta_JetPt", Directory)
+                            line = line.replace("Tag_JetEta_JetPt", Directory.split('/')[-1])
                             line = line.replace("PileUp", pu)
                             line = line.replace("DETECTOR", dec)
                             out.write(line)
@@ -223,7 +223,8 @@ def my_process():
     my_CheckFile()
 
     ## Create the output directory
-    outdir = DelDir + "/" + Directory
+    outdir = Directory
+    #outdir = DelDir + "/" + Directory
     try:
         os.mkdir(outdir)
     except OSError:
@@ -241,9 +242,8 @@ def my_process():
     shutil.copy2("mergeHT.csh", outdir)
     shutil.copy2("Delphes_condor", outdir)
     os.chdir(outdir)
-    os.system("tar -czf FileList.tgz ../FileList")
+    os.system("tar -czf FileList.tgz %s/FileList" % DelDir)
     Condor_Sub()
-
 
 
 if __name__ == "__main__":

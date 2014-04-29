@@ -65,7 +65,6 @@ DelHTB::operator = ( const DelHTB &other )
 // ===========================================================================
 bool DelHTB::CheckFlag(const std::string flag)
 {
-
   assert(!FakingZvv);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating boson production ~~~~~
   if (flag == "H")      return Boson == 1;
@@ -234,8 +233,8 @@ bool DelHTB::PrintGen() const
   for (int i = 0; i < vGenParticle.size(); ++i)
   {
     GenParticle p = vGenParticle.at(i);
-    std::cout << " i " << i 
-      << std::setw(5) << " PID "    << std::setw(3) << p.PID
+    std::cout << " i " << std::setw(2) << i 
+      << std::setw(5) << " PID "    << std::setw(10) << p.PID
       << std::setw(5) << " Status "    << std::setw(3) << p.Status
       << std::setw(5) << " M1 "    << std::setw(3) << p.M1
       << std::setw(5) << " M2 "    << std::setw(3) << p.M2

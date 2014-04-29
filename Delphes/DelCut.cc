@@ -73,6 +73,7 @@ bool DelCut::BookHistogram()
   BookLeptonEff();
   BookJetEff();
   BookSUSYVar();
+  BookBJet();
 //----------------------------------------------------------------------------
 //  Booking global histogram
 //----------------------------------------------------------------------------
@@ -970,6 +971,30 @@ int DelCut::FillJets(int NCut)
       }
     }
   }
+//----------------------------------------------------------------------------
+//  Fill in BJet information
+//----------------------------------------------------------------------------
+  His->FillTH1(NCut, "NBJets", int(Ana->vBJet.size()));
+  int centralb = 0;
+   for (int i = 0; i < Ana->vBJet.size(); ++i)
+   {
+     Jet bjet = Ana->vBJet.at(i);
+     His->FillTH1(NCut, "BJetPt", bjet.PT);
+     His->FillTH1(NCut, "BJetEta", bjet.Eta);
+     if ( (bjet.Eta > Ana->J1->Eta && bjet.Eta < Ana->J2->Eta) || 
+         (bjet.Eta > Ana->J2->Eta && bjet.Eta < Ana->J1->Eta))
+     {
+       His->FillTH1(NCut, "CentralBJetPt", bjet.PT);
+       His->FillTH1(NCut, "CentralBJetEta", bjet.Eta);
+       centralb++;
+       His->FillTH1(NCut, "CentralBJetOrder", i);
+     }
+     if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), i) != Ana->PileUpJet.end())
+       His->FillTH1(NCut, "CentralPUBJetOrder", i);
+   }
+
+   His->FillTH1(NCut, "NCentralBJets", centralb);
+
    return 1;
 }       // -----  end of function DelCut::FillJets  -----
 
@@ -1097,9 +1122,17 @@ int DelCut::BookSUSYVar()
 {
   His->AddTH1C("RazorMR", "Razor MR", 350, 0, 3500 );
   His->AddTH1C("RazorR", "Razor R", 15, 0, 1.5 );
+  His->AddTH1C("RazorR2", "Razor R^2", 15, 0, 1.5 );
   His->AddTH1C("RazorMRT", "Razor MRT", 200, 0, 1000);
+  His->AddTH2C("RazorR_MR", "Razor R vs MR", 200, 0, 1000, 15, 0, 1.5);
   His->AddTH1C("AlphaT", "AlphaT", 20, 0, 1 );
-  His->AddTH1C("MT2", "MT2", 200, 0, 2000 );
+  His->AddTH1C("MT2_Eta", "MT2", 200, 0, 2000 );
+  His->AddTH1C("MT2_J1J2", "MT2", 200, 0, 2000 );
+  His->AddTH1C("MT2_Razor", "MT2", 200, 0, 2000 );
+  His->AddTH1C("MHTHT", "MHT/#sqrt(HT)", 200, 0, 5 );
+  His->AddTH1C("METHT", "MET/#sqrt(HT)", 200, 0, 5 );
+  His->AddTH1C("BoostMHT", "MHT w.r.t dijet", 200, 0, 1000 );
+  His->AddTH1C("BoostHT", "HT w.r.t dijet", 200, 0, 1000 );
   return 1;
 }       // -----  end of function DelCut::BookSUSYVar  -----
 
@@ -1550,11 +1583,50 @@ bool DelCut::FillLepton()
 // ===========================================================================
 int DelCut::FillSUSYVar(int NCut ) const
 {
+  His->FillTH1(NCut, "AlphaT", Ana->AlphaT);
   His->FillTH1(NCut, "RazorMR", Ana->RazorMR);
-  //std::cout << " ----- MRT  " << Ana->RazorMRT << std::endl;
   His->FillTH1(NCut, "RazorMRT", Ana->RazorMRT);
   His->FillTH1(NCut, "RazorR", Ana->RazorR);
-  His->FillTH1(NCut, "MT2", Ana->Mt2);
-  His->FillTH1(NCut, "AlphaT", Ana->AlphaT);
+  His->FillTH1(NCut, "RazorR2", Ana->RazorR*Ana->RazorR);
+  His->FillTH2(NCut, "RazorR_MR", Ana->RazorMR, Ana->RazorR);
+
+  //assert(MT2sides.size() == 2);
+  //Mt2 = MT2_CalcMT2(MT2sides.at(0), MT2sides.at(1));
+  if (Ana->MT2sidesEta.size() >= 2)
+    His->FillTH1(NCut, "MT2_Eta", Ana->MT2_CalcMT2(0, Ana->MT2sidesEta.at(0), Ana->MT2sidesEta.at(1)));
+  if (Ana->MT2sidesJ1J2.size() >= 2)
+    His->FillTH1(NCut, "MT2_J1J2", Ana->MT2_CalcMT2(0, Ana->MT2sidesJ1J2.at(0), Ana->MT2sidesJ1J2.at(1)));
+  if (Ana->RazorJets.size() >= 2)
+    His->FillTH1(NCut, "MT2_Razor", Ana->MT2_CalcMT2(0, Ana->RazorJets.at(0), Ana->RazorJets.at(1)));
+
+  His->FillTH1(NCut, "MHTHT", Ana->PUCorMet->Mod()/sqrt(*Ana->HT));
+  His->FillTH1(NCut, "METHT", Ana->RawMet.Mod()/sqrt(*Ana->HT));
+  His->FillTH1(NCut, "BoostMHT", Ana->VBFBoostMET());
+  His->FillTH1(NCut, "BoostHT", Ana->VBFBoostHT());
   return 1;
 }       // -----  end of function DelCut::FillSUSYVar  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::BookBJet
+//  Description:  
+// ===========================================================================
+bool DelCut::BookBJet()
+{
+
+  His->AddTH1C("NGenBJets", "Num. of GenBJets", "Number of GenBJets", "Events", 10, 0, 10 );
+  His->AddTH1C("GenBJetPt", "GenBJetPt", "Pt_{Gen BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("GenBJetEta", "GenBJetEta", "#eta_{Gen BJet}", "Events",  60, -6, 6 );
+  His->AddTH1C("NBJets", "Num. of BJets", "Number of BJets", "Events", 10, 0, 10 );
+  His->AddTH1C("BJetPt", "BJetPt", "Pt_{BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("BJetEta", "BJetEta", "#eta_{BJet}", "Events", 60, -6, 6 );
+//----------------------------------------------------------------------------
+// Central BJets
+//----------------------------------------------------------------------------
+  His->AddTH1C("NCentralBJets", "Num. of CentralBJets", "Number of CentralBJets", "Events", 10, 0, 10 );
+  His->AddTH1C("CentralBJetPt", "CentralBJetPt", "Pt_{Central BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
+  His->AddTH1C("CentralBJetEta", "CentralBJetEta", "#eta_{Central BJet}", "Events",  60, -6, 6 );
+  His->AddTH1C("CentralBJetOrder", "CentralBJetOrder", "Order of Central BJet", "Events",  10, 0, 10);
+  His->AddTH1C("CentralPUBJetOrder", "CentralPUBJetOrder", "Order of Central PUBJet", "Events",  10, 0, 10);
+  return true;
+}       // -----  end of function DelCut::BookBJet  -----

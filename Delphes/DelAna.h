@@ -62,10 +62,13 @@ class DelAna
     double Razor_CalcMR();
     std::vector<TLorentzVector> Razor_CombineJets();
 
-    double MT2_CalcMT2(TLorentzVector sidea, TLorentzVector sideb);
+    double MT2_CalcMT2(double Inv_mass, TLorentzVector sidea, TLorentzVector sideb);
     std::vector<TLorentzVector> MT2_2SideEta0();
+    std::vector<TLorentzVector> MT2_2SideJ1J2();
     double CalcAlphaT();
     /* ====================  OPERATORS     ======================================= */
+    double VBFBoostMET();
+    double VBFBoostHT();
 
     DelAna& operator = ( const DelAna &other ); /* assignment operator */
 
@@ -76,6 +79,7 @@ class DelAna
     std::vector<Electron> *vElectron;
     std::vector<Muon> *vMuon;
     std::vector<Jet> *vJet;
+    std::vector<Jet> vBJet;
     std::vector<Jet> *vGenJet;
     std::vector<MissingET> *vMissingET;
     TVector2 *PUCorMet;
@@ -133,7 +137,8 @@ class DelAna
     double RazorR;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MT2 ~~~~~
-    std::vector<TLorentzVector> MT2sides;
+    std::vector<TLorentzVector> MT2sidesEta;
+    std::vector<TLorentzVector> MT2sidesJ1J2;
     double Mt2;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AlphaT ~~~~~

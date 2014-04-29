@@ -23,6 +23,8 @@
 #include "TError.h"
 #include <cstdio>
 
+std::vector<std::string> TokenizedString(std::string input, char sep);
+
 int main ( int argc, char *argv[] )
 {
 
@@ -50,10 +52,10 @@ int main ( int argc, char *argv[] )
 
   double PUCorJetEta = -99;
   double PUCorJetPt = -99;
-  char buf[10];
-  sscanf(Outdir.c_str(), "%[^_]_%lf_%lf", buf, &PUCorJetEta, &PUCorJetPt );
+  char Cuts[80];
+  sscanf(Outdir.c_str(), "%[^_]_%lf_%lf", Cuts, &PUCorJetEta, &PUCorJetPt );
 
-
+  const std::vector<std::string> VCuts = TokenizedString(std::string(Cuts), '-');
 //----------------------------------------------------------------------------
 //  Done with input variables
 //----------------------------------------------------------------------------
@@ -86,7 +88,6 @@ int main ( int argc, char *argv[] )
   }
 
   std::cout << "Files to be run on : " << TreeList  << std::endl;
-
 
 
   if(TreeList.Contains("FileList"))
@@ -124,3 +125,28 @@ int main ( int argc, char *argv[] )
 }				// ----------  end of function main  ----------
 
 
+// ===  FUNCTION  ============================================================
+//         Name:  TokenizedString
+//  Description:  Tokenize an input String by sep, and return a vector of
+//  string
+// ===========================================================================
+std::vector<std::string> TokenizedString(std::string input, char sep)
+{
+
+  std::vector<std::string> Vsubstr;
+
+  std::size_t place1 = 0;
+  std::string out = "";
+  while (place1 <= input.size() )
+  {
+    std::size_t place2 = input.find_first_of(sep, place1+1);
+    if (place1 == 0)
+      out = input.substr(place1 , place2 - place1);
+    else
+      out = input.substr(place1+1 , place2 - place1 -1);
+    Vsubstr.push_back(out);
+    place1 = place2;
+  }
+
+  return Vsubstr;
+}       // -----  end of function TokenizedString  -----

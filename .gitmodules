@@ -1,0 +1,3 @@
+[submodule "Delphes-TP"]
+	path = Delphes-TP
+	url = https://github.com/sethzenz/Delphes.git

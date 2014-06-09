@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelWino.cc
+//       Filename:  DelEventWino.cc
 // 
 //    Description:  Class for the signal sample 
 // 
@@ -14,55 +14,55 @@
 // 
 // ===========================================================================
 
-#include "DelWino.h"
+#include "DelEventWino.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelWino
-//      Method:  DelWino
+//       Class:  DelEventWino
+//      Method:  DelEventWino
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelWino::DelWino (double Eta, double Pt): DelEvent(Eta, Pt)
+DelEventWino::DelEventWino (double Eta, double Pt): DelEvent(Eta, Pt)
 {
-}  // ~~~~~  end of method DelWino::DelWino  (constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventWino::DelEventWino  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelWino
-//      Method:  DelWino
+//       Class:  DelEventWino
+//      Method:  DelEventWino
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelWino::DelWino ( const DelWino &other ) : DelEvent(other)
+DelEventWino::DelEventWino ( const DelEventWino &other ) : DelEvent(other)
 {
-}  // ~~~~~  end of method DelWino::DelWino  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventWino::DelEventWino  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelWino
-//      Method:  ~DelWino
+//       Class:  DelEventWino
+//      Method:  ~DelEventWino
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelWino::~DelWino ()
+DelEventWino::~DelEventWino ()
 {
-}  // ~~~~~  end of method DelWino::~DelWino  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelEventWino::~DelEventWino  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelWino
+//       Class:  DelEventWino
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelWino&
-DelWino::operator = ( const DelWino &other )
+  DelEventWino&
+DelEventWino::operator = ( const DelEventWino &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelWino::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelEventWino::operator =  (assignment operator)  ~~~
 
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelWino::PreSelected
+//         Name:  DelEventWino::PreSelected
 //  Description:  
 // ===========================================================================
-bool DelWino::PreSelected()
+bool DelEventWino::PreSelected()
 {
   return true;
-}       // -----  end of function DelWino::PreSelected  -----
+}       // -----  end of function DelEventWino::PreSelected  -----

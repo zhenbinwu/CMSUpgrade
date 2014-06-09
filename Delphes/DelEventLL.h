@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelLL.h
+//       Filename:  DelEventLL.h
 // 
 //    Description:  A class for LL HTBin samples
 // 
@@ -14,24 +14,24 @@
 // 
 // ===========================================================================
 
-#ifndef  __DELLL_INC__
-#define  __DELLL_INC__
+#ifndef  __DelEventLL_INC__
+#define  __DelEventLL_INC__
 
 #include "DelEvent.h"
 #include <iomanip>
 
 // ===========================================================================
-//        Class:  DelLL
+//        Class:  DelEventLL
 //  Description:  A class for handling the LL samples
 // ===========================================================================
-class DelLL : public DelEvent
+class DelEventLL : public DelEvent
 {
   public:
 
     // ====================  LIFECYCLE     ===============================
-    DelLL (double Eta, double Pt); // constructor
-    DelLL ( const DelLL &other );  // copy constructor
-    ~DelLL ();                     // destructor
+    DelEventLL (double Eta, double Pt); // constructor
+    DelEventLL ( const DelEventLL &other );  // copy constructor
+    ~DelEventLL ();                     // destructor
 
     // ====================  ACCESSORS     ===============================
     bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
@@ -44,7 +44,7 @@ class DelLL : public DelEvent
 
     // ====================  OPERATORS     ===============================
 
-    DelLL& operator = ( const DelLL &other ); // assignment operator
+    DelEventLL& operator = ( const DelEventLL &other ); // assignment operator
 
     bool CheckFlag(std::string flag) const;
 
@@ -58,7 +58,7 @@ class DelLL : public DelEvent
     
     int LepMode;
 
-}; // -----  end of class DelLL  -----
+}; // -----  end of class DelEventLL  -----
 
 
-#endif   // ----- #ifndef __DELLL_INC__  -----
+#endif   // ----- #ifndef __DelEventLL_INC__  -----

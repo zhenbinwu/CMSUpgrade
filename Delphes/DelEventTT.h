@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  DelTT.h
+ *       Filename:  DelEventTT.h
  *
  *    Description:  A class for ttbar samples only, inherited from DelEvent
  *
@@ -20,18 +20,18 @@
 
 /*
  * =====================================================================================
- *        Class:  DelTT
+ *        Class:  DelEventTT
  *  Description:  
  * =====================================================================================
  */
-class DelTT : public DelEvent
+class DelEventTT : public DelEvent
 {
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelTT (double Eta, double Pt);                             /* constructor      */
-    DelTT ( const DelTT &other );   /* copy constructor */
-    ~DelTT ();                            /* destructor       */
+    DelEventTT (double Eta, double Pt);                             /* constructor      */
+    DelEventTT ( const DelEventTT &other );   /* copy constructor */
+    ~DelEventTT ();                            /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
 
@@ -39,7 +39,7 @@ class DelTT : public DelEvent
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelTT& operator = ( const DelTT &other ); /* assignment operator */
+    DelEventTT& operator = ( const DelEventTT &other ); /* assignment operator */
     bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet, TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
@@ -56,5 +56,5 @@ class DelTT : public DelEvent
     bool CheckFlag(std::string flag);
 
 
-}; /* -----  end of class DelTT  ----- */
+}; /* -----  end of class DelEventTT  ----- */
 

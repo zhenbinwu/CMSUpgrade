@@ -1,7 +1,7 @@
 /*
  * ===========================================================================
  *
- *       Filename:  DelWino.h
+ *       Filename:  DelEventWino.h
  *
  *    Description:  Interface for Wino sample 
  *
@@ -17,26 +17,26 @@
  */
 
 
-#ifndef  DELWINO_INC
-#define  DELWINO_INC
+#ifndef  DelEventWino_INC
+#define  DelEventWino_INC
 
 
 #include "DelEvent.h"
 
 /*
  * ===========================================================================
- *        Class:  DelWino
+ *        Class:  DelEventWino
  *  Description:  
  * ===========================================================================
  */
-class DelWino : public DelEvent
+class DelEventWino : public DelEvent
 {
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelWino (double Eta, double Pt);  /* constructor      */
-    DelWino ( const DelWino &other ); /* copy constructor */
-    ~DelWino ();                      /* destructor       */
+    DelEventWino (double Eta, double Pt);  /* constructor      */
+    DelEventWino ( const DelEventWino &other ); /* copy constructor */
+    ~DelEventWino ();                      /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
 
@@ -44,7 +44,7 @@ class DelWino : public DelEvent
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelWino& operator = ( const DelWino &other ); /* assignment operator */
+    DelEventWino& operator = ( const DelEventWino &other ); /* assignment operator */
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
@@ -53,7 +53,7 @@ class DelWino : public DelEvent
     /* ====================  DATA MEMBERS  ======================================= */
     bool PreSelected();
 
-}; /* -----  end of class DelWino  ----- */
+}; /* -----  end of class DelEventWino  ----- */
 
 
-#endif   /* ----- #ifndef DELWINO_INC  ----- */
+#endif   /* ----- #ifndef DelEventWino_INC  ----- */

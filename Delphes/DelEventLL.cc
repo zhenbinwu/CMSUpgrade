@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelLL.cc
+//       Filename:  DelEventLL.cc
 // 
 //    Description:  A class for LL  
 // 
@@ -14,54 +14,54 @@
 // 
 // ===========================================================================
 
-#include "DelLL.h"
+#include "DelEventLL.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelLL
-//      Method:  DelLL
+//       Class:  DelEventLL
+//      Method:  DelEventLL
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelLL::DelLL (double Eta, double Pt) : DelEvent(Eta, Pt)
+DelEventLL::DelEventLL (double Eta, double Pt) : DelEvent(Eta, Pt)
 {
-}  // ~~~~~  end of method DelLL::DelLL  (constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventLL::DelEventLL  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelLL
-//      Method:  DelLL
+//       Class:  DelEventLL
+//      Method:  DelEventLL
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelLL::DelLL ( const DelLL &other ) : DelEvent(other)
+DelEventLL::DelEventLL ( const DelEventLL &other ) : DelEvent(other)
 {
-}  // ~~~~~  end of method DelLL::DelLL  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventLL::DelEventLL  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelLL
-//      Method:  ~DelLL
+//       Class:  DelEventLL
+//      Method:  ~DelEventLL
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelLL::~DelLL ()
+DelEventLL::~DelEventLL ()
 {
-}  // ~~~~~  end of method DelLL::~DelLL  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelEventLL::~DelEventLL  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelLL
+//       Class:  DelEventLL
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelLL&
-DelLL::operator = ( const DelLL &other )
+  DelEventLL&
+DelEventLL::operator = ( const DelEventLL &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelLL::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelEventLL::operator =  (assignment operator)  ~~~
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelLL::LoadEvent
+//         Name:  DelEventLL::LoadEvent
 //  Description:  
 // ===========================================================================
-bool DelLL::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+bool DelEventLL::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
@@ -74,13 +74,13 @@ bool DelLL::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   LepMode = CheckLeptonMode();
   return true;
   
-}       // -----  end of function DelLL::LoadEvent  -----
+}       // -----  end of function DelEventLL::LoadEvent  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelLL::CheckFlag
+//         Name:  DelEventLL::CheckFlag
 //  Description:  
 // ===========================================================================
-bool DelLL::CheckFlag(std::string flag) const
+bool DelEventLL::CheckFlag(std::string flag) const
 {
   if (flag == "EleEle")      return LepMode == 1;
   if (flag == "MuMu")      return LepMode == 2;
@@ -89,13 +89,13 @@ bool DelLL::CheckFlag(std::string flag) const
   if (flag == "Lep")      return LepMode == -99;
   
   return false;
-}       // -----  end of function DelLL::CheckFlag  -----
+}       // -----  end of function DelEventLL::CheckFlag  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelLL::CheckLeptonMode
+//         Name:  DelEventLL::CheckLeptonMode
 //  Description:  Check whether these are electron, muon, taus, or neutrinos
 // ===========================================================================
-int DelLL::CheckLeptonMode()
+int DelEventLL::CheckLeptonMode()
 {
   // Assuming the status 3 electron directly from Z
   // Delphes has broken mother links, can't track back to mother Z
@@ -131,14 +131,14 @@ int DelLL::CheckLeptonMode()
 
   //PrintGen();
   return -99;
-}       // -----  end of function DelLL::CheckLeptonMode  -----
+}       // -----  end of function DelEventLL::CheckLeptonMode  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelLL::PrintGen
+//         Name:  DelEventLL::PrintGen
 //  Description:  Print out the GenParticle list
 // ===========================================================================
-bool DelLL::PrintGen() const
+bool DelEventLL::PrintGen() const
 {
   std::cout << "===========================================" << std::endl;
   for (int i = 0; i < vGenParticle.size(); ++i)
@@ -175,5 +175,5 @@ bool DelLL::PrintGen() const
       << std::endl;
   }
 
-}       // -----  end of function DelLL::PrintGen  -----
+}       // -----  end of function DelEventLL::PrintGen  -----
 

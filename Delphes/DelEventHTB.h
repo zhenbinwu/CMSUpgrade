@@ -1,7 +1,7 @@
 /*
  * ===========================================================================
  *
- *       Filename:  DelHTB.h
+ *       Filename:  DelEventHTB.h
  *
  *    Description:  A class for HTBin sample with single boson
  *    B, BJ, BJJ with B = photon, W, Z, H
@@ -18,26 +18,26 @@
  */
 
 
-#ifndef  DELHTB_INC
-#define  DELHTB_INC
+#ifndef  DelEventHTB_INC
+#define  DelEventHTB_INC
 
 #include "DelEvent.h"
-#include "DelZJJ.h"
+#include "DelEventZJJ.h"
 #include <iomanip>
 /*
  * ===========================================================================
- *        Class:  DelHTB
+ *        Class:  DelEventHTB
  *  Description:  
  * ===========================================================================
  */
-class DelHTB : public DelZJJ
+class DelEventHTB : public DelEventZJJ
 {
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelHTB (double Eta, double Pt); /* constructor      */
-    DelHTB ( const DelHTB &other ); /* copy constructor */
-    ~DelHTB ();                     /* destructor       */
+    DelEventHTB (double Eta, double Pt); /* constructor      */
+    DelEventHTB ( const DelEventHTB &other ); /* copy constructor */
+    ~DelEventHTB ();                     /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     bool LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
@@ -50,7 +50,7 @@ class DelHTB : public DelZJJ
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelHTB& operator = ( const DelHTB &other ); /* assignment operator */
+    DelEventHTB& operator = ( const DelEventHTB &other ); /* assignment operator */
 
     bool CheckFlag(const std::string flag);
 
@@ -71,6 +71,6 @@ class DelHTB : public DelZJJ
     int ZMode;
 
 
-}; /* -----  end of class DelHTB  ----- */
+}; /* -----  end of class DelEventHTB  ----- */
 
-#endif   /* ----- #ifndef DELHTB_INC  ----- */
+#endif   /* ----- #ifndef DelEventHTB_INC  ----- */

@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelTT.cc
+//       Filename:  DelEventTT.cc
 // 
 //    Description:  
 // 
@@ -14,53 +14,53 @@
 // 
 // ===========================================================================
 
-#include "DelTT.h"
+#include "DelEventTT.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelTT
-//      Method:  DelTT
+//       Class:  DelEventTT
+//      Method:  DelEventTT
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelTT::DelTT (double Eta, double Pt) : DelEvent(Eta, Pt)
+DelEventTT::DelEventTT (double Eta, double Pt) : DelEvent(Eta, Pt)
 {
-}  // ~~~~~  end of method DelTT::DelTT  (constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventTT::DelEventTT  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelTT
-//      Method:  DelTT
+//       Class:  DelEventTT
+//      Method:  DelEventTT
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelTT::DelTT ( const DelTT &other ) : DelEvent(other)
+DelEventTT::DelEventTT ( const DelEventTT &other ) : DelEvent(other)
 {
-}  // ~~~~~  end of method DelTT::DelTT  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventTT::DelEventTT  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelTT
-//      Method:  ~DelTT
+//       Class:  DelEventTT
+//      Method:  ~DelEventTT
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelTT::~DelTT ()
+DelEventTT::~DelEventTT ()
 {
-}  // ~~~~~  end of method DelTT::~DelTT  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelEventTT::~DelEventTT  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelTT
+//       Class:  DelEventTT
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelTT&
-DelTT::operator = ( const DelTT &other )
+  DelEventTT&
+DelEventTT::operator = ( const DelEventTT &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelTT::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelEventTT::operator =  (assignment operator)  ~~~
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelTT::GenLeps
+//         Name:  DelEventTT::GenLeps
 //  Description:  
 // ===========================================================================
-int DelTT::GenLeps() const
+int DelEventTT::GenLeps() const
 {
   std::list<int> VLep;
 
@@ -93,25 +93,25 @@ int DelTT::GenLeps() const
 
   return VLep.size();
 
-}       // -----  end of function DelTT::GenLeps  -----
+}       // -----  end of function DelEventTT::GenLeps  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelTT::CheckFlag
+//         Name:  DelEventTT::CheckFlag
 //  Description:  /* cursor */
 // ===========================================================================
-bool DelTT::CheckFlag(std::string flag)
+bool DelEventTT::CheckFlag(std::string flag)
 {
   if (flag == "TTFL") return GenLeps() == 2;
   if (flag == "TTSL") return GenLeps() == 1;
   if (flag == "TTHD") return GenLeps() == 0;
-}       // -----  end of function DelTT::CheckFlag  -----
+}       // -----  end of function DelEventTT::CheckFlag  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelTT::LoadEvent
+//         Name:  DelEventTT::LoadEvent
 //  Description:  
 // ===========================================================================
-bool DelTT::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+bool DelEventTT::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
@@ -122,4 +122,4 @@ bool DelTT::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
       branchPhoton,  branchMet, branchHt,  branchParticle);
   return true;
   
-}       // -----  end of function DelTT::LoadEvent  -----
+}       // -----  end of function DelEventTT::LoadEvent  -----

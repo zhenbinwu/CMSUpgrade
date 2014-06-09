@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  DelZJJ.h
+ *       Filename:  DelEventZJJ.h
  *
  *    Description:  a
  *
@@ -16,26 +16,26 @@
  * =====================================================================================
  */
 
-#ifndef  DELZJJ_INC
-#define  DELZJJ_INC
+#ifndef  DelEventZJJ_INC
+#define  DelEventZJJ_INC
 
 
 
 #include "DelEvent.h"
 /*
  * =====================================================================================
- *        Class:  DelZJJ
+ *        Class:  DelEventZJJ
  *  Description:  
  * =====================================================================================
  */
-class DelZJJ : public DelEvent
+class DelEventZJJ : public DelEvent
 {
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelZJJ (bool Faking, double Eta, double Pt);
-    DelZJJ ( const DelZJJ &other );   /* copy constructor */
-    ~DelZJJ ();                            /* destructor       */
+    DelEventZJJ (bool Faking, double Eta, double Pt);
+    DelEventZJJ ( const DelEventZJJ &other );   /* copy constructor */
+    ~DelEventZJJ ();                            /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     //bool CheckFlag(std::string flag);
@@ -50,7 +50,7 @@ class DelZJJ : public DelEvent
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelZJJ& operator = ( const DelZJJ &other ); /* assignment operator */
+    DelEventZJJ& operator = ( const DelEventZJJ &other ); /* assignment operator */
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
@@ -82,6 +82,6 @@ class DelZJJ : public DelEvent
 
   private:
 
-}; /* -----  end of class DelZJJ  ----- */
+}; /* -----  end of class DelEventZJJ  ----- */
 
-#endif   /* ----- #ifndef DELZJJ_INC  ----- */
+#endif   /* ----- #ifndef DelEventZJJ_INC  ----- */

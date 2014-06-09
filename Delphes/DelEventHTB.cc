@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelHTB.cc
+//       Filename:  DelEventHTB.cc
 // 
 //    Description:  
 // 
@@ -14,56 +14,56 @@
 // 
 // ===========================================================================
 
-#include "DelHTB.h"
+#include "DelEventHTB.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelHTB
-//      Method:  DelHTB
+//       Class:  DelEventHTB
+//      Method:  DelEventHTB
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelHTB::DelHTB (double Eta, double Pt) : DelZJJ(false, Eta, Pt)
+DelEventHTB::DelEventHTB (double Eta, double Pt) : DelEventZJJ(false, Eta, Pt)
 {
   Boson = -99;
   WMode = -99;
   ZMode = -99;
-}  // ~~~~~  end of method DelHTB::DelHTB  (constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventHTB::DelEventHTB  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelHTB
-//      Method:  DelHTB
+//       Class:  DelEventHTB
+//      Method:  DelEventHTB
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelHTB::DelHTB ( const DelHTB &other ) : DelZJJ(other)
+DelEventHTB::DelEventHTB ( const DelEventHTB &other ) : DelEventZJJ(other)
 {
-}  // ~~~~~  end of method DelHTB::DelHTB  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventHTB::DelEventHTB  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelHTB
-//      Method:  ~DelHTB
+//       Class:  DelEventHTB
+//      Method:  ~DelEventHTB
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelHTB::~DelHTB ()
+DelEventHTB::~DelEventHTB ()
 {
-}  // ~~~~~  end of method DelHTB::~DelHTB  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelEventHTB::~DelEventHTB  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelHTB
+//       Class:  DelEventHTB
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelHTB&
-DelHTB::operator = ( const DelHTB &other )
+  DelEventHTB&
+DelEventHTB::operator = ( const DelEventHTB &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelHTB::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelEventHTB::operator =  (assignment operator)  ~~~
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::CheckFlag
+//         Name:  DelEventHTB::CheckFlag
 //  Description:  
 // ===========================================================================
-bool DelHTB::CheckFlag(const std::string flag)
+bool DelEventHTB::CheckFlag(const std::string flag)
 {
   assert(!FakingZvv);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Separating boson production ~~~~~
@@ -101,10 +101,10 @@ bool DelHTB::CheckFlag(const std::string flag)
   }
 
   return false;
-}       // -----  end of function DelHTB::CheckFlag  -----
+}       // -----  end of function DelEventHTB::CheckFlag  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::GenBoson
+//         Name:  DelEventHTB::GenBoson
 //  Description:  Function to check the genparticles for boson
 //                Higgs  -- 1
 //                W      -- 2
@@ -112,7 +112,7 @@ bool DelHTB::CheckFlag(const std::string flag)
 //                Photon -- 4
 //  
 // ===========================================================================
-int DelHTB::GenBoson() const
+int DelEventHTB::GenBoson() const
 {
   for (int i = 0; i < vGenParticle.size(); ++i)
   {
@@ -124,13 +124,13 @@ int DelHTB::GenBoson() const
   }
   // if can't find W, Z, H and photon
   return 0;
-}       // -----  end of function DelHTB::GenBoson  -----
+}       // -----  end of function DelEventHTB::GenBoson  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::LoadEvent
+//         Name:  DelEventHTB::LoadEvent
 //  Description:  
 // ===========================================================================
-bool DelHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+bool DelEventHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
@@ -221,13 +221,13 @@ bool DelHTB::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   }
   return true;
 
-}       // -----  end of function DelHTB::LoadEvent  -----
+}       // -----  end of function DelEventHTB::LoadEvent  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::PrintGen
+//         Name:  DelEventHTB::PrintGen
 //  Description:  Print out the GenParticle list
 // ===========================================================================
-bool DelHTB::PrintGen() const
+bool DelEventHTB::PrintGen() const
 {
   std::cout << "===========================================" << std::endl;
   for (int i = 0; i < vGenParticle.size(); ++i)
@@ -247,13 +247,13 @@ bool DelHTB::PrintGen() const
       << std::setw(5) << " Eta "    << std::setw(8) << p.Eta
       << std::endl;
   }
-}       // -----  end of function DelHTB::PrintGen  -----
+}       // -----  end of function DelEventHTB::PrintGen  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::CheckPhoton
+//         Name:  DelEventHTB::CheckPhoton
 //  Description:  
 // ===========================================================================
-bool DelHTB::CheckPhoton(bool IsPhoton) const
+bool DelEventHTB::CheckPhoton(bool IsPhoton) const
 {
   if (!IsPhoton) return false;
   
@@ -390,13 +390,13 @@ bool DelHTB::CheckPhoton(bool IsPhoton) const
 
   std::cout << "" << std::endl;
 
-}       // -----  end of function DelHTB::CheckPhoton  -----
+}       // -----  end of function DelEventHTB::CheckPhoton  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::CheckBoson
+//         Name:  DelEventHTB::CheckBoson
 //  Description:  
 // ===========================================================================
-bool DelHTB::CheckBoson(int boson) const
+bool DelEventHTB::CheckBoson(int boson) const
 {
   std::cout << "===========================================" << std::endl;
   PrintGen();
@@ -521,18 +521,18 @@ bool DelHTB::CheckBoson(int boson) const
     << std::endl;
 
   std::cout << "" << std::endl;
-}       // -----  end of function DelHTB::CheckBoson  -----
+}       // -----  end of function DelEventHTB::CheckBoson  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::CheckWMode
+//         Name:  DelEventHTB::CheckWMode
 //  Description:  Separate out the W decay mode
 //  W->ev --- 1
 //  W->mv --- 2
 //  W->tv --- 3
 //  W->jj --- 0
 // ===========================================================================
-int DelHTB::CheckWMode() const
+int DelEventHTB::CheckWMode() const
 {
   // Find whether it is a W event
   int Widx = -1;
@@ -562,10 +562,10 @@ int DelHTB::CheckWMode() const
 
   //In the case without leptons, it should be hadronic W decay
   return 0;
-}       // -----  end of function DelHTB::CheckWMode  -----
+}       // -----  end of function DelEventHTB::CheckWMode  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelHTB::CheckZMode
+//         Name:  DelEventHTB::CheckZMode
 //  Description:  Separate out the Z decay mode
 //  Z-> vv --- 0
 //  Z-> ee --- 1
@@ -573,7 +573,7 @@ int DelHTB::CheckWMode() const
 //  Z-> tt --- 3
 //  Z-> jj --- -1
 // ===========================================================================
-int DelHTB::CheckZMode() const
+int DelEventHTB::CheckZMode() const
 {
   // Find whether it is a Z event
   int Zidx = -1;
@@ -622,4 +622,4 @@ int DelHTB::CheckZMode() const
   else if (vNv.size() == 2) return 0;
 
   return -99;
-}       // -----  end of function DelHTB::CheckZMode  -----
+}       // -----  end of function DelEventHTB::CheckZMode  -----

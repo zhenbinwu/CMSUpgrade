@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelZJJ.cc
+//       Filename:  DelEventZJJ.cc
 // 
 //    Description:  
 // 
@@ -14,55 +14,55 @@
 // 
 // ===========================================================================
 
-#include "DelZJJ.h"
+#include "DelEventZJJ.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelZJJ
-//      Method:  DelZJJ
+//       Class:  DelEventZJJ
+//      Method:  DelEventZJJ
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelZJJ::DelZJJ (bool Faking, double Eta, double Pt) : DelEvent(Eta, Pt)
+DelEventZJJ::DelEventZJJ (bool Faking, double Eta, double Pt) : DelEvent(Eta, Pt)
 {
   FakingZvv = Faking;
-}  // ~~~~~  end of method DelZJJ::DelZJJ  (constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventZJJ::DelEventZJJ  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelZJJ
-//      Method:  DelZJJ
+//       Class:  DelEventZJJ
+//      Method:  DelEventZJJ
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelZJJ::DelZJJ ( const DelZJJ &other ) : DelEvent(other)
+DelEventZJJ::DelEventZJJ ( const DelEventZJJ &other ) : DelEvent(other)
 {
-}  // ~~~~~  end of method DelZJJ::DelZJJ  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelEventZJJ::DelEventZJJ  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelZJJ
-//      Method:  ~DelZJJ
+//       Class:  DelEventZJJ
+//      Method:  ~DelEventZJJ
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelZJJ::~DelZJJ ()
+DelEventZJJ::~DelEventZJJ ()
 {
-}  // ~~~~~  end of method DelZJJ::~DelZJJ  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelEventZJJ::~DelEventZJJ  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelZJJ
+//       Class:  DelEventZJJ
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelZJJ&
-DelZJJ::operator = ( const DelZJJ &other )
+  DelEventZJJ&
+DelEventZJJ::operator = ( const DelEventZJJ &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelZJJ::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelEventZJJ::operator =  (assignment operator)  ~~~
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::LoadEvent
+//         Name:  DelEventZJJ::LoadEvent
 //  Description:  virtual fucntion for loading the event whether faking the
 //  ZLL sample
 // ===========================================================================
-bool DelZJJ::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+bool DelEventZJJ::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
@@ -81,13 +81,13 @@ bool DelZJJ::LoadEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
     return  true;
   }
 
-}       // -----  end of function DelZJJ::LoadEvent  -----
+}       // -----  end of function DelEventZJJ::LoadEvent  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::LoadZLLEvent
+//         Name:  DelEventZJJ::LoadZLLEvent
 //  Description:  Faking the Zvv sample from the ZLL sample
 // ===========================================================================
-bool DelZJJ::LoadZLLEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
+bool DelEventZJJ::LoadZLLEvent(TClonesArray *branchEvent, TClonesArray *branchJet, 
         TClonesArray *branchGenJet,  TClonesArray *branchCAJet, 
         TClonesArray *branchElectron, TClonesArray *branchMuon, 
         TClonesArray *branchPhoton, TClonesArray *branchMet, 
@@ -123,13 +123,13 @@ bool DelZJJ::LoadZLLEvent(TClonesArray *branchEvent, TClonesArray *branchJet,
   //Whether this event is preselected?
   //return PreSelected();
   return true;
-}       // -----  end of function DelZJJ::LoadZLLEvent  -----
+}       // -----  end of function DelEventZJJ::LoadZLLEvent  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::CheckZ
+//         Name:  DelEventZJJ::CheckZ
 //  Description:  
 // ===========================================================================
-bool DelZJJ::CheckZ()
+bool DelEventZJJ::CheckZ()
 {
   // Actually this function should name differently now
   // I loop over the particle list to find the leptons 
@@ -276,13 +276,13 @@ bool DelZJJ::CheckZ()
   if (VZLep.size() == 2) return true;
 
   if (VZLep.size() != 2)  return false;
-}       // -----  end of function DelZJJ::CheckZ  -----
+}       // -----  end of function DelEventZJJ::CheckZ  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::ZLLMet
+//         Name:  DelEventZJJ::ZLLMet
 //  Description:  Calculating the met from ZLL as the ZNN sample
 // ===========================================================================
-TVector2 DelZJJ::ZLLMet(TClonesArray *branchParticle, TClonesArray *branchElectron, 
+TVector2 DelEventZJJ::ZLLMet(TClonesArray *branchParticle, TClonesArray *branchElectron, 
     TClonesArray *branchMuon, TClonesArray *branchJet)
 {
   // First get the PU corrected Met in the event
@@ -317,13 +317,13 @@ TVector2 DelZJJ::ZLLMet(TClonesArray *branchParticle, TClonesArray *branchElectr
 
   oldMet += ZLLLep(EleGen, MuonGen, branchParticle, branchElectron, branchMuon, branchJet);
   return oldMet;
-}       // -----  end of function DelZJJ::ZLLMet  -----
+}       // -----  end of function DelEventZJJ::ZLLMet  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::ZLLLep
+//         Name:  DelEventZJJ::ZLLLep
 //  Description:  Looking up the system for different number of leptons
 // ===========================================================================
-TVector2 DelZJJ::ZLLLep(std::map<int, GenParticle*> EleGen, 
+TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen, 
     std::map<int, GenParticle*> MuonGen,  TClonesArray *branchParticle,
     TClonesArray *branchElectron, TClonesArray *branchMuon, TClonesArray *branchJet)
 {
@@ -468,16 +468,16 @@ TVector2 DelZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
    *}
    */
   return addmet;
-}       // -----  end of function DelZJJ::ZLL1Lep  -----
+}       // -----  end of function DelEventZJJ::ZLL1Lep  -----
 
 
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::LoadElectron
+//         Name:  DelEventZJJ::LoadElectron
 //  Description:  Functions to load the electron
 // ===========================================================================
-int DelZJJ::LoadZLLElectron(TClonesArray *branchElectron)
+int DelEventZJJ::LoadZLLElectron(TClonesArray *branchElectron)
 {
   
   for (int i = 0; i < branchElectron->GetEntries(); ++i)
@@ -488,15 +488,15 @@ int DelZJJ::LoadZLLElectron(TClonesArray *branchElectron)
   }
 
   return 1;
-} // -----  end of function DelZJJ::LoadElectron  -----
+} // -----  end of function DelEventZJJ::LoadElectron  -----
 
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::LoadMuon
+//         Name:  DelEventZJJ::LoadMuon
 //  Description:  Functions to load the Muon
 // ===========================================================================
-int DelZJJ::LoadZLLMuon(TClonesArray *branchMuon)
+int DelEventZJJ::LoadZLLMuon(TClonesArray *branchMuon)
 {
   
   for (int i = 0; i < branchMuon->GetEntries(); ++i)
@@ -507,27 +507,27 @@ int DelZJJ::LoadZLLMuon(TClonesArray *branchMuon)
   }
 
   return 1;
-}       // -----  end of function DelZJJ::LoadMuon  -----
+}       // -----  end of function DelEventZJJ::LoadMuon  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::CheckFlag
+//         Name:  DelEventZJJ::CheckFlag
 //  Description:  
 // ===========================================================================
-bool DelZJJ::CheckFlag(std::string flag)
+bool DelEventZJJ::CheckFlag(std::string flag)
 {
   if (flag == "MetDiMuon" && !FakingZvv)
     return DiMuonMet();
   if (flag == "MetDiEle" && !FakingZvv)
     return DiEleMet();
   return true;
-}       // -----  end of function DelZJJ::CheckFlag  -----
+}       // -----  end of function DelEventZJJ::CheckFlag  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::DiMuonMet
+//         Name:  DelEventZJJ::DiMuonMet
 //  Description:  
 // ===========================================================================
-bool DelZJJ::DiMuonMet()
+bool DelEventZJJ::DiMuonMet()
 {
   if (vMuon.size() != 2) return false;
   if (vElectron.size()> 0) return false;
@@ -545,13 +545,13 @@ bool DelZJJ::DiMuonMet()
   if (Qt.Pt() < 50) return false;
 
   return true;
-}       // -----  end of function DelZJJ::DiMuonMet  -----
+}       // -----  end of function DelEventZJJ::DiMuonMet  -----
  
 // ===  FUNCTION  ============================================================
-//         Name:  DelZJJ::DiEleMet
+//         Name:  DelEventZJJ::DiEleMet
 //  Description:  
 // ===========================================================================
-bool DelZJJ::DiEleMet()
+bool DelEventZJJ::DiEleMet()
 {
   if (vElectron.size() != 2) return false;
   if (vMuon.size()> 0) return false;
@@ -568,5 +568,5 @@ bool DelZJJ::DiEleMet()
   if (Qt.Pt() < 50)  return false;
 
   return true;
-}       // -----  end of function DelZJJ::DiEleMet  -----
+}       // -----  end of function DelEventZJJ::DiEleMet  -----
 

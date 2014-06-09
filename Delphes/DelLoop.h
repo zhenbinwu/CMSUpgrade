@@ -25,7 +25,9 @@
 #include <sstream>
 #include <algorithm>
 #include <bitset>
+#include <memory>
 #include <sys/stat.h>
+
 #include "TChain.h"
 #include "TH1F.h"
 #include "TH1.h"
@@ -39,13 +41,13 @@
 
 // Classes from Ben
 #include "DelEvent.h"
-#include "DelWino.h"
-#include "DelZJJ.h"
-#include "DelTT.h"
-#include "DelLL.h"
+#include "DelEventWino.h"
+#include "DelEventZJJ.h"
+#include "DelEventTT.h"
+#include "DelEventLL.h"
+#include "DelEventHTB.h"
 #include "DelAna.h"
-#include "DelHTB.h"
-#include "DelCut.h"
+#include "DelProcess.h"
 
 // Classes from Delphes
 #include "ExRootAnalysis/ExRootConfReader.h"
@@ -72,7 +74,7 @@ class DPhes
     int InitDelPhes(std::string process, std::string pu, std::string outdir);
     int SetPreName(std::string process, std::string pu, std::string outdir);
     int ReadDelPhes();
-    int PreLooping();
+    int PreLooping(const std::vector<std::string>& VCuts);
     int Looping();
     int PostLooping();
     bool GetCrossSection(std::string process);
@@ -95,7 +97,7 @@ class DPhes
     ExRootTreeReader *treeReader;
     DelEvent *DEV;
     DelAna *ANA;
-    std::map<std::string, DelCut*> MDelCut; // For separated output
+    std::map<std::string, std::unique_ptr<DelProcess> > MDelPro; // For separated output
 
     // Delphes branches
     TClonesArray *branchEvent;

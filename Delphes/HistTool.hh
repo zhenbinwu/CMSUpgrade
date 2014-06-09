@@ -26,6 +26,7 @@
 #include "TLegend.h"
 #include <map>
 #include <iostream>
+#include <memory>
 
 
 
@@ -40,6 +41,7 @@ class HistTool
 
     // ====================  LIFECYCLE     ===============================
     HistTool (std::string name);
+    HistTool (std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_);
     HistTool ( const HistTool &other );   // copy constructor
     ~HistTool ();                            // destructor
 
@@ -61,17 +63,18 @@ class HistTool
 //----------------------------------------------------------------------------
     // Book the His TH1
     TH1F* AddTH1(TH1F* th);
-    TH1F* AddTH1 (const std::string name, const std::string title, 
-        const std::string xlabel, const std::string ylabel, 
-        Int_t nxbins, Axis_t xmin, Axis_t xmax, Int_t logx=0, Int_t logy=0);
-    TH1F* AddTH1 (const std::string name, const std::string title, 
-        Int_t nxbins, Axis_t xmin, Axis_t xmax);
-    int AddTH1C (const std::string name, const std::string title, 
-        Int_t nxbins, double xmin, double  xmax);
-    int AddTH1C (const std::string name, const std::string title, 
-        const std::string xlabel, const std::string ylabel, 
-        Int_t nxbins, Axis_t xmin, Axis_t xmax, 
-        Int_t logx=0, Int_t logy=0);
+    TH1F* AddTH1 (const std::string& name, const std::string& title, 
+        const std::string& xlabel, const std::string& ylabel, 
+        const Int_t& nxbins, const Axis_t& xmin, const Axis_t& xmax, 
+        const Int_t& logx=0, const Int_t& logy=0);
+    TH1F* AddTH1 (const std::string& name, const std::string& title, 
+        const Int_t& nxbins, const Axis_t& xmin, const Axis_t& xmax);
+    int AddTH1C (const std::string& name, const std::string& title, 
+        const Int_t& nxbins, const double& xmin, const double&  xmax);
+    int AddTH1C (const std::string& name, const std::string& title, 
+        const std::string& xlabel, const std::string& ylabel, 
+        const Int_t& nxbins, const Axis_t& xmin, const Axis_t& xmax, 
+        const Int_t& logx=0, const Int_t& logy=0);
 
     // Filling the his TH1
     int FillTH1(int Ncut, std::string HisName, int value, double weight=-999.);
@@ -146,13 +149,14 @@ class HistTool
     // ====================  DATA MEMBERS  ===============================
     int CutSize; // The size of the cutbit
     double HWeight; // The weight of current event
-    TFile* OutFile;
-    std::string prefix;
+    std::shared_ptr<TFile> OutFile;
+    std::string prefix; // Name of the process
+    std::string cutflag; // Name of the cutflag
 
     std::vector<std::string> order;
-    std::map<std::string, TProfile*> ProMap; //Saving the 1D Hist 
-    std::map<std::string, TH1F*> HisMap; //Saving the 1D Hist 
-    std::map<std::string, TH2D*> HisMap2D; //Saving the 2D Hist 
+    std::map<std::string, std::unique_ptr<TProfile> > ProMap; //Saving the 1D Hist 
+    std::map<std::string, std::unique_ptr<TH1F> > HisMap; //Saving the 1D Hist 
+    std::map<std::string, std::unique_ptr<TH2D> > HisMap2D; //Saving the 2D Hist 
 
 }; // -----  end of class HistTool  -----
 

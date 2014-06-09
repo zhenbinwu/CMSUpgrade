@@ -62,7 +62,6 @@ int main ( int argc, char *argv[] )
 
   std::cout<<"Running Process : \033[0;31m"<< Process<<"\033[0m with pileup : \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
 
-  std::string env  = getenv("DELPHES");
   TString TreeList = "";
   TChain chain("Delphes");
 
@@ -81,10 +80,10 @@ int main ( int argc, char *argv[] )
   } else if (Detector == "PhaseII4v2")
   {
     TreeList = "./FileList/PhaseII4v2/"+Process+"_"+Pileup+".list";
-  } else if (Detector == "Test")
-  {
+  } else if (Detector == "Test") {
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
     //TreeList = "./Sample/Bj-4p-300-600-v1510_14TEV_NoPileUp_99966708.root";
-    TreeList = "./Sample/LL-4p-100-200-v1510_14TEV_96382643_PhaseII_Conf4_140PileUp.root";
+    TreeList = "../out.root";
   }
 
   std::cout << "Files to be run on : " << TreeList  << std::endl;
@@ -118,7 +117,7 @@ int main ( int argc, char *argv[] )
   DP.SetPUCorMet(PUCorJetPt, PUCorJetEta);
   DP.InitDelPhes(Process, Pileup, Detector);
   DP.ReadDelPhes();
-  DP.PreLooping();
+  DP.PreLooping(VCuts);
   DP.Looping();
   DP.PostLooping();
   return EXIT_SUCCESS;

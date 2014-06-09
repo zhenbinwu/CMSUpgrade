@@ -28,7 +28,6 @@ DelAna::DelAna (DelEvent *DE, std::string pileup_,  std::string detector_)
   PileUp = pileup_;
   Detector = detector_;
 
-
   vEvent = &DEV->vEvent;
   vGenParticle = &DEV->vGenParticle;
   vPhoton = &DEV->vPhoton;

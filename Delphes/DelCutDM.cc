@@ -1,6 +1,6 @@
 // ===========================================================================
 // 
-//       Filename:  DelCut.cc
+//       Filename:  DelCutDM.cc
 // 
 //    Description:  Class for Cut flow 
 //           TODO:  1. How to avoid the warning of replacing existing TH1F
@@ -16,58 +16,59 @@
 // ===========================================================================
 
 
-#include "DelCut.h"
+#include "DelCutDM.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelCut
-//      Method:  DelCut
+//       Class:  DelCutDM
+//      Method:  DelCutDM
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelCut::DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_ ):
-  Ana(ana), ProName(name), AnaCut(cut_)
+DelCutDM::DelCutDM(DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ )
+: DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ )
 {
-  //His     = std::unique_ptr<HistTool>(new HistTool(OutFile_, ProName, AnaCut));
-  His     = new HistTool(OutFile_, ProName, AnaCut);
-}  // ~~~~~  end of method DelCut::DelCut  (constructor)  ~~~~~
+  Ana     = ana;
+  ProName = name;
+  His     = new HistTool(name);
+}  // ~~~~~  end of method DelCutDM::DelCutDM  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelCut
-//      Method:  DelCut
+//       Class:  DelCutDM
+//      Method:  DelCutDM
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelCut::DelCut ( const DelCut &other )
+DelCutDM::DelCutDM ( const DelCutDM &other )
 {
-}  // ~~~~~  end of method DelCut::DelCut  (copy constructor)  ~~~~~
+}  // ~~~~~  end of method DelCutDM::DelCutDM  (copy constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelCut
-//      Method:  ~DelCut
+//       Class:  DelCutDM
+//      Method:  ~DelCutDM
 // Description:  destructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelCut::~DelCut ()
+DelCutDM::~DelCutDM ()
 {
   delete His;
-}  // ~~~~~  end of method DelCut::~DelCut  (destructor)  ~~~~~
+}  // ~~~~~  end of method DelCutDM::~DelCutDM  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//       Class:  DelCut
+//       Class:  DelCutDM
 //      Method:  operator =
 // Description:  assignment operator
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  DelCut&
-DelCut::operator = ( const DelCut &other )
+  DelCutDM&
+DelCutDM::operator = ( const DelCutDM &other )
 {
   if ( this != &other ) {
   }
   return *this;
-}  // ~~~~~  end of method DelCut::operator =  (assignment operator)  ~~~
+}  // ~~~~~  end of method DelCutDM::operator =  (assignment operator)  ~~~
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookHistogram
+//         Name:  DelCutDM::BookHistogram
 //  Description:  
 // ===========================================================================
-bool DelCut::BookHistogram()
+bool DelCutDM::BookHistogram()
 {
   
   BookLeptonEff();
@@ -194,14 +195,14 @@ bool DelCut::BookHistogram()
   //His->AddTH1("J32D", "J3  in #eta_#phi plane", 10, -7, 7, 20, -7, 7);
   if (ProName.find("Photon") != std::string::npos)
       His->AddTH2("MetVsPhoton", "Met Vs Photon", 10, 0 , 10, 100, 0, 1000);
-}       // -----  end of function DelCut::BookHistogram  -----
+}       // -----  end of function DelCutDM::BookHistogram  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::InitCutOrder
+//         Name:  DelCutDM::InitCutOrder
 //  Description:  
 // ===========================================================================
-bool DelCut::InitCutOrder(std::string ana)
+bool DelCutDM::InitCutOrder(std::string ana)
 {
   AnaCut = ana;
    // The Cut flow for DM
@@ -294,23 +295,23 @@ bool DelCut::InitCutOrder(std::string ana)
    assert(CutOrder.size() == CutMap.size());
    His->Cutorder(CutOrder);
   
-}       // -----  end of function DelCut::InitCutOrder  -----
+}       // -----  end of function DelCutDM::InitCutOrder  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CutFlow
+//         Name:  DelCutDM::CutFlow
 //  Description:  
 // ===========================================================================
-bool DelCut::CutFlow(std::bitset<20> cutbit)
+bool DelCutDM::CutFlow(std::bitset<20> cutbit)
 {
 
   return 1;
-}       // -----  end of function DelCut::CutFlow  -----
+}       // -----  end of function DelCutDM::CutFlow  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillCut
+//         Name:  DelCutDM::FillCut
 //  Description:  Main function to be called in DelFill
 // ===========================================================================
-int DelCut::FillCut()
+int DelCutDM::FillCut()
 {
 //----------------------------------------------------------------------------
 //  Set up the DelAna
@@ -358,26 +359,26 @@ int DelCut::FillCut()
   }
 
   return 1;
-}       // -----  end of function DelCut::FillCut  -----
+}       // -----  end of function DelCutDM::FillCut  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckCut
+//         Name:  DelCutDM::CheckCut
 //  Description:  
 // ===========================================================================
-bool DelCut::CheckCut(std::bitset<20> cutflag)
+bool DelCutDM::CheckCut(std::bitset<20> cutflag)
 {
   if (AnaCut == "DM") return CheckDMCut(cutflag);
   if (AnaCut == "Higgs") return CheckHiggsCut(cutflag);
 
   //return CheckPhenoCut(cutflag);
   return true;
-}       // -----  end of function DelCut::CheckCut  -----
+}       // -----  end of function DelCutDM::CheckCut  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckHiggsCut
+//         Name:  DelCutDM::CheckHiggsCut
 //  Description:  HIG-13-013
 // ===========================================================================
-bool DelCut::CheckHiggsCut(std::bitset<20> cutflag)
+bool DelCutDM::CheckHiggsCut(std::bitset<20> cutflag)
 {
 
 //----------------------------------------------------------------------------
@@ -513,13 +514,13 @@ bool DelCut::CheckHiggsCut(std::bitset<20> cutflag)
   }
 
   return true;
-}       // -----  end of function DelCut::CheckHiggsCut  -----
+}       // -----  end of function DelCutDM::CheckHiggsCut  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckDMCut
+//         Name:  DelCutDM::CheckDMCut
 //  Description:  Cut for Susy VBF DM
 // ===========================================================================
-bool DelCut::CheckDMCut(std::bitset<20> cutflag)
+bool DelCutDM::CheckDMCut(std::bitset<20> cutflag)
 {
  
 //----------------------------------------------------------------------------
@@ -649,13 +650,13 @@ bool DelCut::CheckDMCut(std::bitset<20> cutflag)
   }
 
   return true;
-}       // -----  end of function DelCut::CheckDMCut  -----
+}       // -----  end of function DelCutDM::CheckDMCut  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckPhenoCut
+//         Name:  DelCutDM::CheckPhenoCut
 //  Description:  
 // ===========================================================================
-bool DelCut::CheckPhenoCut(std::bitset<20> cutflag)
+bool DelCutDM::CheckPhenoCut(std::bitset<20> cutflag)
 {
 
 //----------------------------------------------------------------------------
@@ -712,37 +713,37 @@ bool DelCut::CheckPhenoCut(std::bitset<20> cutflag)
   }
   return true;
 
-}       // -----  end of function DelCut::CheckPhenoCut  -----
+}       // -----  end of function DelCutDM::CheckPhenoCut  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::DrawHistogram
+//         Name:  DelCutDM::DrawHistogram
 //  Description:  
 // ===========================================================================
-int DelCut::DrawHistogram()
+int DelCutDM::DrawHistogram()
 {
   His->DrawTH1();
   His->DrawTPro();
   His->DrawTH2();
   return 1;
-}       // -----  end of function DelCut::DrawHistogram  -----
+}       // -----  end of function DelCutDM::DrawHistogram  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::WriteHistogram
+//         Name:  DelCutDM::WriteHistogram
 //  Description:  
 // ===========================================================================
-int DelCut::WriteHistogram()
+int DelCutDM::WriteHistogram()
 {
   His->WriteTH1();
   His->WriteTPro();
   His->WriteTH2();
   return 1;
-}       // -----  end of function DelCut::WriteHistogram  -----
+}       // -----  end of function DelCutDM::WriteHistogram  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillJets
+//         Name:  DelCutDM::FillJets
 //  Description:  Filling jets relative hist
 // ===========================================================================
-int DelCut::FillJets() const
+int DelCutDM::FillJets() const
 {
 
   for (int i = 0; i < Ana->vJet->size(); ++i)
@@ -792,13 +793,13 @@ int DelCut::FillJets() const
 
 
   return 1;
-}       // -----  end of function DelCut::FillJets  -----
+}       // -----  end of function DelCutDM::FillJets  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillJets
+//         Name:  DelCutDM::FillJets
 //  Description:  
 // ===========================================================================
-int DelCut::FillJets(int NCut)
+int DelCutDM::FillJets(int NCut)
 {
 //----------------------------------------------------------------------------
 //  Inclusive Jet 
@@ -996,25 +997,25 @@ int DelCut::FillJets(int NCut)
    His->FillTH1(NCut, "NCentralBJets", centralb);
 
    return 1;
-}       // -----  end of function DelCut::FillJets  -----
+}       // -----  end of function DelCutDM::FillJets  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillEle
+//         Name:  DelCutDM::FillEle
 //  Description:  
 // ===========================================================================
-int DelCut::FillEle(int NCut)
+int DelCutDM::FillEle(int NCut)
 {
 
 
   return 1;
-}       // -----  end of function DelCut::FillEle  -----
+}       // -----  end of function DelCutDM::FillEle  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillMet
+//         Name:  DelCutDM::FillMet
 //  Description:  
 // ===========================================================================
-int DelCut::FillMet(int NCut)
+int DelCutDM::FillMet(int NCut)
 {
   His->FillTH1(NCut, "GenMet", Ana->GenMet.Pt());
   His->FillTH1(NCut, "MHT", Ana->Met);
@@ -1023,25 +1024,25 @@ int DelCut::FillMet(int NCut)
   His->FillTH1(NCut, "MetAsys", Ana->METAsys);
   //His->FillTH2(NCut, "MetMHT", Ana->Met, Ana->RawMet.Mod());
   return 1;
-}       // -----  end of function DelCut::FillEle  -----
+}       // -----  end of function DelCutDM::FillEle  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillSampleXS
+//         Name:  DelCutDM::FillSampleXS
 //  Description:  Save the cross section in bin 1 in histogram XS
 // ===========================================================================
-bool DelCut::FillSampleXS(double xs, double error)
+bool DelCutDM::FillSampleXS(double xs, double error)
 {
   His->AddTH1("CrossSection", "Cross Section", 2, 0, 2);
   His->FillTH1("CrossSection", 1, xs);
   His->FillTH1("CrossSection", 0, error);
-}       // -----  end of function DelCut::FillSampleXS  -----
+}       // -----  end of function DelCutDM::FillSampleXS  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookMetPerf
+//         Name:  DelCutDM::BookMetPerf
 //  Description:  Booking all the histogram for the MET performance study
 // ===========================================================================
-int DelCut::BookMetPerf() const
+int DelCutDM::BookMetPerf() const
 {
   // Met study
   His->AddTH1("MLL", "M_{ll}", "M_{ll} [GeV]", "Events / 1 GeV", 60, 60, 120, 0, 1);
@@ -1111,14 +1112,14 @@ int DelCut::BookMetPerf() const
   His->AddTH1("UTJetsPT", "Sum PT of Jets in UT Cal", 200, 0, 400);
   His->AddTH1("UTPhotonsPT", "Sum PT of Photons in UT Cal", 200, 0, 400);
   return 1;
-}       // -----  end of function DelCut::BookMetPerf  -----
+}       // -----  end of function DelCutDM::BookMetPerf  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookSUSYVar
+//         Name:  DelCutDM::BookSUSYVar
 //  Description:  
 // ===========================================================================
-int DelCut::BookSUSYVar()
+int DelCutDM::BookSUSYVar()
 {
   His->AddTH1C("RazorMR", "Razor MR", 350, 0, 3500 );
   His->AddTH1C("RazorR", "Razor R", 15, 0, 1.5 );
@@ -1134,14 +1135,14 @@ int DelCut::BookSUSYVar()
   His->AddTH1C("BoostMHT", "MHT w.r.t dijet", 200, 0, 1000 );
   His->AddTH1C("BoostHT", "HT w.r.t dijet", 200, 0, 1000 );
   return 1;
-}       // -----  end of function DelCut::BookSUSYVar  -----
+}       // -----  end of function DelCutDM::BookSUSYVar  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillMetPerf
+//         Name:  DelCutDM::FillMetPerf
 //  Description:  filling all the histogram for the MET performance study
 // ===========================================================================
-int DelCut::FillMetPerf() const
+int DelCutDM::FillMetPerf() const
 {
   // Met Study
   Ana->MetDiLepton();
@@ -1194,23 +1195,23 @@ int DelCut::FillMetPerf() const
     }
   }
   return 1;
-}       // -----  end of function DelCut::FillMetPerf  -----
+}       // -----  end of function DelCutDM::FillMetPerf  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillNEVT
+//         Name:  DelCutDM::FillNEVT
 //  Description:  Pulic function for filling in the NEVT, it should be same
-//  among DelCuts
+//  among DelCutDMs
 // ===========================================================================
-bool DelCut::FillNEVT(double weight) const
+bool DelCutDM::FillNEVT(double weight) const
 {
   His->FillTH1("NEVT", 1, weight); //the NEVT with weight 
-}       // -----  end of function DelCut::FillNEVT  -----
+}       // -----  end of function DelCutDM::FillNEVT  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckSysLep
+//         Name:  DelCutDM::CheckSysLep
 //  Description:  For systematic study
 // ===========================================================================
-bool DelCut::CheckSysLep() const
+bool DelCutDM::CheckSysLep() const
 {
   assert(ProName.find("Sys") != std::string::npos);
 
@@ -1242,13 +1243,13 @@ bool DelCut::CheckSysLep() const
   }
 
   return Ana->vElectron->size() == nele  && Ana->vMuon->size() == nmuon ;
-}       // -----  end of function DelCut::CheckSysLep  -----
+}       // -----  end of function DelCutDM::CheckSysLep  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::SysMet
+//         Name:  DelCutDM::SysMet
 //  Description:  
 // ===========================================================================
-double DelCut::SysMet() const
+double DelCutDM::SysMet() const
 {
   TLorentzVector temp = *(Ana->MHT);
 
@@ -1268,13 +1269,13 @@ double DelCut::SysMet() const
   TVector2 NewMet(met_x, met_y);
 
   return NewMet.Mod();
-}       // -----  end of function DelCut::SysMet  -----
+}       // -----  end of function DelCutDM::SysMet  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookLeptonEff
+//         Name:  DelCutDM::BookLeptonEff
 //  Description:  
 // ===========================================================================
-bool DelCut::BookLeptonEff()
+bool DelCutDM::BookLeptonEff()
 {
   His->AddTH1C("GenElePt", "GenElePt", "Pt_{Gen e} [GeV] ", "Events / 4 GeV", 200, 0, 800.0 );
   His->AddTH1C("GenMuonPt", "GenMuonPt", "Pt_{Gen m} [GeV] ","Events / 4 GeV",  200, 0, 800.0 );
@@ -1321,13 +1322,13 @@ bool DelCut::BookLeptonEff()
   His->AddTH2C("RecoEleJet", "Reco Electron", "#eta_{e}", "Pt_{e}", 120, -6, 6, 200, 0, 800);
   His->AddTH2C("RecoMuonJet", "Reco Muon", "#eta_{m}", "Pt_{m}", 120, -6, 6, 200, 0, 800);
   return true;
-}       // -----  end of function DelCut::BookLeptonEff  -----
+}       // -----  end of function DelCutDM::BookLeptonEff  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookJetEff
+//         Name:  DelCutDM::BookJetEff
 //  Description:  
 // ===========================================================================
-bool DelCut::BookJetEff()
+bool DelCutDM::BookJetEff()
 {
 
 //----------------------------------------------------------------------------
@@ -1386,13 +1387,13 @@ bool DelCut::BookJetEff()
 
   return true;
 
-}       // -----  end of function DelCut::BookJetEff  -----
+}       // -----  end of function DelCutDM::BookJetEff  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillLepton
+//         Name:  DelCutDM::FillLepton
 //  Description:  
 // ===========================================================================
-int DelCut::FillLepton(int NCut) const
+int DelCutDM::FillLepton(int NCut) const
 {
 
 //----------------------------------------------------------------------------
@@ -1539,13 +1540,13 @@ int DelCut::FillLepton(int NCut) const
 
 
   return true;
-}       // -----  end of function DelCut::FillLepton  -----
+}       // -----  end of function DelCutDM::FillLepton  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillLepton
+//         Name:  DelCutDM::FillLepton
 //  Description:  
 // ===========================================================================
-bool DelCut::FillLepton()
+bool DelCutDM::FillLepton()
 {
   for (int i = 0; i < Ana->vElectron->size(); ++i)
   {
@@ -1575,13 +1576,13 @@ bool DelCut::FillLepton()
   }
 
   return true;
-} // -----  end of function DelCut::FillLepton  -----
+} // -----  end of function DelCutDM::FillLepton  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillSUSYVar
+//         Name:  DelCutDM::FillSUSYVar
 //  Description:  
 // ===========================================================================
-int DelCut::FillSUSYVar(int NCut ) const
+int DelCutDM::FillSUSYVar(int NCut ) const
 {
   His->FillTH1(NCut, "AlphaT", Ana->AlphaT);
   His->FillTH1(NCut, "RazorMR", Ana->RazorMR);
@@ -1604,14 +1605,14 @@ int DelCut::FillSUSYVar(int NCut ) const
   His->FillTH1(NCut, "BoostMHT", Ana->VBFBoostMET());
   His->FillTH1(NCut, "BoostHT", Ana->VBFBoostHT());
   return 1;
-}       // -----  end of function DelCut::FillSUSYVar  -----
+}       // -----  end of function DelCutDM::FillSUSYVar  -----
 
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::BookBJet
+//         Name:  DelCutDM::BookBJet
 //  Description:  
 // ===========================================================================
-bool DelCut::BookBJet()
+bool DelCutDM::BookBJet()
 {
 
   His->AddTH1C("NGenBJets", "Num. of GenBJets", "Number of GenBJets", "Events", 10, 0, 10 );
@@ -1629,4 +1630,4 @@ bool DelCut::BookBJet()
   His->AddTH1C("CentralBJetOrder", "CentralBJetOrder", "Order of Central BJet", "Events",  10, 0, 10);
   His->AddTH1C("CentralPUBJetOrder", "CentralPUBJetOrder", "Order of Central PUBJet", "Events",  10, 0, 10);
   return true;
-}       // -----  end of function DelCut::BookBJet  -----
+}       // -----  end of function DelCutDM::BookBJet  -----

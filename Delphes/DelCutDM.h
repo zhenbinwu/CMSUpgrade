@@ -17,31 +17,31 @@
  * =====================================================================================
  */
 
-#ifndef  __delcut_INC__
-#define  __delcut_INC__
+#ifndef  __delcutdm_INC__
+#define  __delcutdm_INC__
 
 #include "DelEvent.h"
 #include "DelAna.h"
 #include "HistTool.hh"
+#include "DelCut.h"
+
 
 #include <sstream>
 #include <bitset>
-#include <memory>
-
 /*
  * ===========================================================================
  *        Class:  DelCut
  *  Description:  A class for cut flow
  * ===========================================================================
  */
-class DelCut
+class DelCutDM : public DelCut
 {
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ );       /* constructor      */
-    DelCut ( const DelCut &other );   /* copy constructor */
-    ~DelCut ();                            /* destructor       */
+    DelCutDM (DelAna *ana, std::string name);       /* constructor      */
+    DelCutDM ( const DelCut &other );   /* copy constructor */
+    ~DelCutDM ();                            /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
@@ -58,7 +58,6 @@ class DelCut
     // Warning: This is not healthy for the code! But we need to scarify for
     // the analysis
     HistTool *His; 
-    //std::unique_ptr<HistTool> His; 
 
     /* ====================  OPERATORS     ======================================= */
 
@@ -109,4 +108,5 @@ class DelCut
 }; /* -----  end of class DelCut  ----- */
 
 
-#endif   // ----- #ifndef __delcut_INC__  -----
+
+#endif   // ----- #ifndef __delcutdm_INC__  -----

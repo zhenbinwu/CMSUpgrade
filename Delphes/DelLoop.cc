@@ -22,9 +22,9 @@
 //      Method:  DPhes
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DPhes::DPhes (TChain* chain)
+DPhes::DPhes (TChain* chain): 
+  fChain(chain)
 {
-  fChain = chain;
   CrossSection = -999.;
 }  /* -----  end of method DPhes::DPhes  (constructor)  ----- */
 
@@ -47,14 +47,18 @@ DPhes::~DPhes ()
   if (!fChain) return;
   delete fChain->GetCurrentFile();
 
+  delete treeReader;
+
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   // Delete all the local classes
   delete DEV;
   delete ANA;
-  for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
-  {
-    delete it->second;
-  }
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+  //for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
+      //it!=MDelPro.end(); it++)
+  //{
+    //delete it->second;
+  //}
 }  // ~~~~~  end of method DPhes::~DPhes  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,21 +131,21 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Default for the S/B ~~~~~
-    DEV = new DelZJJ(true, PUCorJetEta, PUCorJetPt);
+    DEV = new DelEventZJJ(true, PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
 
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ For Met Resolution study ~~~~~
-    //DEV = new DelZJJ(false, PUCorJetEta, PUCorJetPt);
+    //DEV = new DelEventZJJ(false, PUCorJetEta, PUCorJetPt);
     //ANA = new DelAna(DEV, pu, detector);
     //TString tempname = name;
     //tempname.ReplaceAll("ZJETS", "MetDiMuon");
-    //MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["MetDiMuon"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = name;
     //tempname.ReplaceAll("ZJETS", "MetDiEle");
-    //MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["MetDiEle"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     return 1;
   }
@@ -151,21 +155,21 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   //----------------------------------------------------------------------------
   if (process.find("TT") != std::string::npos)
   {
-    DEV = new DelTT(PUCorJetEta, PUCorJetPt);
+    DEV = new DelEventTT(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
 
     TString tempname = name;
     tempname.ReplaceAll("TT", "TTFLep");
-    MDelCut["TTFL"] = new DelCut(ANA, tempname.Data());
+    MDelPro["TTFL"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = name;
     tempname.ReplaceAll("TT", "TTSLep");
-    MDelCut["TTSL"] = new DelCut(ANA, tempname.Data());
+    MDelPro["TTSL"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = name;
     tempname.ReplaceAll("TT", "TTHad");
-    MDelCut["TTHD"] = new DelCut(ANA, tempname.Data());
+    MDelPro["TTHD"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     return 1;
   }
@@ -176,9 +180,9 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   //----------------------------------------------------------------------------
   if (process.find("Wino") != std::string::npos)
   {
-    DEV = new DelWino(PUCorJetEta, PUCorJetPt);
+    DEV = new DelEventWino(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
     return 1;
   }
 
@@ -190,76 +194,76 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
   if (std::count(process.begin(), process.end(), 'B') == 1) //TODO: make sure only one B,  
   {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
-    DEV = new DelHTB(PUCorJetEta, PUCorJetPt);
+    DEV = new DelEventHTB(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
-    //MDelCut["Default"] = new DelCut(ANA, name.Data());
-
     TString tempname = name;
+    //MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Higgs+Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "H");
-    //MDelCut["H"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["H"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ W + Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "W");
-    //MDelCut["W"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["W"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Wev");
-    MDelCut["Wev"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Wev"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Wmv");
-    MDelCut["Wmv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Wmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Wtv");
-    MDelCut["Wtv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Wtv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Wlv");
-    MDelCut["Wlv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Wlv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Whad");
-    MDelCut["Whad"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Whad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "SysWev");
-    MDelCut["SysWev"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysWev"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "SysWmv");
-    MDelCut["SysWmv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysWmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z + Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "Z");
-    //MDelCut["Z"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Z"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Zee");
-    //MDelCut["Zee"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Zee"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Zmm");
-    //MDelCut["Zmm"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Zmm"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Ztt");
-    //MDelCut["Ztt"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Ztt"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Zll");
-    //MDelCut["Zll"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Zll"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "Zvv");
-    MDelCut["Zvv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Zvv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Zhad");
-    //MDelCut["Zhad"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Zhad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "SysZee");
-    MDelCut["SysZee"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysZee"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "SysZmm");
-    MDelCut["SysZmm"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysZmm"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Photon + Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "Photon");
-    //MDelCut["Photon"] = new DelCut(ANA, tempname.Data());
+    //MDelPro["Photon"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Met Study ~~~~~
     tempname = ModifiedPreName(name, "B", "MetDiMuon");
-    MDelCut["MetDiMuon"] = new DelCut(ANA, tempname.Data());
+    MDelPro["MetDiMuon"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "B", "MetDiEle");
-    MDelCut["MetDiEle"] = new DelCut(ANA, tempname.Data());
+    MDelPro["MetDiEle"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     return 1;
   }
@@ -271,31 +275,31 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 //----------------------------------------------------------------------------
   if (process.find("LL") != std::string::npos)
   {
-    DEV = new DelLL(PUCorJetEta, PUCorJetPt);
+    DEV = new DelEventLL(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
-    MDelCut["Default"] = new DelCut(ANA, name.Data());
+    MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
 
     TString tempname = name;
     tempname = ModifiedPreName(name, "LL", "EleEle");
-    MDelCut["EleEle"] = new DelCut(ANA, tempname.Data());
+    MDelPro["EleEle"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "MuMu");
-    MDelCut["MuMu"] = new DelCut(ANA, tempname.Data());
+    MDelPro["MuMu"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "NvNv");
-    MDelCut["NvNv"] = new DelCut(ANA, tempname.Data());
+    MDelPro["NvNv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "TauTau");
-    MDelCut["TauTau"] = new DelCut(ANA, tempname.Data());
+    MDelPro["TauTau"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "Lep");
-    MDelCut["Lep"] = new DelCut(ANA, tempname.Data());
+    MDelPro["Lep"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "SysEE");
-    MDelCut["SysEE"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysEE"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     tempname = ModifiedPreName(name, "LL", "SysMM");
-    MDelCut["SysMM"] = new DelCut(ANA, tempname.Data());
+    MDelPro["SysMM"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     return 1;
   }
@@ -305,7 +309,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 //----------------------------------------------------------------------------
   DEV = new DelEvent(PUCorJetEta, PUCorJetPt);
   ANA = new DelAna(DEV, pu, detector);
-  MDelCut[process] = new DelCut(ANA, name.Data());
+  MDelPro[process] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
   return 1;
 }       // -----  end of function DPhes::SetPreName  -----
 
@@ -337,15 +341,18 @@ int DPhes::ReadDelPhes()
 //         Name:  DPhes::PreLooping
 //  Description:  Prepared for the looping
 // ===========================================================================
-int DPhes::PreLooping()
+int DPhes::PreLooping(const std::vector<std::string>& VCuts)
 {
-  for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+  for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
+      it!=MDelPro.end(); it++)
   {
-    it->second->InitCutOrder("DM");
-    //it->second->InitCutOrder("Higgs");
-    it->second->BookHistogram();
-    it->second->FillSampleXS(CrossSection, CrossSectionError);
+    for(std::vector<std::string>::const_iterator sit=VCuts.begin();
+      sit!=VCuts.end(); sit++)
+    {
+      it->second->AddCutFlow(*sit);
+    }
+
+    it->second->SetSampleXS(CrossSection, CrossSectionError);
   } 
   
 //----------------------------------------------------------------------------
@@ -368,7 +375,7 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
-    //if (entry > 5000 ) break;
+    if (entry > 50 ) break;
     if (entry % 5000 == 0)
       std::cout << "--------------------" << entry << std::endl;
 
@@ -388,8 +395,8 @@ int DPhes::Looping()
     //----------------------------------------------------------------------------
     //  Filling the Hist for different DelCut according to the Flag
     //----------------------------------------------------------------------------
-    for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-        it!=MDelCut.end(); it++)
+    for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
+        it!=MDelPro.end(); it++)
     {
       // For each DelCut, fill NEVT with weight. 07/18/2013 10:41:34 AM
       // This can include all the information with the TH1F
@@ -413,12 +420,13 @@ int DPhes::Looping()
 // ===========================================================================
 int DPhes::PostLooping()
 {  
-  for(std::map<std::string, DelCut*>::iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+  for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
+      it!=MDelPro.end(); it++)
   {
     //it->second->DrawHistogram();
     it->second->WriteHistogram();
   } 
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   return 1;
 }       // -----  end of function DPhes::PostLooping  -----
 

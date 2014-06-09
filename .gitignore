@@ -29,6 +29,7 @@ pileup2root
 root2lhco
 root2pileup
 stdhep2pileup
+Example1
 tmp/
 
 ## Ignore compiled local executable

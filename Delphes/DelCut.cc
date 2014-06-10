@@ -26,7 +26,6 @@
 DelCut::DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_ ):
   Ana(ana), ProName(name), AnaCut(cut_)
 {
-  //His     = std::unique_ptr<HistTool>(new HistTool(OutFile_, ProName, AnaCut));
   His     = new HistTool(OutFile_, ProName, AnaCut);
 }  // ~~~~~  end of method DelCut::DelCut  (constructor)  ~~~~~
 
@@ -46,7 +45,11 @@ DelCut::DelCut ( const DelCut &other )
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DelCut::~DelCut ()
 {
-  delete His;
+  //:TRICKY:06/09/2014 12:45:08 PM:benwu: Don't delete the HistTool, which
+  //will course the code to crash. I am guessing it is related to how root
+  //writing the output file
+  
+  //delete His;
 }  // ~~~~~  end of method DelCut::~DelCut  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,6 +66,213 @@ DelCut::operator = ( const DelCut &other )
 }  // ~~~~~  end of method DelCut::operator =  (assignment operator)  ~~~
 
 
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::InitCutOrder
+//  Description:  
+// ===========================================================================
+bool DelCut::InitCutOrder(std::string ana)
+{
+  AnaCut = ana;
+
+  //Clear the objects
+  CutOrder.clear();
+  CutMap.clear();
+
+
+  //Add name and order of the cutflow
+  CutOrder.push_back("NoCut");
+  CutOrder.push_back("VBFCut");
+  CutOrder.push_back("J1J2");
+  CutOrder.push_back("CTMjj");
+  CutOrder.push_back("CTJ3");
+  CutOrder.push_back("CTBJ");
+  CutOrder.push_back("CTLep");
+  CutOrder.push_back("CTMet200");
+  CutOrder.push_back("CTdPhi");
+
+  //Set the cutbit of each cut
+  CutMap["NoCut"]     = "00000000000000000";
+  CutMap["VBFCut"]    = "00000000001111111";
+  CutMap["J1J2"]      = "00000000111111111";
+  CutMap["CTMjj"]     = "00000001111111111";
+  CutMap["CTJ3"]      = "00000011111111111";
+  CutMap["CTBJ"]      = "00000111111111111";
+  CutMap["CTLep"]     = "00001111111111111";
+  CutMap["CTMet200"]  = "00011111111111111";
+  CutMap["CTdPhi"]    = "00111111111111111";
+
+  assert(CutOrder.size() == CutMap.size());
+  His->Cutorder(ana, CutOrder);
+
+}       // -----  end of function DelCut::InitCutOrder  -----
+
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::CheckCut
+//  Description:  Define the cutbit per event
+// ===========================================================================
+bool DelCut::CheckCut()
+{
+  cutbit.reset();
+
+//----------------------------------------------------------------------------
+//  VBF Cut
+//----------------------------------------------------------------------------
+  cutbit.set(0, Ana->METMHTAsys());
+  cutbit.set(1, Ana->vJet->size() >= 2);
+  cutbit.set(2, Ana->Met >= 50);
+
+  if (Ana->J1 != 0)
+    cutbit.set(3, Ana->J1->PT >= 30 && std::fabs(Ana->J1->Eta) <= 5);
+  if (Ana->J2 != 0)
+    cutbit.set(4, Ana->J2->PT >= 30 && std::fabs(Ana->J2->Eta) <= 5);
+
+  //
+  // Opposive eta and eta separation
+  //
+  if (Ana->J1 != 0 && Ana->J2 != 0)
+    cutbit.set(5, Ana->J1->Eta * Ana->J2->Eta < 0);
+  if (Ana->J1 != 0 && Ana->J2 != 0)
+    cutbit.set(6, fabs(Ana->J1->Eta - Ana->J2->Eta ) >= 4.2);
+
+//----------------------------------------------------------------------------
+//  Leading jet cut
+//----------------------------------------------------------------------------
+  if (Ana->PileUp == "140PileUp")
+    cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 200);
+  else
+    cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 50);
+
+  if (Ana->PileUp == "140PileUp")
+    cutbit.set(8,  Ana->J2 != 0 && Ana->J2->PT >= 100);
+  else
+    cutbit.set(8,  Ana->J2 != 0 && Ana->J2->PT >= 50);
+
+  cutbit.set(9,  Ana->Mjj >= 1500. );
+
+
+  // By default, passed central jet veto
+  if (Ana->J1 != 0 && Ana->J2 != 0 )
+  {
+    cutbit.set(10,  true);
+    if (Ana->J3 != 0)
+    {
+
+      // Jet3 is within jet1 and jet2 
+      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
+          (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
+      {
+        cutbit.set(10,  Ana->J3->PT < 30);
+      }
+    }
+  }
+
+  bool hasB = false;
+  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+  {
+    if (it->BTag) hasB = true;
+    break;
+  }
+  cutbit.set(11, !hasB);
+
+
+  bool hasTau = false;
+  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); it++)
+  {
+    if (it->TauTag) hasTau = true;
+    break;
+  }
+
+  if (ProName.find("Sys") == std::string::npos)
+    cutbit.set(12, !hasTau && Ana->vElectron->size() == 0 &&  Ana->vMuon->size() == 0);
+  else 
+    if (CheckSysLep() == false) return false;
+
+  cutbit.set(13, Ana->Met >= 200);
+
+//----------------------------------------------------------------------------
+//  Delta Phi 
+//----------------------------------------------------------------------------
+  if (Ana->J1 != 0 && Ana->J2 != 0)
+  {
+    double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
+    cutbit.set(14, std::fabs(deltaphi) <= 1.8 );
+  }
+
+  return true;
+}       // -----  end of function DelCut::CheckDMCut  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillCut
+//  Description:  Main function to be called in DelFill
+// ===========================================================================
+int DelCut::FillCut()
+{
+//----------------------------------------------------------------------------
+//  Set up the DelAna
+//----------------------------------------------------------------------------
+  //Set Weight for this event, auto fill each his by HistTool
+  //You can over write the weight by adding the weight in Filling
+  His->SetWeight(Ana->Weight); 
+
+//----------------------------------------------------------------------------
+//  Filling variable per event
+// :SUGGESTION:06/09/2014 01:28:42 PM:benwu: This should move to DelProcesses
+//----------------------------------------------------------------------------
+  His->FillTH1("NEle", (int)Ana->vElectron->size());
+  His->FillTH1("NMuon", (int)Ana->vMuon->size());
+  His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
+  His->FillTH1("Met", Ana->Met);
+  His->FillTH1("MetRelSys", Ana->METAsys);
+  His->FillTPro("MHTAsys", Ana->Met, Ana->METAsys);
+  His->FillTPro("METAsys", Ana->RawMet.Mod(), Ana->METAsys);
+
+  if (ProName.find("Photon") != std::string::npos)
+    His->FillTH2("MetVsPhoton", (double)Ana->vPhoton->size(), Ana->Met);
+//----------------------------------------------------------------------------
+// Filling jets Globally
+//----------------------------------------------------------------------------
+   FillJets();
+   FillLepton();
+   His->FillTH1("ZMass", Ana->GenMet.M());
+
+//----------------------------------------------------------------------------
+//  Filling histogram for MET performance study
+//----------------------------------------------------------------------------
+   if (ProName.find("MetDiEle") != std::string::npos
+       || ProName.find("MetDiMuon") != std::string::npos)
+    FillMetPerf();
+
+
+
+//----------------------------------------------------------------------------
+//  Check cut and fill cut-based plots
+//----------------------------------------------------------------------------
+  CheckCut();
+  for (int i = 0; i < CutOrder.size(); ++i)
+  {
+    std::bitset<NBITS> locbit(CutMap[CutOrder.at(i)]);
+    std::cout << " Cutcheck " << locbit << "  event bit " << cutbit << std::endl;
+    if ( (cutbit & locbit) != locbit) continue;
+
+    His->FillTH1("CutFlow", i); 
+    std::cout << " pass cut " << CutOrder.at(i) << std::endl;
+
+
+    // Filling by functions
+    FillJets(i);
+    FillMet(i);
+    FillLepton(i);
+    FillSUSYVar(i);
+  }
+
+  return 1;
+}       // -----  end of function DelCut::FillCut  -----
+
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::BookHistogram
 //  Description:  
@@ -74,22 +284,9 @@ bool DelCut::BookHistogram()
   BookJetEff();
   BookSUSYVar();
   BookBJet();
-//----------------------------------------------------------------------------
-//  Booking global histogram
-//----------------------------------------------------------------------------
-  His->AddTH1("NEVT", "Num. of Events", 2, 0, 2 );
-  His->AddTH1("Weight", "Weight", 100, 0, 10 );
 
-  // Initial the cutflow
-  TString title = AnaCut == "DM" ? "SUSY VBF DM" : AnaCut;
-  TH1F* temp = His->AddTH1("CutFlow", title.Data(), CutOrder.size(), 0 , CutOrder.size());
-  for (int i = 0; i < CutOrder.size(); ++i)
-    temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
 
   His->AddTH1C("NJets", "Num. of Jets", "Number of Jets", "Events", 40, 0, 40 );
-  His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
-  His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
-  His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
 
   His->AddTH1("ZMass", "Zmass", "M_{Z} [GeV]", "Events / 8 GeV",  50, 0, 400, 0, 1);
   His->AddTH1C("GenMet", "GenMet", "Gen #slash{E}_{T} [GeV]", "Events / 5 GeV",  200, 0, 1000, 0, 1);
@@ -196,524 +393,6 @@ bool DelCut::BookHistogram()
       His->AddTH2("MetVsPhoton", "Met Vs Photon", 10, 0 , 10, 100, 0, 1000);
 }       // -----  end of function DelCut::BookHistogram  -----
 
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::InitCutOrder
-//  Description:  
-// ===========================================================================
-bool DelCut::InitCutOrder(std::string ana)
-{
-  AnaCut = ana;
-   // The Cut flow for DM
-   if (AnaCut == "DM")
-   {
-     CutOrder.clear();
-     CutMap.clear();
-     CutOrder.push_back("NoCut");
-     CutOrder.push_back("VBFCut");
-     //CutOrder.push_back("MetFilter");
-     //CutOrder.push_back("NJet2");
-     //CutOrder.push_back("Met50");
-     //CutOrder.push_back("VBFJ1");
-     //CutOrder.push_back("VBFJ2");
-     //CutOrder.push_back("Eta2");
-     //CutOrder.push_back("dEta42");
-     CutOrder.push_back("J1J2");
-     //CutOrder.push_back("CTJ1");
-     //CutOrder.push_back("CTJ2");
-     CutOrder.push_back("CTMjj");
-     CutOrder.push_back("CTJ3");
-     CutOrder.push_back("CTBJ");
-     CutOrder.push_back("CTLep");
-     CutOrder.push_back("CTMet200");
-     CutOrder.push_back("CTdPhi");
-     CutOrder.push_back("AllCut");
-
-     CutMap["NoCut"]     = "00000000000000000";
-     //CutMap["MetFilter"] = "00000000000000001";
-     //CutMap["NJet2"]     = "00000000000000011";
-     //CutMap["Met50"]     = "00000000000000111";
-     //CutMap["VBFJ1"]     = "00000000000001111";
-     //CutMap["VBFJ2"]     = "00000000000011111";
-     //CutMap["Eta2"]      = "00000000000111111";
-     //CutMap["dEta42"]    = "00000000001111111";
-     CutMap["VBFCut"]    = "00000000001111111";
-     //CutMap["CTJ1"]      = "00000000011111111";
-     //CutMap["CTJ2"]      = "00000000111111111";
-     CutMap["J1J2"]      = "00000000111111111";
-     CutMap["CTMjj"]     = "00000001111111111";
-     CutMap["CTJ3"]      = "00000011111111111";
-     CutMap["CTBJ"]      = "00000111111111111";
-     CutMap["CTLep"]     = "00001111111111111";
-     CutMap["CTMet200"]  = "00011111111111111";
-     CutMap["CTdPhi"]    = "00111111111111111";
-     CutMap["AllCut"]    = "01111111111111111";
-
-   }
-
-   // The Cut flow for Higss
-   if (AnaCut == "Higgs")
-   {
-     CutOrder.clear();
-     CutMap.clear();
-
-     CutOrder.push_back("NoCut");
-     CutOrder.push_back("Trigger");
-     CutOrder.push_back("METfilter");
-     CutOrder.push_back("Eveto");
-     CutOrder.push_back("Mveto");
-     CutOrder.push_back("JetPt");
-     CutOrder.push_back("JetEta");
-     CutOrder.push_back("dEta");
-     CutOrder.push_back("MET130");
-     CutOrder.push_back("MJJ");
-     CutOrder.push_back("CJV");
-     CutOrder.push_back("dPhi");
-     CutOrder.push_back("Tveto");
-     CutOrder.push_back("Bveto");
-     CutOrder.push_back("AllCut");
-
-
-     CutMap["NoCut"]     = "000000000000000";
-     CutMap["Trigger"]   = "000000000000001";
-     CutMap["METfilter"] = "000000000000011";
-     CutMap["Eveto"]     = "000000000000111";
-     CutMap["Mveto"]     = "000000000001111";
-     CutMap["JetPt"]     = "000000000011111";
-     CutMap["JetEta"]    = "000000000111111";
-     CutMap["dEta"]      = "000000001111111";
-     CutMap["MET130"]    = "000000011111111";
-     CutMap["MJJ"]       = "000000111111111";
-     CutMap["CJV"]       = "000001111111111";
-     CutMap["dPhi"]      = "000011111111111";
-     CutMap["Tveto"]     = "000111111111111";
-     CutMap["Bveto"]     = "001111111111111";
-     CutMap["AllCut"]    = "011111111111111";
-   }
-
-   assert(CutOrder.size() == CutMap.size());
-   His->Cutorder(CutOrder);
-  
-}       // -----  end of function DelCut::InitCutOrder  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::CutFlow
-//  Description:  
-// ===========================================================================
-bool DelCut::CutFlow(std::bitset<20> cutbit)
-{
-
-  return 1;
-}       // -----  end of function DelCut::CutFlow  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillCut
-//  Description:  Main function to be called in DelFill
-// ===========================================================================
-int DelCut::FillCut()
-{
-//----------------------------------------------------------------------------
-//  Set up the DelAna
-//----------------------------------------------------------------------------
-  //Set Weight for this event, auto fill each his by HistTool
-  //You can over write the weight by adding the weight in Filling
-  His->SetWeight(Ana->Weight); 
-  His->FillTH1("Weight", Ana->Weight);
-  His->FillTH1("NEle", (int)Ana->vElectron->size());
-  His->FillTH1("NMuon", (int)Ana->vMuon->size());
-  His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
-  His->FillTH1("Met", Ana->Met);
-  His->FillTH1("MetRelSys", Ana->METAsys);
-  His->FillTPro("MHTAsys", Ana->Met, Ana->METAsys);
-  His->FillTPro("METAsys", Ana->RawMet.Mod(), Ana->METAsys);
-
-  if (ProName.find("Photon") != std::string::npos)
-    His->FillTH2("MetVsPhoton", (double)Ana->vPhoton->size(), Ana->Met);
-//----------------------------------------------------------------------------
-// Filling jets Globally
-//----------------------------------------------------------------------------
-   FillJets();
-   FillLepton();
-   His->FillTH1("ZMass", Ana->GenMet.M());
-
-//----------------------------------------------------------------------------
-//  Filling histogram for MET performance study
-//----------------------------------------------------------------------------
-   if (ProName.find("MetDiEle") != std::string::npos
-       || ProName.find("MetDiMuon") != std::string::npos)
-    FillMetPerf();
-
-  for (int i = 0; i < CutOrder.size(); ++i)
-  {
-    std::bitset<20> locbit(CutMap[CutOrder.at(i)]);
-    if (CheckCut(locbit) == false) break;
-    //if (CheckCut(locbit) == false) continue;
-    // For HTBin sample, the cutflow should fill with event weight
-    His->FillTH1("CutFlow", i); 
-    // Filling by functions
-    FillJets(i);
-    FillMet(i);
-    FillLepton(i);
-    FillSUSYVar(i);
-  }
-
-  return 1;
-}       // -----  end of function DelCut::FillCut  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckCut
-//  Description:  
-// ===========================================================================
-bool DelCut::CheckCut(std::bitset<20> cutflag)
-{
-  if (AnaCut == "DM") return CheckDMCut(cutflag);
-  if (AnaCut == "Higgs") return CheckHiggsCut(cutflag);
-
-  //return CheckPhenoCut(cutflag);
-  return true;
-}       // -----  end of function DelCut::CheckCut  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckHiggsCut
-//  Description:  HIG-13-013
-// ===========================================================================
-bool DelCut::CheckHiggsCut(std::bitset<20> cutflag)
-{
-
-//----------------------------------------------------------------------------
-//  Trigger, just 2 jet trigger?
-//----------------------------------------------------------------------------
-  if (cutflag.test(0)) 
-  {
-    if (Ana->vJet->size() < 2) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  MET Filter
-//----------------------------------------------------------------------------
-  if (cutflag.test(1)) 
-  {
-    if (!Ana->METMHTAsys())  return false;
-  }
-
-//----------------------------------------------------------------------------
-//  Electron Veto
-//----------------------------------------------------------------------------
-  if (cutflag.test(2)) 
-  {
-    if (Ana->vElectron->size() > 0) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  Muon Veto
-//----------------------------------------------------------------------------
-  if (cutflag.test(3)) 
-  {
-    if (Ana->vMuon->size() > 0) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  J1 J2 Pt 
-//----------------------------------------------------------------------------
-  if (cutflag.test(4)) 
-  {
-    if ( Ana->J1 == 0 || Ana->J1->PT < 50 || std::fabs(Ana->J1->Eta) > 4.7) return false;
-    if ( Ana->J2 == 0 || Ana->J2->PT < 50 || std::fabs(Ana->J2->Eta) > 4.7) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  J1J2 Eta
-//----------------------------------------------------------------------------
-  if (cutflag.test(5)) 
-  {
-    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
-  }
-
-//----------------------------------------------------------------------------
-//  J1 J2 Delta Eta
-//----------------------------------------------------------------------------
-  if (cutflag.test(6)) 
-  {
-    if ( std::fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
-  }
-
-//----------------------------------------------------------------------------
-//  MET 130
-//----------------------------------------------------------------------------
-  if (cutflag.test(7)) 
-  {
-    if (Ana->Met < 130) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  MJJ 
-//----------------------------------------------------------------------------
-
-  if (cutflag.test(8)) 
-  {
-    if ( Ana->Mjj<1100. ) return false;
-  }
-
-
-//----------------------------------------------------------------------------
-//  Central Jet Veto
-//----------------------------------------------------------------------------
-
-  if (cutflag.test(9)) 
-  {
-
-    if (Ana->J3 != 0)
-    {
-      
-      // Jet3 is within jet1 and jet2 
-      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
-         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
-      {
-        // Only reject hard jets 
-        if (Ana->J3->PT > 30) return false;
-      }
-
-    }
-  }
-
-//----------------------------------------------------------------------------
-//  Delta Phi 
-//----------------------------------------------------------------------------
-  if (cutflag.test(10)) 
-  {
-    double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
-    if (  std::fabs(deltaphi) > 1.0  ) return false;
-  }
-
-
-//---------------------------------------------------------------------------
-//  Tau Veto
-//----------------------------------------------------------------------------
-  if (cutflag.test(11)) 
-  {
-    // tau veto
-    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
-    {
-      if (it->TauTag) return false;
-    }
-  }
-
-//---------------------------------------------------------------------------
-//  Tau Veto
-//----------------------------------------------------------------------------
-  if (cutflag.test(12)) 
-  {
-    // tau veto
-    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
-    {
-      if (it->BTag) return false;
-    }
-  }
-
-  return true;
-}       // -----  end of function DelCut::CheckHiggsCut  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckDMCut
-//  Description:  Cut for Susy VBF DM
-// ===========================================================================
-bool DelCut::CheckDMCut(std::bitset<20> cutflag)
-{
- 
-//----------------------------------------------------------------------------
-//  VBF Cut
-//----------------------------------------------------------------------------
-  if (cutflag.test(0)) 
-  {
-    if (!Ana->METMHTAsys())  return false;
-  }
-
-  if (cutflag.test(1)) 
-  {
-    if (Ana->vJet->size() < 2) return false;
-  }
-
-
-  if (cutflag.test(2)) 
-  {
-    if (Ana->Met < 50) return false;
-  }
-
-  if (cutflag.test(3)) 
-    if (Ana->J1->PT < 30 || std::fabs(Ana->J1->Eta) > 5) return false;
-
-  if (cutflag.test(4)) 
-    if (Ana->J2->PT < 30 || std::fabs(Ana->J2->Eta) > 5) return false;
-
-    //
-    // Opposive eta and eta separation
-    //
-  if (cutflag.test(5)) 
-    if (Ana->J1->Eta * Ana->J2->Eta > 0) return false;      
-
-  if (cutflag.test(6)) 
-    if ( fabs(Ana->J1->Eta - Ana->J2->Eta ) < 4.2) return false;      
-
-//----------------------------------------------------------------------------
-//  Leading jet cut
-//----------------------------------------------------------------------------
-  if (cutflag.test(7)) 
-  {
-    if (Ana->PileUp == "140PileUp")
-    {
-      if ( Ana->J1 == 0 || Ana->J1->PT < 200) return false; //For 140PU 
-    }
-    else
-    {
-      if ( Ana->J1 == 0 || Ana->J1->PT < 50) return false;
-    }
-  }
-
-  if (cutflag.test(8)) 
-  {
-    if (Ana->PileUp == "140PileUp")
-    {
-      if (Ana->J2 == 0 || Ana->J2->PT < 100) return false; //For 140PU 
-    }
-    else
-    {
-      if (Ana->J2 == 0 || Ana->J2->PT < 50) return false;
-    }
-  }
-
-  if (cutflag.test(9)) 
-  {
-    //if ( Ana->Mjj<2000. ) return false; //For harder cuts 
-    if ( Ana->Mjj<1500. ) return false;
-  }
-
-  if (cutflag.test(10)) 
-  {
-    if (Ana->J3 != 0)
-    {
-      // Jet3 is within jet1 and jet2 
-      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
-         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
-      {
-        // Only reject hard jets 
-        if (Ana->J3->PT > 30) return false;
-      }
-
-    }
-  }
-
-  if (cutflag.test(11)) 
-  {
-    // b veto
-    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
-    {
-      if (it->BTag) return false;
-    }
-  }
-
-
-  if (cutflag.test(12)) 
-  {
-    // b veto
-    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
-    {
-      if (it->TauTag) return false;
-    }
-
-    if (ProName.find("Sys") == std::string::npos)
-    {
-      if (Ana->vElectron->size() > 0) return false;
-      if (Ana->vMuon->size() > 0) return false;
-    }
-    else 
-        if (CheckSysLep() == false) return false;
-  }
-
-  if (cutflag.test(13)) 
-  {
-    //if (Ana->Met < 300) return false; // for harder MHT
-    if (Ana->Met < 200) return false;
-  }
-
-//----------------------------------------------------------------------------
-//  Delta Phi 
-//----------------------------------------------------------------------------
-  if (cutflag.test(14)) 
-  {
-    double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
-    if (  std::fabs(deltaphi) > 1.8  ) return false;
-  }
-
-  return true;
-}       // -----  end of function DelCut::CheckDMCut  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::CheckPhenoCut
-//  Description:  
-// ===========================================================================
-bool DelCut::CheckPhenoCut(std::bitset<20> cutflag)
-{
-
-//----------------------------------------------------------------------------
-//  Leading jet cut
-//----------------------------------------------------------------------------
-  if (cutflag.test(0)) 
-  {
-    if ( Ana->J1 == 0 || Ana->J1->PT < 50) return false;
-  }
-
-  if (cutflag.test(1)) 
-  {
-    if (Ana->J2 == 0 || Ana->J2->PT < 50) return false;
-  }
-
-  if (cutflag.test(2)) 
-  {
-    if ( Ana->Mjj<1500. ) return false;
-  }
-
-  if (cutflag.test(3)) 
-  {
-
-    if (Ana->J3 != 0)
-    {
-      
-      // Jet3 is within jet1 and jet2 
-      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
-         (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
-      {
-        // Only reject hard jets 
-        if (Ana->J3->PT > 30) return false;
-      }
-
-    }
-
-    // b veto
-    for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
-    {
-      if (it->BTag) return false;
-      if (it->TauTag) return false;
-    }
-
-    if (Ana->vElectron->size() > 0) return false;
-    if (Ana->vMuon->size() > 0) return false;
-
-  }
-
-
-  if (cutflag.test(4)) 
-  {
-    if (Ana->Met < 200) return false;
-  }
-  return true;
-
-}       // -----  end of function DelCut::CheckPhenoCut  -----
-
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::DrawHistogram
 //  Description:  
@@ -737,6 +416,7 @@ int DelCut::WriteHistogram()
   His->WriteTH2();
   return 1;
 }       // -----  end of function DelCut::WriteHistogram  -----
+
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::FillJets
@@ -1026,18 +706,6 @@ int DelCut::FillMet(int NCut)
 }       // -----  end of function DelCut::FillEle  -----
 
 // ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillSampleXS
-//  Description:  Save the cross section in bin 1 in histogram XS
-// ===========================================================================
-bool DelCut::FillSampleXS(double xs, double error)
-{
-  His->AddTH1("CrossSection", "Cross Section", 2, 0, 2);
-  His->FillTH1("CrossSection", 1, xs);
-  His->FillTH1("CrossSection", 0, error);
-}       // -----  end of function DelCut::FillSampleXS  -----
-
-
-// ===  FUNCTION  ============================================================
 //         Name:  DelCut::BookMetPerf
 //  Description:  Booking all the histogram for the MET performance study
 // ===========================================================================
@@ -1196,15 +864,6 @@ int DelCut::FillMetPerf() const
   return 1;
 }       // -----  end of function DelCut::FillMetPerf  -----
 
-// ===  FUNCTION  ============================================================
-//         Name:  DelCut::FillNEVT
-//  Description:  Pulic function for filling in the NEVT, it should be same
-//  among DelCuts
-// ===========================================================================
-bool DelCut::FillNEVT(double weight) const
-{
-  His->FillTH1("NEVT", 1, weight); //the NEVT with weight 
-}       // -----  end of function DelCut::FillNEVT  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::CheckSysLep

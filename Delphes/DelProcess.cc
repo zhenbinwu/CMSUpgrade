@@ -34,9 +34,12 @@ DelProcess::DelProcess (DelAna *ana, const std::string& name):
 
   ProName = name.substr(0, name.find_first_of('_'));
 
-  HNEVT = std::unique_ptr<TH1F>(new TH1F("NEVT", "Num. of Events", 2, 0, 2 ));
-  HXS= std::unique_ptr<TH1F>(new TH1F("CrossSection", "Cross Section", 2, 0, 2));
-  HWeight= std::unique_ptr<TH1F>(new TH1F("Weight", "Weight", 100, 0, 10 ));
+  HNEVT   = std::unique_ptr<TH1F>(new TH1F("NEVT", "Num. of Events", 2, 0, 2 ));
+  HXS     = std::unique_ptr<TH1F>(new TH1F("CrossSection", "Cross Section", 2, 0, 2));
+  HWeight = std::unique_ptr<TH1F>(new TH1F("Weight", "Weight", 100, 0, 10 ));
+
+  His     = new HistTool(OutFile, ProName);
+  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
 
 }  // -----  end of method DelProcess::DelProcess  (constructor)  -----
 
@@ -56,17 +59,12 @@ DelProcess::DelProcess ( const DelProcess &other )
 //----------------------------------------------------------------------------
 DelProcess::~DelProcess ()
 {
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   OutFile->cd();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   HNEVT->Write();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   HXS->Write();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   HWeight->Write();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   
-  OutFile->Close();
+  //OutFile->Close();
 }  // -----  end of method DelProcess::-DelProcess  (destructor)  -----
 
 //----------------------------------------------------------------------------
@@ -89,11 +87,18 @@ DelProcess::operator = ( const DelProcess &other )
 // ===========================================================================
 bool DelProcess::AddCutFlow(std::string cuts)
 {
+  std::cout << "cut s " << cuts << std::endl;
   if (cuts == "DM")
   {
-    //MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
+    MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
   }
-  MDelCut[cuts] = std::unique_ptr<DelCut>(new DelCut(Ana, OutFile, ProName, cuts));
+  else
+  {
+
+    MDelCut[cuts] = std::unique_ptr<DelCut>(new DelCut(Ana, OutFile, ProName, cuts));
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+  }
+
   MDelCut[cuts]->InitCutOrder(cuts);
   MDelCut[cuts]->BookHistogram();
   return true;
@@ -119,6 +124,7 @@ bool DelProcess::FillNEVT(double weight) const
 {
   HNEVT->Fill(1, weight); //the NEVT with weight 
   HWeight->Fill(weight);
+  His->SetWeight(weight); 
   return true;
 }       // -----  end of function DelProcess::FillNEVT  -----
 
@@ -127,7 +133,7 @@ bool DelProcess::FillNEVT(double weight) const
 //         Name:  DelProcess::FillCut
 //  Description:  
 // ===========================================================================
-bool DelProcess::FillCut() const
+bool DelProcess::FillCut()
 {
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
       it!=MDelCut.end(); it++)
@@ -142,8 +148,12 @@ bool DelProcess::FillCut() const
 //         Name:  DelProcess::WriteHistogram
 //  Description:  
 // ===========================================================================
-bool DelProcess::WriteHistogram() const
+bool DelProcess::WriteHistogram()
 {
+  His->WriteTH1();
+  His->WriteTPro();
+  His->WriteTH2();
+
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
       it!=MDelCut.end(); it++)
   {
@@ -151,12 +161,17 @@ bool DelProcess::WriteHistogram() const
   } 
   return true;
 }       // -----  end of function DelProcess::WriteHistogram  -----
+
 // ===  FUNCTION  ============================================================
 //         Name:  DelProcess::DrawHistogram
 //  Description:  
 // ===========================================================================
-bool DelProcess::DrawHistogram() const
+bool DelProcess::DrawHistogram()
 {
+  His->DrawTH1();
+  His->DrawTPro();
+  His->DrawTH2();
+
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
       it!=MDelCut.end(); it++)
   {
@@ -164,3 +179,27 @@ bool DelProcess::DrawHistogram() const
   } 
   return true;
 }       // -----  end of function DelProcess::DrawHistogram  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelProcess::BookHistogram
+//  Description:  
+// ===========================================================================
+bool DelProcess::BookHistogram()
+{
+  His->AddTH1("NEle", "Num. of Electrons", 10, 0, 10 );
+  His->AddTH1("NMuon", "Num. of Muons", 10, 0, 10 );
+  His->AddTH1("NPhoton", "Num. of Photons", 10, 0, 10 );
+  return true;
+}       // -----  end of function DelProcess::BookHistogram  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelProcess::FillHistogram
+//  Description:  
+// ===========================================================================
+bool DelProcess::FillHistogram(const DelAna *ana)
+{
+  His->FillTH1("NEle", (int)Ana->vElectron->size());
+  His->FillTH1("NMuon", (int)Ana->vMuon->size());
+  His->FillTH1("NPhoton", (int)Ana->vPhoton->size());
+  return true;
+}       // -----  end of function DelProcess::FillHistogram  -----

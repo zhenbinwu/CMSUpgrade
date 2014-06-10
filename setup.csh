@@ -23,14 +23,15 @@ endif
 #============================================================================#
 
 
-setenv DELPHES Delphes-3.0.10
+setenv DELPHES Delphes-TP
+#setenv DELPHES Delphes-3.0.10
 setenv LD_LIBRARY_PATH $CURRENTDIR/$DELPHES/:$LD_LIBRARY_PATH
 setenv PATH  $CURRENTDIR/BWTool/:$PATH
 
 #============================================================================#
 #---------------------------   Setup MT2 package   --------------------------#
 #============================================================================#
-setenv OxbridgeMT2 True
+setenv OxbridgeMT2 False
 
 if ( $OxbridgeMT2  == True ) then
   if (! -d OxbridgeMT2) then
@@ -52,3 +53,6 @@ endif
 #============================================================================#
 #------------------------   Setup Boost from CMSSW   ------------------------#
 #============================================================================#
+if ( $?CMSSW_FWLITE_INCLUDE_PATH) then 
+  setenv BOOSTROOT `echo $CMSSW_FWLITE_INCLUDE_PATH | awk -F: '{for(i=0;++i<=NF;){if ($i ~ /.*boost.*/) print $i}}'`
+endif

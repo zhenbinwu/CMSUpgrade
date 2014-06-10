@@ -27,6 +27,7 @@
 #include <bitset>
 #include <memory>
 #include <sys/stat.h>
+#include "stdlib.h"
 
 #include "TChain.h"
 #include "TH1F.h"
@@ -54,6 +55,9 @@
 #include "ExRootAnalysis/ExRootTreeReader.h"
 #include "ExRootAnalysis/ExRootResult.h"
 #include "classes/DelphesClasses.h"
+
+
+
 /*
  * ===========================================================================
  *        Class:  DPhes
@@ -80,6 +84,8 @@ class DPhes
     bool GetCrossSection(std::string process);
 
     /* ====================  MUTATORS      ======================================= */
+    int ParseMemoryLine(char* line);
+    double GetMemoryValue();
 
     /* ====================  OPERATORS     ======================================= */
 
@@ -124,5 +130,6 @@ class DPhes
     std::string Process;
     std::string PU;
 }; /* -----  end of class DPhes  ----- */
+
 
 #endif /* __DPHES_H__ */

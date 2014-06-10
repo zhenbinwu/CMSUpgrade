@@ -867,12 +867,16 @@ std::vector<TLorentzVector> DelAna::MT2_2SideJ1J2()
   return Twosides;
 }       // -----  end of function DelAna::MT2_2SideJ1J2  -----
 
+
 // ===  FUNCTION  ============================================================
 //         Name:  DelAna::MT2_CalcMT2
 //  Description: 
 // ===========================================================================
 double DelAna::MT2_CalcMT2(double Inv_mass, TLorentzVector sidea, TLorentzVector sideb)
 {
+
+#ifdef  OXBRIDGE_MT2
+  
   // First we create the object that is going to do the calculation
   // of MT2 for us.  You can do this once early on, and re-use it
   // multiple times.
@@ -916,7 +920,9 @@ double DelAna::MT2_CalcMT2(double Inv_mass, TLorentzVector sidea, TLorentzVector
     //<< std::endl; 
   
   return mt2;
-
+#else      // -----  not OXBRIDGE_MT2  -----
+  return 0.0;
+#endif     // -----  not OXBRIDGE_MT2  -----
 }       // -----  end of function DelAna::MT2_CalcMT2  -----
 
 // ===  FUNCTION  ============================================================
@@ -967,7 +973,7 @@ double DelAna::VBFBoostHT()
   {
     TLorentzVector jet = vJet->at(i).P4();
     jet.Boost(-dijetV3);
-    std::cout <<  " " << i << "  " << BoostHT.Pt() << " " << std::endl;
+    //std::cout <<  " " << i << "  " << BoostHT.Pt() << " " << std::endl;
     BoostHT += jet;
   }
 

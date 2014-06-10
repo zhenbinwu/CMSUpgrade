@@ -40,12 +40,13 @@ class DelProcess
     // ====================  MUTATORS      ===============================
 
     // ====================  OPERATORS     ===============================
-    bool DrawHistogram() const;
-    bool WriteHistogram() const;
+    bool DrawHistogram();
+    bool WriteHistogram();
     bool BookHistogram();
+    bool FillHistogram(const DelAna *ana);
 
     bool FillNEVT(double weight=1) const;
-    bool FillCut() const;
+    bool FillCut();
     bool SetSampleXS(double xs, double error);
 
     DelProcess& operator = ( const DelProcess &other ); // assignment operator
@@ -57,6 +58,7 @@ class DelProcess
 
     // ====================  DATA MEMBERS  ===============================
     std::string ProName;
+    HistTool *His; 
 
   private:
     // ====================  METHODS       ===============================

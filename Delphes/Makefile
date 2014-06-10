@@ -2,7 +2,7 @@ DEL           = $(shell echo $(DELPHES))
 #CXX           = ~/.vim/bundle/ClangComplete/bin/cc_args.py g++
 
 
-CXX           = g++ -std=c++0x 
+CXX           = g++ 
 #CXXFLAGS     += -Wall -Wextra -Weffc++
 ## Include ROOT
 CXXFLAGS     += $(shell root-config --cflags) 
@@ -19,7 +19,7 @@ LIBS += -L../$(DEL) -lDelphes
 #--------------------------   Include OxbridgeMT2   -------------------------#
 #============================================================================#
 ifeq ($(shell echo $(OxbridgeMT2)), True)
-  CXXFLAGS     += -I../OxbridgeMT2/include/oxbridgekinetics-1.0/
+  CXXFLAGS     += -I../OxbridgeMT2/include/oxbridgekinetics-1.0/ -DOXBRIDGE_MT2
   LIBS         += -L../OxbridgeMT2/lib -loxbridgekinetics-1.0
 endif
 
@@ -27,15 +27,15 @@ endif
 #============================================================================#
 #-----------------------------   Include Boost   ----------------------------#
 #============================================================================#
-ifneq (, $(findstring cmslpc, $(shell hostname)))
-  CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
+ifneq ($(shell echo $(BOOSTROOT)), '')
+  CPPFLAGS += -I$(shell echo $(BOOSTROOT))
 endif
 
 
 OBJS          = DelMain.o DelLoop.o DelProcess.o DelAna.o HistTool.o
 OBJS         += DelEvent.o DelEventWino.o DelEventTT.o DelEventZJJ.o DelEventHTB.o DelEventLL.o 
-OBJS         += DelCut.o
-#OBJS         += DelCut.o DelCutDM.o
+OBJS         += DelCut.o DelCutDM.o
+#OBJS         += DelCut.o
 PROGRAM       = DelFill
 
 

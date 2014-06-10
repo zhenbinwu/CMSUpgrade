@@ -22,7 +22,12 @@
 
 #include <assert.h>
 #include "DelEvent.h"
+
+
+#ifdef  OXBRIDGE_MT2
 #include "Mt2/ChengHanBisect_Mt2_332_Calculator.h"
+#endif     // -----  not OXBRIDGE_MT2  -----
+
 
 /*
  * ===========================================================================

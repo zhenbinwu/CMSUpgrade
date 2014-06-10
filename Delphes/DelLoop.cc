@@ -49,16 +49,9 @@ DPhes::~DPhes ()
 
   delete treeReader;
 
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   // Delete all the local classes
   delete DEV;
   delete ANA;
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
-  //for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
-      //it!=MDelPro.end(); it++)
-  //{
-    //delete it->second;
-  //}
 }  // ~~~~~  end of method DPhes::~DPhes  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -349,6 +342,7 @@ int DPhes::PreLooping(const std::vector<std::string>& VCuts)
     for(std::vector<std::string>::const_iterator sit=VCuts.begin();
       sit!=VCuts.end(); sit++)
     {
+      std::cout << "Initialing Cuts " << *sit << std::endl;
       it->second->AddCutFlow(*sit);
     }
 
@@ -375,9 +369,10 @@ int DPhes::Looping()
   int entry = 0;
   while (true) //Using the break from treeReader 
   {
-    if (entry > 50 ) break;
-    if (entry % 5000 == 0)
-      std::cout << "--------------------" << entry << std::endl;
+    if (entry > 5 ) break;
+
+    if (entry % 5 == 0)
+      std::cout << entry << " -------------------- " <<  GetMemoryValue() << "MB" << std::endl;
 
     // Load selected branches with data from specified event
     if (! treeReader->ReadEntry(entry)) break;
@@ -404,6 +399,7 @@ int DPhes::Looping()
       // number of event without weight, which is needed to include the
       // kfactor, which will normalized to NLO cross section
       it->second->FillNEVT(ANA->Weight);
+      it->second->FillHistogram(ANA);
 
       if (ANA->CheckFlag(it->first))
       {
@@ -426,7 +422,6 @@ int DPhes::PostLooping()
     //it->second->DrawHistogram();
     it->second->WriteHistogram();
   } 
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
   return 1;
 }       // -----  end of function DPhes::PostLooping  -----
 
@@ -516,4 +511,33 @@ TString DPhes::ModifiedPreName(const TString output, std::string org, std::strin
   tempPro.ReplaceAll(org, rep);
   return tempOut.ReplaceAll(Process, tempPro);
 }       // -----  end of function DPhes::ModifiedPreName  -----
+
+
+int DPhes::ParseMemoryLine(char* line)
+{
+  int i = strlen(line);
+  while (*line < '0' || *line > '9') line++;
+  line[i-3] = '\0';
+  i = atoi(line);
+  return i;
+}
+
+
+double DPhes::GetMemoryValue()
+{ 
+  FILE* file = fopen("/proc/self/status", "r");
+  int result = -1;
+  char line[128];
+
+  while (fgets(line, 128, file) != NULL){
+    if (strncmp(line, "VmSize:", 7) == 0){
+      result = ParseMemoryLine(line);
+      break;
+    }
+  }
+  fclose(file);
+
+  //Note: this value is in MB!
+  return result/1024;
+}
 

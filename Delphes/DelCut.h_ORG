@@ -17,8 +17,8 @@
  * =====================================================================================
  */
 
-#ifndef  __DELCUT_INC__
-#define  __DELCUT_INC__
+#ifndef  __delcut_INC__
+#define  __delcut_INC__
 
 #include "DelEvent.h"
 #include "DelAna.h"
@@ -28,8 +28,6 @@
 #include <bitset>
 #include <memory>
 
-
-#define NBITS 20
 /*
  * ===========================================================================
  *        Class:  DelCut
@@ -46,9 +44,11 @@ class DelCut
     ~DelCut ();                            /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
-    virtual bool BookHistogram();
+    bool BookHistogram();
+    bool FillSampleXS(double xs, double error);
     bool InitCutOrder(std::string ana="DM");
-    virtual int FillCut();
+    int FillCut();
+    bool FillNEVT(double weight=1) const;
     int WriteHistogram();
     int DrawHistogram();
 
@@ -58,14 +58,16 @@ class DelCut
     // Warning: This is not healthy for the code! But we need to scarify for
     // the analysis
     HistTool *His; 
+    //std::unique_ptr<HistTool> His; 
 
     /* ====================  OPERATORS     ======================================= */
+
     DelCut& operator = ( const DelCut &other ); /* assignment operator */
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
     bool CutFlow(std::bitset<20> cutbit);
-    virtual bool CheckCut();
+    bool CheckCut(std::bitset<20> cutflag);
     bool CheckPhenoCut(std::bitset<20> cutflag);
     bool CheckDMCut(std::bitset<20> cutflag);
     bool CheckHiggsCut(std::bitset<20> cutflag);
@@ -73,15 +75,11 @@ class DelCut
     bool CheckSysLep() const;
     double SysMet() const;
     bool DetectorAccp(double Eta) const;
-
-    std::bitset<NBITS> cutbit;
-
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;
     std::string ProName; // Process name
     std::string AnaCut;  // Flag to choose which analysis cut to apply 
-
     // "DM"    -> SUSY VBF DM Cut
     // "Higgs" -> Higgs invisible Cut
     // "RA2"   -> SUSY RA2 Cut (To be implemented)
@@ -111,4 +109,4 @@ class DelCut
 }; /* -----  end of class DelCut  ----- */
 
 
-#endif   // ----- #ifndef __DELCUT_INC__  -----
+#endif   // ----- #ifndef __delcut_INC__  -----

@@ -81,9 +81,9 @@ int main ( int argc, char *argv[] )
   {
     TreeList = "./FileList/PhaseII4v2/"+Process+"_"+Pileup+".list";
   } else if (Detector == "Test") {
-    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
     //TreeList = "./Sample/Bj-4p-300-600-v1510_14TEV_NoPileUp_99966708.root";
-    TreeList = "../out.root";
+    TreeList = "../out2.root";
+    //TreeList = "../out.root";
   }
 
   std::cout << "Files to be run on : " << TreeList  << std::endl;

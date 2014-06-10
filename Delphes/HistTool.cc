@@ -25,7 +25,8 @@ HistTool::HistTool (std::shared_ptr<TFile> OutFile_, std::string name, std::stri
   OutFile(OutFile_), prefix(name), cutflag(cut_)
 { 
   OutFile->cd();
-  OutFile->mkdir(cutflag.c_str());
+  if (cutflag != "")
+    OutFile->mkdir(cutflag.c_str());
   HWeight = -999.;
   CutSize = 0;
 }  // ~~~~~  end of method HistTool::HistTool  (constructor)  ~~~~~
@@ -46,11 +47,16 @@ HistTool::HistTool ( const HistTool &other )
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 HistTool::~HistTool ()
 {
-  std::cout << " share pointer? " << OutFile.use_count() << std::endl;
-  HisMap2D.clear();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+
+  //for(std::map<std::string, std::unique_ptr<TH2D> >::iterator it=HisMap2D.begin();
+    //it!=HisMap2D.end(); it++)
+  //{
+    ////delete it->second.get_deleter();
+  //}
+  std::cout << "File name " << OutFile->GetName() << std::endl;
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+  //HisMap2D.clear();
   //HisMap.clear();
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
 }  // ~~~~~  end of method HistTool::~HistTool  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -96,10 +102,18 @@ std::vector<std::string> HistTool::Cutorder()
 //         Name:  HistTool::Cutorder
 //  Description:  
 // ===========================================================================
-int HistTool::Cutorder(std::vector<std::string> Order)
+int HistTool::Cutorder(std::string ana, std::vector<std::string> CutOrder)
 {
-  order = Order;
+  order = CutOrder;
   CutSize = order.size();
+
+  // Initial the cutflow
+  TString title = ana == "DM" ? "SUSY VBF DM" : ana;
+
+  TH1 *temp = AddTH1("CutFlow", title.Data(), CutOrder.size(), 0 , CutOrder.size());
+  for (int i = 0; i < CutOrder.size(); ++i)
+    temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
+
   return CutSize;
 }       // -----  end of function HistTool::Cutorder  -----
 
@@ -244,7 +258,8 @@ int HistTool::FillTH1(std::string HisName, double value, double weight)
 int HistTool::WriteTH1()
 {
   OutFile->cd();
-  OutFile->cd(cutflag.c_str());
+  if (cutflag != "")
+    OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TH1F> >::iterator it=HisMap.begin();
     it!=HisMap.end(); it++)
   {
@@ -419,7 +434,8 @@ int HistTool::FillTPro(std::string HisName, int xvalue, double yvalue, double we
 int HistTool::WriteTPro()
 {
   OutFile->cd();
-  OutFile->cd(cutflag.c_str());
+  if (cutflag != "")
+    OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TProfile> >::iterator it=ProMap.begin();
     it!=ProMap.end(); it++)
   {
@@ -596,7 +612,8 @@ int HistTool::FillTH2(std::string HisName, double xvalue, double yvalue, double 
 int HistTool::WriteTH2()
 {
   OutFile->cd();
-  OutFile->cd(cutflag.c_str());
+  if (cutflag != "")
+    OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TH2D> >::iterator it=HisMap2D.begin();
     it!=HisMap2D.end(); it++)
   {

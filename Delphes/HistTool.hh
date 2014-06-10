@@ -41,7 +41,7 @@ class HistTool
 
     // ====================  LIFECYCLE     ===============================
     HistTool (std::string name);
-    HistTool (std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_);
+    HistTool (std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_ = "");
     HistTool ( const HistTool &other );   // copy constructor
     ~HistTool ();                            // destructor
 
@@ -53,7 +53,7 @@ class HistTool
 
     HistTool& operator = ( const HistTool &other ); // assignment operator
 
-    int Cutorder(std::vector<std::string> order);
+    int Cutorder(std::string ana, std::vector<std::string> order);
     std::vector<std::string> Cutorder();
     int CreateFile(std::string filname);
     bool SetWeight(double weight);

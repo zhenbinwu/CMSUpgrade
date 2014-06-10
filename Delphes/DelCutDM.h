@@ -17,14 +17,13 @@
  * =====================================================================================
  */
 
-#ifndef  __delcutdm_INC__
-#define  __delcutdm_INC__
+#ifndef  __DELCUTDM_INC__
+#define  __DELCUTDM_INC__
 
 #include "DelEvent.h"
 #include "DelAna.h"
 #include "HistTool.hh"
 #include "DelCut.h"
-
 
 #include <sstream>
 #include <bitset>
@@ -39,8 +38,8 @@ class DelCutDM : public DelCut
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelCutDM (DelAna *ana, std::string name);       /* constructor      */
-    DelCutDM ( const DelCut &other );   /* copy constructor */
+    DelCutDM (DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ );       /* constructor      */
+    DelCutDM ( const DelCutDM &other );   /* copy constructor */
     ~DelCutDM ();                            /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
@@ -57,19 +56,16 @@ class DelCutDM : public DelCut
     // histogram apart from the DelCut.
     // Warning: This is not healthy for the code! But we need to scarify for
     // the analysis
-    HistTool *His; 
+    //HistTool *His; 
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelCut& operator = ( const DelCut &other ); /* assignment operator */
+    DelCutDM& operator = ( const DelCutDM &other ); /* assignment operator */
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
-    bool CutFlow(std::bitset<20> cutbit);
-    bool CheckCut(std::bitset<20> cutflag);
-    bool CheckPhenoCut(std::bitset<20> cutflag);
-    bool CheckDMCut(std::bitset<20> cutflag);
-    bool CheckHiggsCut(std::bitset<20> cutflag);
+    bool CutFlow(std::bitset<NBITS> cutbit);
+    bool CheckCut();
 
     bool CheckSysLep() const;
     double SysMet() const;
@@ -109,4 +105,4 @@ class DelCutDM : public DelCut
 
 
 
-#endif   // ----- #ifndef __delcutdm_INC__  -----
+#endif   // ----- #ifndef __DELCUTDM_INC__  -----

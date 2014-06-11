@@ -5,11 +5,11 @@ setenv CURRENTDIR $PWD
 #============================================================================#
 if (  $HOST =~ cmslpc* ) then 
     source /uscmst1/prod/sw/cms/cshrc prod
-    setenv LANG en_US.UTF-8
     ##grid-proxy-init -debug -verify
     ##voms-proxy-init -voms cms
     cd $HOME/CMSSW_5_2_5/src
     cmsenv
+    setenv LANG en_US.UTF-8
     cd $CURRENTDIR
 endif
 
@@ -21,7 +21,6 @@ endif
 #============================================================================#
 #-------------------------   Setup CMSSW @ Kodiak   -------------------------#
 #============================================================================#
-
 
 setenv DELPHES Delphes-TP
 #setenv DELPHES Delphes-3.0.10

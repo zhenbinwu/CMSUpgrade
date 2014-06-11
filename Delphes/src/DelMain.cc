@@ -52,15 +52,14 @@ int main ( int argc, char *argv[] )
 
   double PUCorJetEta = -99;
   double PUCorJetPt = -99;
-  char Cuts[80];
+  char Cuts[100];
   sscanf(Outdir.c_str(), "%[^_]_%lf_%lf", Cuts, &PUCorJetEta, &PUCorJetPt );
 
-  const std::vector<std::string> VCuts = TokenizedString(std::string(Cuts), '-');
 //----------------------------------------------------------------------------
 //  Done with input variables
 //----------------------------------------------------------------------------
 
-  std::cout<<"Running Process : \033[0;31m"<< Process<<"\033[0m with pileup : \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
+  std::cout<<"Running process : \033[0;31m"<< Process<<"\033[0m with pileup \033[1;36m"<< Pileup << "\033[0m"<< std::endl; 
 
   TString TreeList = "";
   TChain chain("Delphes");
@@ -86,7 +85,7 @@ int main ( int argc, char *argv[] )
     //TreeList = "../out.root";
   }
 
-  std::cout << "Files to be run on : " << TreeList  << std::endl;
+  std::cout<<"Run on filelist : \033[0;33m" << TreeList << "\033[0m" << std::endl;
 
 
   if(TreeList.Contains("FileList"))
@@ -107,6 +106,8 @@ int main ( int argc, char *argv[] )
     std::cout << "No files attached! Exiting ...."  << std::endl;
     return EXIT_FAILURE;
   }
+
+  const std::vector<std::string> VCuts = TokenizedString(std::string(Cuts), '-');
 
   // To remove the warning from TFile::Append
   // -->  Replacing existing TH1: CrossSection (Potential memory leak)
@@ -144,6 +145,7 @@ std::vector<std::string> TokenizedString(std::string input, char sep)
     else
       out = input.substr(place1+1 , place2 - place1 -1);
     Vsubstr.push_back(out);
+    std::cout<<"Adding cutflow  : \033[0;32m"<< out<<"\033[0m" << std::endl; 
     place1 = place2;
   }
 

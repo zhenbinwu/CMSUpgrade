@@ -349,10 +349,10 @@ int DPhes::ReadDelPhes()
 int DPhes::PreLooping(const std::vector<std::string>& VCuts)
 {
   for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
-      it!=MDelPro.end(); it++)
+      it!=MDelPro.end(); ++it)
   {
     for(std::vector<std::string>::const_iterator sit=VCuts.begin();
-      sit!=VCuts.end(); sit++)
+      sit!=VCuts.end(); ++sit)
     {
       it->second->AddCutFlow(*sit);
     }
@@ -382,7 +382,7 @@ int DPhes::Looping()
   {
 
     if (entry % 500 == 0)
-      std::cout << entry << " -------------------- " <<  GetMemoryValue() << "MB" << std::endl;
+      std::cout << entry << " -------------------- Memory usage: " <<  GetMemoryValue() << "MB" << std::endl;
 
     // Load selected branches with data from specified event
     if (! treeReader->ReadEntry(entry)) break;
@@ -401,7 +401,7 @@ int DPhes::Looping()
     //  Filling the Hist for different DelCut according to the Flag
     //----------------------------------------------------------------------------
     for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
-        it!=MDelPro.end(); it++)
+        it!=MDelPro.end(); ++it)
     {
       // For each DelCut, fill NEVT with weight. 07/18/2013 10:41:34 AM
       // This can include all the information with the TH1F
@@ -429,7 +429,7 @@ int DPhes::Looping()
 int DPhes::PostLooping()
 {  
   for(std::map<std::string, std::unique_ptr<DelProcess> >::iterator it=MDelPro.begin();
-      it!=MDelPro.end(); it++)
+      it!=MDelPro.end(); ++it)
   {
     //it->second->DrawHistogram();
     it->second->WriteHistogram();

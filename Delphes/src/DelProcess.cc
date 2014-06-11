@@ -29,7 +29,7 @@ DelProcess::DelProcess (DelAna *ana, const std::string& name):
     OutFileName = name + ".root";
   else 
     OutFileName = name;
-  std::cout << "outfile name " << OutFileName << std::endl;
+  std::cout<<"Making outfile  : " << OutFileName << std::endl;
   OutFile = std::shared_ptr<TFile>(new TFile(OutFileName, "RECREATE"));
 
   ProName = name.substr(0, name.find_first_of('_'));

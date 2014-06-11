@@ -238,12 +238,12 @@ int DelCutHiggs::FillCut()
 //----------------------------------------------------------------------------
   CheckCut();
 
-  for (int i = 0; i < CutOrder.size(); ++i)
+  for (unsigned int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<NBITS> locbit(CutMap[CutOrder.at(i)]);
     if ( (cutbit & locbit) != locbit) continue;
 
-    His->FillTH1("CutFlow", i); 
+    His->FillTH1("CutFlow", int(i)); 
 
     // Filling by functions
     FillJets(i);

@@ -1227,7 +1227,7 @@ bool DelCutDM::FillLepton()
     }
   }
 
-  for (int i = 0; i < Ana->vPhoton->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vPhoton->size(); ++i)
   {
     His->FillTH1("PhotonEta", Ana->vPhoton->at(i).Eta);
     His->FillTH1("PhotonPt", Ana->vPhoton->at(i).PT);

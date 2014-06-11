@@ -609,7 +609,6 @@ bool DelAna::FindJetLepton()
       {
         MatchedPhotonJet[x.first] = SkimJet.at(i);
         matched = true;
-        matched = true;
         std::vector<int>::iterator jit = std::find(PileUpJet.begin(), PileUpJet.end(), SkimJet.at(i));
         if (jit != PileUpJet.end())
           PileUpJet.erase(jit);
@@ -707,11 +706,10 @@ std::vector<TLorentzVector> DelAna::Razor_CombineJets()
   }
 
   double M_min = 9999999999.0;
-  int j_count;
   for(int i = 1; i < N_comb-1; i++){
     TLorentzVector j_temp1, j_temp2;
     int itemp = i;
-    j_count = N_comb/2;
+    int j_count = N_comb/2;
     int count = 0;
     while(j_count > 0){
       if(itemp/j_count == 1){

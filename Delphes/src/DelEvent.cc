@@ -110,7 +110,7 @@ int DelEvent::LoadJet(TClonesArray *branchJet)
   lJetPt.reverse();
 
   for(std::list< std::pair<double, int> >::iterator jit=lJetPt.begin();
-    jit!=lJetPt.end(); jit++)
+    jit!=lJetPt.end(); ++jit)
   {
     if (JetPool.find(jit->second) != JetPool.end()) // Corrected jet
     {
@@ -123,7 +123,7 @@ int DelEvent::LoadJet(TClonesArray *branchJet)
 
   // Release the jets
   for(std::map<int, Jet*>::iterator jit=JetPool.begin();
-    jit!=JetPool.end(); jit++)
+    jit!=JetPool.end(); ++jit)
   {
     delete jit->second;
   }
@@ -158,7 +158,7 @@ int DelEvent::LoadGenJet(TClonesArray* branchGenJet)
   lJetPt.reverse();
 
   for(std::list< std::pair<double, int> >::iterator jit=lJetPt.begin();
-    jit!=lJetPt.end(); jit++)
+    jit!=lJetPt.end(); ++jit)
   {
       Jet* jet = (Jet*)branchGenJet->At(jit->second); 
       vGenJet.push_back(*jet);
@@ -192,7 +192,7 @@ int DelEvent::LoadCAJet(TClonesArray* branchCAJet)
   lJetPt.reverse();
 
   for(std::list< std::pair<double, int> >::iterator jit=lJetPt.begin();
-    jit!=lJetPt.end(); jit++)
+    jit!=lJetPt.end(); ++jit)
   {
       Jet* jet = (Jet*)branchCAJet->At(jit->second); 
       vCAJet.push_back(*jet);

@@ -94,7 +94,7 @@ int main ( int argc, char *argv[] )
     for(std::string line; getline(input, line);)
     {
       if (line[0] == '#') continue;
-      std::cout << "Add File: " << line << std::endl;
+      //std::cout << "Add File: " << line << std::endl;
       chain.Add(line.c_str());
     }
   }

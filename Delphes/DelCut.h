@@ -41,13 +41,14 @@ class DelCut
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ );       /* constructor      */
-    DelCut ( const DelCut &other );   /* copy constructor */
-    ~DelCut ();                            /* destructor       */
+    DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile, /* constructor      */
+            std::string name, std::string cut_ );
+    DelCut ( const DelCut &other );                      /* copy constructor */
+    ~DelCut ();                                          /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     virtual bool BookHistogram();
-    bool InitCutOrder(std::string ana="DM");
+    virtual bool InitCutOrder(std::string ana="DM");
     virtual int FillCut();
     int WriteHistogram();
     int DrawHistogram();
@@ -64,24 +65,39 @@ class DelCut
 
   protected:
     /* ====================  DATA MEMBERS  ======================================= */
-    bool CutFlow(std::bitset<20> cutbit);
+    std::bitset<NBITS> cutbit;
+    DelAna *Ana;
     virtual bool CheckCut();
-    bool CheckPhenoCut(std::bitset<20> cutflag);
-    bool CheckDMCut(std::bitset<20> cutflag);
-    bool CheckHiggsCut(std::bitset<20> cutflag);
 
+    // Filling variables globally
+    bool BookLeptonEff();
+    bool BookJetEff();
+    bool BookBJet();
+    int BookSUSYVar();
+
+    int FillJets() const;
+    bool FillLepton();
+
+    // Filling variables for each cut
+    int FillJets(int NCut);
+    int FillEle(int NCut);
+    int FillMet(int NCut);
+    
+    int FillLepton(int NCut) const;
+    int FillSUSYVar(int NCut ) const;
+    // For MET Performance study
+    int BookMetPerf() const;
+    int FillMetPerf() const;
+
+    // Systematics samples for hadronic events
     bool CheckSysLep() const;
     double SysMet() const;
     bool DetectorAccp(double Eta) const;
 
-    std::bitset<NBITS> cutbit;
-
   private:
     /* ====================  DATA MEMBERS  ======================================= */
-    DelAna *Ana;
     std::string ProName; // Process name
     std::string AnaCut;  // Flag to choose which analysis cut to apply 
-
     // "DM"    -> SUSY VBF DM Cut
     // "Higgs" -> Higgs invisible Cut
     // "RA2"   -> SUSY RA2 Cut (To be implemented)
@@ -89,25 +105,6 @@ class DelCut
     std::vector<std::string> CutOrder;
     std::map<std::string, std::string>  CutMap;
 
-    // Filling variables globally
-    int FillJets() const;
-    int FillLepton(int NCut) const;
-    bool BookLeptonEff();
-    bool BookJetEff();
-    bool BookBJet();
-
-    bool FillLepton();
-    // Filling variables for each cut
-    int FillJets(int NCut);
-    int FillEle(int NCut);
-    int FillMet(int NCut);
-
-    
-    int BookSUSYVar();
-    int FillSUSYVar(int NCut ) const;
-    // For MET Performance study
-    int BookMetPerf() const;
-    int FillMetPerf() const;
 }; /* -----  end of class DelCut  ----- */
 
 

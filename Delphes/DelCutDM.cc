@@ -23,10 +23,10 @@
 //      Method:  DelCutDM
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelCutDM::DelCutDM(DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ )
+DelCutDM::DelCutDM(DelAna *ana, std::shared_ptr<TFile> OutFile, 
+    std::string name, std::string cut_ )
 : DelCut(ana,  OutFile, name, cut_ ), Ana(ana), ProName(name), AnaCut(cut_)
 {
-  //His     = new HistTool(OutFile, ProName, AnaCut);
 }  // ~~~~~  end of method DelCutDM::DelCutDM  (constructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,7 +101,7 @@ bool DelCutDM::InitCutOrder(std::string ana)
   CutMap["CTLep"]     = "00001111111111111";
   CutMap["CTMet200"]  = "00011111111111111";
   CutMap["CTdPhi"]    = "00111111111111111";
-  CutMap["ALL"]    = "00111111111111111";
+  CutMap["ALL"]       = "00111111111111111";
 
   assert(CutOrder.size() == CutMap.size());
   His->Cutorder(ana, CutOrder);
@@ -215,9 +215,6 @@ int DelCutDM::FillCut()
 //----------------------------------------------------------------------------
 //  Set up the DelAna
 //----------------------------------------------------------------------------
-  //Set Weight for this event, auto fill each his by HistTool
-  //You can over write the weight by adding the weight in Filling
-  His->SetWeight(Ana->Weight); 
   His->FillTH1("Weight", Ana->Weight);
   His->FillTH1("NEle", (int)Ana->vElectron->size());
   His->FillTH1("NMuon", (int)Ana->vMuon->size());
@@ -243,8 +240,6 @@ int DelCutDM::FillCut()
        || ProName.find("MetDiMuon") != std::string::npos)
     FillMetPerf();
 
-
-
 //----------------------------------------------------------------------------
 //  Check cut and fill cut-based plots
 //----------------------------------------------------------------------------
@@ -252,11 +247,9 @@ int DelCutDM::FillCut()
   for (int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<NBITS> locbit(CutMap[CutOrder.at(i)]);
-    std::cout << " Cutcheck " << locbit << "  event bit " << cutbit << std::endl;
     if ( (cutbit & locbit) != locbit) continue;
 
     His->FillTH1("CutFlow", i); 
-    std::cout << " pass cut " << CutOrder.at(i) << std::endl;
 
 
     // Filling by functions
@@ -403,29 +396,6 @@ bool DelCutDM::BookHistogram()
   if (ProName.find("Photon") != std::string::npos)
       His->AddTH2("MetVsPhoton", "Met Vs Photon", 10, 0 , 10, 100, 0, 1000);
 }       // -----  end of function DelCutDM::BookHistogram  -----
-// ===  FUNCTION  ============================================================
-//         Name:  DelCutDM::DrawHistogram
-//  Description:  
-// ===========================================================================
-int DelCutDM::DrawHistogram()
-{
-  His->DrawTH1();
-  His->DrawTPro();
-  His->DrawTH2();
-  return 1;
-}       // -----  end of function DelCutDM::DrawHistogram  -----
-
-// ===  FUNCTION  ============================================================
-//         Name:  DelCutDM::WriteHistogram
-//  Description:  
-// ===========================================================================
-int DelCutDM::WriteHistogram()
-{
-  His->WriteTH1();
-  His->WriteTPro();
-  His->WriteTH2();
-  return 1;
-}       // -----  end of function DelCutDM::WriteHistogram  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCutDM::FillJets

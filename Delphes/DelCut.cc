@@ -23,8 +23,8 @@
 //      Method:  DelCut
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DelCut::DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile_, std::string name, std::string cut_ ):
-  Ana(ana), ProName(name), AnaCut(cut_)
+DelCut::DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile_, std::string name, 
+    std::string cut_ ):Ana(ana), ProName(name), AnaCut(cut_)
 {
   His     = new HistTool(OutFile_, ProName, AnaCut);
 }  // ~~~~~  end of method DelCut::DelCut  (constructor)  ~~~~~
@@ -66,7 +66,6 @@ DelCut::operator = ( const DelCut &other )
 }  // ~~~~~  end of method DelCut::operator =  (assignment operator)  ~~~
 
 
-
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::InitCutOrder
 //  Description:  
@@ -106,8 +105,6 @@ bool DelCut::InitCutOrder(std::string ana)
   His->Cutorder(ana, CutOrder);
 
 }       // -----  end of function DelCut::InitCutOrder  -----
-
-
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::CheckCut
@@ -213,13 +210,6 @@ bool DelCut::CheckCut()
 int DelCut::FillCut()
 {
 //----------------------------------------------------------------------------
-//  Set up the DelAna
-//----------------------------------------------------------------------------
-  //Set Weight for this event, auto fill each his by HistTool
-  //You can over write the weight by adding the weight in Filling
-  His->SetWeight(Ana->Weight); 
-
-//----------------------------------------------------------------------------
 //  Filling variable per event
 // :SUGGESTION:06/09/2014 01:28:42 PM:benwu: This should move to DelProcesses
 //----------------------------------------------------------------------------
@@ -256,12 +246,9 @@ int DelCut::FillCut()
   for (int i = 0; i < CutOrder.size(); ++i)
   {
     std::bitset<NBITS> locbit(CutMap[CutOrder.at(i)]);
-    std::cout << " Cutcheck " << locbit << "  event bit " << cutbit << std::endl;
     if ( (cutbit & locbit) != locbit) continue;
 
     His->FillTH1("CutFlow", i); 
-    std::cout << " pass cut " << CutOrder.at(i) << std::endl;
-
 
     // Filling by functions
     FillJets(i);

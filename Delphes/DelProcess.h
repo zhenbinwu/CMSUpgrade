@@ -20,6 +20,7 @@
 
 #include "DelCut.h"
 #include "DelCutDM.h"
+#include "DelCutHiggs.h"
 
 // ===========================================================================
 //        Class:  DelProcess

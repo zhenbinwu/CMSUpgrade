@@ -39,7 +39,7 @@ DelProcess::DelProcess (DelAna *ana, const std::string& name):
   HWeight = std::unique_ptr<TH1F>(new TH1F("Weight", "Weight", 100, 0, 10 ));
 
   His     = new HistTool(OutFile, ProName);
-  std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+  BookHistogram();
 
 }  // -----  end of method DelProcess::DelProcess  (constructor)  -----
 
@@ -87,17 +87,14 @@ DelProcess::operator = ( const DelProcess &other )
 // ===========================================================================
 bool DelProcess::AddCutFlow(std::string cuts)
 {
-  std::cout << "cut s " << cuts << std::endl;
   if (cuts == "DM")
-  {
     MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
-  }
+  else if (cuts == "Higgs")
+    MDelCut[cuts] = std::unique_ptr<DelCutHiggs>(new DelCutHiggs(Ana, OutFile, ProName, cuts));
   else
-  {
+    std::cout << "No Cutflow defined : " << cuts << std::endl;
 
-    MDelCut[cuts] = std::unique_ptr<DelCut>(new DelCut(Ana, OutFile, ProName, cuts));
-    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
-  }
+  //MDelCut[cuts] = std::unique_ptr<DelCut>(new DelCut(Ana, OutFile, ProName, cuts));
 
   MDelCut[cuts]->InitCutOrder(cuts);
   MDelCut[cuts]->BookHistogram();
@@ -125,6 +122,14 @@ bool DelProcess::FillNEVT(double weight) const
   HNEVT->Fill(1, weight); //the NEVT with weight 
   HWeight->Fill(weight);
   His->SetWeight(weight); 
+
+  //Set Weight for this event, auto fill each his by HistTool
+  //You can over write the weight by adding the weight in Filling
+  for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
+      it!=MDelCut.end(); it++)
+  {
+    it->second->His->SetWeight(weight); 
+  } 
   return true;
 }       // -----  end of function DelProcess::FillNEVT  -----
 

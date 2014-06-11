@@ -38,9 +38,10 @@ class DelCutDM : public DelCut
   public:
 
     /* ====================  LIFECYCLE     =============================== */
-    DelCutDM (DelAna *ana, std::shared_ptr<TFile> OutFile, std::string name, std::string cut_ );       /* constructor      */
-    DelCutDM ( const DelCutDM &other );   /* copy constructor */
-    ~DelCutDM ();                            /* destructor       */
+    DelCutDM (DelAna *ana, std::shared_ptr<TFile> OutFile, /* constructor      */
+        std::string name, std::string cut_ );
+    DelCutDM ( const DelCutDM &other );                    /* copy constructor */
+    ~DelCutDM ();                                          /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
@@ -48,8 +49,6 @@ class DelCutDM : public DelCut
     bool InitCutOrder(std::string ana="DM");
     int FillCut();
     bool FillNEVT(double weight=1) const;
-    int WriteHistogram();
-    int DrawHistogram();
 
     /* ====================  MUTATORS      ======================================= */
     // Move HistTool to public so that the CMSSW can book and fill some

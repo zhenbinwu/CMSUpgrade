@@ -27,20 +27,19 @@ endif
 #============================================================================#
 #-----------------------------   Include Boost   ----------------------------#
 #============================================================================#
-ifneq ($(shell echo $(BOOSTROOT)), '')
+ifeq ($(shell echo $(BOOSTROOT)), '')
   CPPFLAGS += -I$(shell echo $(BOOSTROOT))
 endif
 
 
 OBJS          = DelMain.o DelLoop.o DelProcess.o DelAna.o HistTool.o
 OBJS         += DelEvent.o DelEventWino.o DelEventTT.o DelEventZJJ.o DelEventHTB.o DelEventLL.o 
-OBJS         += DelCut.o DelCutDM.o
+OBJS         += DelCut.o DelCutDM.o DelCutHiggs.o
 #OBJS         += DelCut.o
 PROGRAM       = DelFill
 
 
 all:            $(PROGRAM)
-
 
 %.o : %.C $(HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<

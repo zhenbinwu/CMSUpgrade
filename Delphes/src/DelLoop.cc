@@ -201,6 +201,7 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Inclusive Bonson+Jets ~~~~~
     DEV = new DelEventHTB(PUCorJetEta, PUCorJetPt);
     ANA = new DelAna(DEV, pu, detector);
+
     TString tempname = name;
     //MDelPro["Default"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, name.Data()));
 
@@ -339,6 +340,8 @@ int DPhes::ReadDelPhes()
   branchMet        = treeReader->UseBranch("MissingET");
   branchHt         = treeReader->UseBranch("ScalarHT");
   branchParticle   = treeReader->UseBranch("Particle");
+
+  return 1;
 }       // -----  end of function DPhes::ReadDelPhes  -----
 
 
@@ -462,7 +465,7 @@ bool DPhes::GetCrossSection(const std::string process_)
   std::string process = process_; //local process
   if (process.find("HT") != std::string::npos)
   {
-    unsigned int  idx = process.find_last_of('_');
+    size_t idx = process.find_last_of('_');
     if (idx != std::string::npos && process.find("HT") < idx)
     {
       process.erase(process.find_first_of("_", process.find("HT")), process.length());

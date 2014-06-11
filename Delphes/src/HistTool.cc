@@ -261,7 +261,7 @@ int HistTool::WriteTH1()
   if (cutflag != "")
     OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TH1F> >::iterator it=HisMap.begin();
-    it!=HisMap.end(); it++)
+    it!=HisMap.end(); ++it)
   {
     it->second->Write();
   }
@@ -276,7 +276,7 @@ int HistTool::DrawTH1()
 {
   TCanvas *c1 = new TCanvas("TH1", "Canvas for TH1", 600, 500);
   for(std::map<std::string, std::unique_ptr<TH1F> >::iterator it=HisMap.begin();
-    it!=HisMap.end(); it++)
+    it!=HisMap.end(); ++it)
   {
     c1->cd();
     c1->Clear();
@@ -437,7 +437,7 @@ int HistTool::WriteTPro()
   if (cutflag != "")
     OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TProfile> >::iterator it=ProMap.begin();
-    it!=ProMap.end(); it++)
+    it!=ProMap.end(); ++it)
   {
     it->second->Write();
   }
@@ -452,7 +452,7 @@ int HistTool::DrawTPro()
 {
   TCanvas *c1 = new TCanvas("TPro", "Canvas for TPro", 600, 500);
   for(std::map<std::string, std::unique_ptr<TProfile> >::iterator it=ProMap.begin();
-    it!=ProMap.end(); it++)
+    it!=ProMap.end(); ++it)
   {
     c1->cd();
     c1->Clear();
@@ -615,7 +615,7 @@ int HistTool::WriteTH2()
   if (cutflag != "")
     OutFile->cd(cutflag.c_str());
   for(std::map<std::string, std::unique_ptr<TH2D> >::iterator it=HisMap2D.begin();
-    it!=HisMap2D.end(); it++)
+    it!=HisMap2D.end(); ++it)
   {
     it->second->Write();
   }
@@ -630,7 +630,7 @@ int HistTool::DrawTH2()
 {
   TCanvas *c1 = new TCanvas("TH2", "Canvas for TH2", 600, 500);
   for(std::map<std::string, std::unique_ptr<TH2D> >::iterator it=HisMap2D.begin();
-    it!=HisMap2D.end(); it++)
+    it!=HisMap2D.end(); ++it)
   {
     c1->cd();
     c1->Clear();

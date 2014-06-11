@@ -88,7 +88,7 @@ int DelEvent::LoadJet(TClonesArray *branchJet)
     Jet* jet = (Jet*)branchJet->At(i);
 
     // Remove or correct jet that matched to lepton
-    CorLepJet(i, jet);
+    //CorLepJet(i, jet);
 
     // Removing the jets from other requirement first
     if (RMjet.find(i) != RMjet.end()) 
@@ -586,9 +586,9 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     if (jet->P4().DeltaR(muon.P4()) < 0.4)
     {
       if (muon.P4().E()/jet->P4().E() > 0.9)
-        RMjet.insert(i);
+        RMjet.insert(idx);
       else
-        CRJet[i] = muon.P4();
+        CRJet[idx] = muon.P4();
       break;
     }
   }
@@ -599,9 +599,9 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     if (jet->P4().DeltaR(ele.P4()) < 0.4)
     {
       if (ele.P4().E()/jet->P4().E() > 0.9)
-        RMjet.insert(i);
+        RMjet.insert(idx);
       else
-        CRJet[i] = ele.P4();
+        CRJet[idx] = ele.P4();
       break;
     }
   }
@@ -612,9 +612,9 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     if (jet->P4().DeltaR(pho.P4()) < 0.4)
     {
       if (pho.P4().E()/jet->P4().E() > 0.9)
-        RMjet.insert(i);
+        RMjet.insert(idx);
       else
-        CRJet[i] = pho.P4();
+        CRJet[idx] = pho.P4();
       break;
     }
   }

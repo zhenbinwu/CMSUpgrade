@@ -669,7 +669,7 @@ int DelAna::JetMatching(int GenIdx, std::vector<int>& JetIdx) const
 
   dRlist.sort();
 
-  if (dRlist.size() != 0)
+  if (!dRlist.empty())
   {
     matchedIdx = dRlist.front().second;
     std::vector<int>::iterator jit = std::find(JetIdx.begin(), JetIdx.end(), matchedIdx);
@@ -698,7 +698,6 @@ std::vector<TLorentzVector> DelAna::Razor_CombineJets()
   RazorJets.clear();
 
   TLorentzVector j1, j2;
-  bool foundGood = false;
   int N_comb = 1;
 
   for(int i = 0; i < vJet->size(); i++){

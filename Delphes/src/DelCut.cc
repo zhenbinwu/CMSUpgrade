@@ -168,7 +168,7 @@ bool DelCut::CheckCut()
 
   bool hasB = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
+      it!=Ana->vJet->end(); ++it)
   {
     if (it->BTag) hasB = true;
     break;
@@ -178,7 +178,7 @@ bool DelCut::CheckCut()
 
   bool hasTau = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
+      it!=Ana->vJet->end(); ++it)
   {
     if (it->TauTag) hasTau = true;
     break;

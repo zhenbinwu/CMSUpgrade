@@ -106,6 +106,7 @@ bool DelCutDM::InitCutOrder(std::string ana)
   assert(CutOrder.size() == CutMap.size());
   His->Cutorder(ana, CutOrder);
 
+  return true;
 }       // -----  end of function DelCutDM::InitCutOrder  -----
 
 // ===  FUNCTION  ============================================================
@@ -170,7 +171,7 @@ bool DelCutDM::CheckCut()
 
   bool hasB = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
+      it!=Ana->vJet->end(); ++it)
   {
     if (it->BTag) hasB = true;
     break;
@@ -180,7 +181,7 @@ bool DelCutDM::CheckCut()
 
   bool hasTau = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); it++)
+      it!=Ana->vJet->end(); ++it)
   {
     if (it->TauTag) hasTau = true;
     break;
@@ -863,6 +864,7 @@ int DelCutDM::FillMetPerf() const
 bool DelCutDM::FillNEVT(double weight) const
 {
   His->FillTH1("NEVT", 1, weight); //the NEVT with weight 
+  return true;
 }       // -----  end of function DelCutDM::FillNEVT  -----
 
 // ===  FUNCTION  ============================================================
@@ -873,8 +875,8 @@ bool DelCutDM::CheckSysLep() const
 {
   assert(ProName.find("Sys") != std::string::npos);
 
-  int nele = 0;
-  int nmuon = 0;
+  unsigned int nele = 0;
+  unsigned int nmuon = 0;
 
 
   if (ProName.find("SysWev") != std::string::npos)
@@ -911,12 +913,12 @@ double DelCutDM::SysMet() const
 {
   TLorentzVector temp = *(Ana->MHT);
 
-  for (int i = 0; i < Ana->vElectron->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vElectron->size(); ++i)
   {
     temp -= Ana->vElectron->at(i).P4();
   }
 
-  for (int i = 0; i < Ana->vMuon->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vMuon->size(); ++i)
   {
     temp -= Ana->vMuon->at(i).P4();
   }
@@ -1206,19 +1208,19 @@ int DelCutDM::FillLepton(int NCut) const
 // ===========================================================================
 bool DelCutDM::FillLepton()
 {
-  for (int i = 0; i < Ana->vElectron->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vElectron->size(); ++i)
   {
     His->FillTH1("EleEta", Ana->vElectron->at(i).Eta);
     His->FillTH1("ElePt", Ana->vElectron->at(i).PT);
   }
 
-  for (int i = 0; i < Ana->vMuon->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vMuon->size(); ++i)
   {
     His->FillTH1("MuonEta", Ana->vMuon->at(i).Eta);
     His->FillTH1("MuonPt", Ana->vMuon->at(i).PT);
   }
 
-  for (int i = 0; i < Ana->vJet->size(); ++i)
+  for (unsigned int i = 0; i < Ana->vJet->size(); ++i)
   {
     if (Ana->vJet->at(i).TauTag)
     {

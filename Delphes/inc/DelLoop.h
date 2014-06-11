@@ -103,7 +103,6 @@ class DPhes
     ExRootTreeReader *treeReader;
     DelEvent *DEV;
     DelAna *ANA;
-    std::map<std::string, std::unique_ptr<DelProcess> > MDelPro; // For separated output
 
     // Delphes branches
     TClonesArray *branchEvent;
@@ -129,6 +128,8 @@ class DPhes
     // Process and PU
     std::string Process;
     std::string PU;
+
+    std::map<std::string, std::unique_ptr<DelProcess> > MDelPro; // For separated output
 }; /* -----  end of class DPhes  ----- */
 
 

@@ -168,7 +168,7 @@ bool DelEventZJJ::CheckZ()
   int sign=1;
   // Double check the parents of the Z decay products
   for(std::list<int>::iterator it=VZLep.begin();
-      it!=VZLep.end(); it++)
+      it!=VZLep.end(); ++it)
   {
     GenParticle* p = &(vGenParticle.at(*it));
     sign *= p->PID;
@@ -207,7 +207,7 @@ bool DelEventZJJ::CheckZ()
     double metx=0.0;
     double mety=0.0;
     for(std::list<int>::iterator it=VZLep.begin();
-        it!=VZLep.end(); it++)
+        it!=VZLep.end(); ++it)
     {
       GenParticle* p = &(vGenParticle.at(*it));
       DY += p->P4();
@@ -256,7 +256,7 @@ bool DelEventZJJ::CheckZ()
   double metx=0.0;
   double mety=0.0;
   for(std::list<int>::iterator it=VZLep.begin();
-      it!=VZLep.end(); it++)
+      it!=VZLep.end(); ++it)
   {
     GenParticle* p = &(vGenParticle.at(*it));
     DY   += p->P4();
@@ -343,7 +343,7 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
   // Muon
   std::map<int, int> GenStat;
   for(std::list<int>::iterator it=VZLep.begin();
-      it!=VZLep.end(); it++)
+      it!=VZLep.end(); ++it)
   {
     GenStat[*it] = 0;
   }
@@ -355,12 +355,12 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
   //  Matching to the electron in the event
   //----------------------------------------------------------------------------
   for(std::map<int, GenParticle*>::iterator it=EleGen.begin();
-      it!=EleGen.end(); it++)
+      it!=EleGen.end(); ++it)
   {
     if (it->second != 0)
     {
       for(std::map<int, int>::iterator git=GenStat.begin();
-          git!=GenStat.end(); git++)
+          git!=GenStat.end(); ++git)
       {
         if (git->second == 1) continue;
         GenParticle* p = (GenParticle*)branchParticle->At(git->first);
@@ -375,7 +375,7 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
     } else { // For High PU, no real Gen was referred 
       Electron* ele = (Electron*) branchElectron->At(it->first);
       for(std::map<int, int>::iterator git=GenStat.begin();
-          git!=GenStat.end(); git++)
+          git!=GenStat.end(); ++git)
       {
         if (git->second == 1) continue;
         GenParticle* p = (GenParticle*)branchParticle->At(git->first);
@@ -394,12 +394,12 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
   //  Matching to the muon in the event
   //----------------------------------------------------------------------------
   for(std::map<int, GenParticle*>::iterator it=MuonGen.begin();
-      it!=MuonGen.end(); it++)
+      it!=MuonGen.end(); ++it)
   {
     if (it->second != 0 ) //In case the ref to GenParticle is real 
     {
       for(std::map<int, int>::iterator git=GenStat.begin();
-          git!=GenStat.end(); git++)
+          git!=GenStat.end(); ++git)
       {
         if (git->second == 1) continue;
         GenParticle* p = (GenParticle*)branchParticle->At(git->first);
@@ -414,7 +414,7 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
     } else { // For high PU, not all the ref are real 
       Muon* muon = (Muon*) branchMuon->At(it->first);
       for(std::map<int, int>::iterator git=GenStat.begin();
-          git!=GenStat.end(); git++)
+          git!=GenStat.end(); ++git)
       {
         if (git->second == 1) continue;
         GenParticle* p = (GenParticle*)branchParticle->At(git->first);
@@ -432,7 +432,7 @@ TVector2 DelEventZJJ::ZLLLep(std::map<int, GenParticle*> EleGen,
   //  Matching to the jet in the event
   //----------------------------------------------------------------------------
   for(std::map<int, int>::iterator git=GenStat.begin();
-      git!=GenStat.end(); git++)
+      git!=GenStat.end(); ++git)
   {
     if (git->second == 1) continue;
     GenParticle* p = (GenParticle*)branchParticle->At(git->first);

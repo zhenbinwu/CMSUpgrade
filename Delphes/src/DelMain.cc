@@ -53,7 +53,7 @@ int main ( int argc, char *argv[] )
   double PUCorJetEta = -99;
   double PUCorJetPt = -99;
   char Cuts[100];
-  sscanf(Outdir.c_str(), "%[^_]_%lf_%lf", Cuts, &PUCorJetEta, &PUCorJetPt );
+  sscanf(Outdir.c_str(), "%100[^_]_%2lf_%3lf", Cuts, &PUCorJetEta, &PUCorJetPt );
 
 //----------------------------------------------------------------------------
 //  Done with input variables

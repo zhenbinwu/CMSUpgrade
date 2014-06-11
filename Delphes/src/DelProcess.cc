@@ -22,7 +22,7 @@
 // Description:  constructor
 //----------------------------------------------------------------------------
 DelProcess::DelProcess (DelAna *ana, const std::string& name):
-  Ana(ana)
+  Ana(ana), ProName(""),His(nullptr), HNEVT(nullptr), HXS(nullptr), HWeight(nullptr)
 {
   TString OutFileName;
   if (name.find(".root") == std::string::npos)
@@ -87,15 +87,21 @@ DelProcess::operator = ( const DelProcess &other )
 // ===========================================================================
 bool DelProcess::AddCutFlow(std::string cuts)
 {
-  if (cuts == "DM")
-    MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
-  else if (cuts == "Higgs")
-    MDelCut[cuts] = std::unique_ptr<DelCutHiggs>(new DelCutHiggs(Ana, OutFile, ProName, cuts));
-  else
-    std::cout << "No Cutflow defined : " << cuts << std::endl;
-
-  //MDelCut[cuts] = std::unique_ptr<DelCut>(new DelCut(Ana, OutFile, ProName, cuts));
-
+  try
+  {
+    if (cuts == "DM")
+      MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
+    else if (cuts == "Higgs")
+      MDelCut[cuts] = std::unique_ptr<DelCutHiggs>(new DelCutHiggs(Ana, OutFile, ProName, cuts));
+    else
+      throw cuts;
+  }
+  catch (std::string& cut)
+  {
+    std::cerr<<"\033[0;31mNo such cutflow : " << cuts << "\033[0m" << std::endl;
+    std::terminate();
+  }
+  
   MDelCut[cuts]->InitCutOrder(cuts);
   MDelCut[cuts]->BookHistogram();
   return true;
@@ -126,7 +132,7 @@ bool DelProcess::FillNEVT(double weight) const
   //Set Weight for this event, auto fill each his by HistTool
   //You can over write the weight by adding the weight in Filling
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+      it!=MDelCut.end(); ++it)
   {
     it->second->His->SetWeight(weight); 
   } 
@@ -141,7 +147,7 @@ bool DelProcess::FillNEVT(double weight) const
 bool DelProcess::FillCut()
 {
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+      it!=MDelCut.end(); ++it)
   {
     it->second->FillCut();
   } 
@@ -160,7 +166,7 @@ bool DelProcess::WriteHistogram()
   His->WriteTH2();
 
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+      it!=MDelCut.end(); ++it)
   {
     it->second->WriteHistogram();
   } 
@@ -178,7 +184,7 @@ bool DelProcess::DrawHistogram()
   His->DrawTH2();
 
   for(std::map<std::string, std::unique_ptr<DelCut> >::const_iterator it=MDelCut.begin();
-      it!=MDelCut.end(); it++)
+      it!=MDelCut.end(); ++it)
   {
     it->second->DrawHistogram();
   } 

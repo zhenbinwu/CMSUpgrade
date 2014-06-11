@@ -42,14 +42,14 @@ class DelEvent
     /* ====================  LIFECYCLE     =============================== */
     DelEvent (double Eta, double Pt);   /* constructor      */
     DelEvent ( const DelEvent &other ); /* copy constructor */
-    ~DelEvent ();                       /* destructor       */
+    virtual ~DelEvent ();                       /* destructor       */
 
 
     /* ====================  MUTATORS      ======================================= */
 
     /* ====================  OPERATORS     ======================================= */
 
-    DelEvent& operator = ( const DelEvent &other ); /* assignment operator */
+    DelEvent& operator = ( const DelEvent& other ); /* assignment operator */
 
 
     /* ====================  ACCESSORS     ======================================= */

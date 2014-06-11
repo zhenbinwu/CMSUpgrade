@@ -16,6 +16,9 @@
 // 
 // ===========================================================================
 
+#ifndef  __DELPROCESS_INC__
+#define  __DELPROCESS_INC__
+
 #include <memory>
 
 #include "DelCut.h"
@@ -75,3 +78,4 @@ class DelProcess
 }; // -----  end of class DelProcess  -----
 
 
+#endif   // ----- #ifndef __DELPROCESS_INC__  -----

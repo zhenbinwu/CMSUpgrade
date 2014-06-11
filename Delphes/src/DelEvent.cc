@@ -359,7 +359,7 @@ bool DelEvent::CalPUCorMet()
   //Loop over the jet correction in DelEvent, jet Pt and Eta selection already
   //applied in the LoadJet()
   if (vJet.size() > 0)
-    for (int i = 0; i < vJet.size(); ++i)
+    for (unsigned int i = 0; i < vJet.size(); ++i)
     {
       MHT += vJet.at(i).P4();
       HT += vJet.at(i).PT;
@@ -367,7 +367,7 @@ bool DelEvent::CalPUCorMet()
 
   //Loop over the Electron correction
   if (vElectron.size() > 0)
-    for (int i = 0; i < vElectron.size(); ++i)
+    for (unsigned int i = 0; i < vElectron.size(); ++i)
     {
       MHT += vElectron.at(i).P4();
       HT += vElectron.at(i).PT;
@@ -375,7 +375,7 @@ bool DelEvent::CalPUCorMet()
 
   //Loop over the muon correction
   if (vMuon.size() > 0)
-    for (int i = 0; i < vMuon.size(); ++i)
+    for (unsigned int i = 0; i < vMuon.size(); ++i)
     {
       MHT += vMuon.at(i).P4();
       HT += vMuon.at(i).PT;
@@ -383,7 +383,7 @@ bool DelEvent::CalPUCorMet()
 
   //Loop over the photon correction
   if (vPhoton.size() > 0)
-    for (int i = 0; i < vPhoton.size(); ++i)
+    for (unsigned int i = 0; i < vPhoton.size(); ++i)
     {
       MHT += vPhoton.at(i).P4();
       HT += vPhoton.at(i).PT;
@@ -548,7 +548,7 @@ double DelEvent::GenMet()
   std::vector<int> NvIdx;
   TLorentzVector NvSum(0,0,0,0);
   
-  for (int i = 0; i < vGenParticle.size(); ++i)
+  for (unsigned int i = 0; i < vGenParticle.size(); ++i)
   {
     int pid = std::fabs(vGenParticle.at(i).PID);
     if (pid == 12 || pid == 14 || pid == 16)
@@ -557,7 +557,7 @@ double DelEvent::GenMet()
     }
   }
 
-  for (int i = 0; i < NvIdx.size(); ++i)
+  for (unsigned int i = 0; i < NvIdx.size(); ++i)
   {
     NvSum += vGenParticle.at(i).P4();
   }
@@ -580,7 +580,7 @@ double DelEvent::GenMet()
 // ===========================================================================
 bool DelEvent::CorLepJet(int idx, Jet *jet)
 {
-  for (int i = 0; i < vMuon.size(); ++i)
+  for (unsigned int i = 0; i < vMuon.size(); ++i)
   {
     Muon muon = vMuon.at(i);
     if (jet->P4().DeltaR(muon.P4()) < 0.4)
@@ -593,7 +593,7 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     }
   }
 
-  for (int i = 0; i < vElectron.size(); ++i)
+  for (unsigned int i = 0; i < vElectron.size(); ++i)
   {
     Electron ele = vElectron.at(i);
     if (jet->P4().DeltaR(ele.P4()) < 0.4)
@@ -606,7 +606,7 @@ bool DelEvent::CorLepJet(int idx, Jet *jet)
     }
   }
 
-  for (int i = 0; i < vPhoton.size(); ++i)
+  for (unsigned int i = 0; i < vPhoton.size(); ++i)
   {
     Photon pho = vPhoton.at(i);
     if (jet->P4().DeltaR(pho.P4()) < 0.4)

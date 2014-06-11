@@ -23,9 +23,12 @@
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DPhes::DPhes (TChain* chain): 
-  fChain(chain)
+  fChain(chain), treeReader(NULL), DEV(NULL), ANA(NULL), branchEvent(NULL), 
+  branchParticle(NULL), branchGenJet(NULL), branchCAJet(NULL),
+  branchJet(NULL), branchElectron(NULL), branchPhoton(NULL), branchMuon(NULL),
+  branchMet(NULL), branchHt(NULL), PUCorJetEta(-999.), PUCorJetPt(-999.),
+  CrossSection(-999.), CrossSectionError(-999.), Process(""), PU("")
 {
-  CrossSection = -999.;
 }  /* -----  end of method DPhes::DPhes  (constructor)  ----- */
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,7 +36,16 @@ DPhes::DPhes (TChain* chain):
 //      Method:  DPhes
 // Description:  copy constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-DPhes::DPhes ( const DPhes &other )
+DPhes::DPhes ( const DPhes &other ):
+  fChain(other.fChain), treeReader(other.treeReader), DEV(other.DEV), 
+  ANA(other.ANA), branchEvent(other.branchEvent), branchParticle(other.branchParticle), 
+  branchGenJet(other.branchGenJet), branchCAJet(other.branchCAJet), 
+  branchJet(other.branchJet), branchElectron(other.branchElectron),
+  branchPhoton(other.branchPhoton), branchMuon(other.branchMuon),
+  branchMet(other.branchMet), branchHt(other.branchHt),
+  PUCorJetEta(other.PUCorJetEta), PUCorJetPt(other.PUCorJetPt), 
+  CrossSection(other.CrossSection), CrossSectionError(other.CrossSectionError),
+  Process(other.Process), PU(other.PU)
 {
 }  // ~~~~~  end of method DPhes::DPhes  (copy constructor)  ~~~~~
 
@@ -450,14 +462,14 @@ bool DPhes::GetCrossSection(const std::string process_)
   std::string process = process_; //local process
   if (process.find("HT") != std::string::npos)
   {
-    int  idx = process.find_last_of('_');
+    unsigned int  idx = process.find_last_of('_');
     if (idx != std::string::npos && process.find("HT") < idx)
     {
       process.erase(process.find_first_of("_", process.find("HT")), process.length());
     }
   } else { //For splited inclusive sample 
 
-    int  idx = process.find_last_of('_');
+    unsigned int idx = process.find_last_of('_');
     if (idx != std::string::npos && process.find("V") < idx)
     {
       process.erase(process.find_first_of("_", process.find("TeV")), process.length());

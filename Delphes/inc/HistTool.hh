@@ -53,11 +53,13 @@ class HistTool
 
     HistTool& operator = ( const HistTool &other ); // assignment operator
 
-    int Cutorder(std::string ana, std::vector<std::string> order);
+    int Cutorder(std::string ana, std::vector<std::string> CutOrder, unsigned int Nbits);
     std::vector<std::string> Cutorder();
     int CreateFile(std::string filname);
     bool SetWeight(double weight);
 
+    bool BookCutBits(const unsigned int& Nbits);
+    bool FillCutBits(const std::vector<bool> bits);
 //----------------------------------------------------------------------------
 //  TH1
 //----------------------------------------------------------------------------

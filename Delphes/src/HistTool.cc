@@ -47,16 +47,7 @@ HistTool::HistTool ( const HistTool &other )
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 HistTool::~HistTool ()
 {
-
-  //for(std::map<std::string, std::unique_ptr<TH2D> >::iterator it=HisMap2D.begin();
-    //it!=HisMap2D.end(); it++)
-  //{
-    ////delete it->second.get_deleter();
-  //}
   std::cout << "File name " << OutFile->GetName() << std::endl;
-    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
-  //HisMap2D.clear();
-  //HisMap.clear();
 }  // ~~~~~  end of method HistTool::~HistTool  (destructor)  ~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +93,7 @@ std::vector<std::string> HistTool::Cutorder()
 //         Name:  HistTool::Cutorder
 //  Description:  
 // ===========================================================================
-int HistTool::Cutorder(std::string ana, std::vector<std::string> CutOrder)
+int HistTool::Cutorder(std::string ana, std::vector<std::string> CutOrder, unsigned int Nbits)
 {
   order = CutOrder;
   CutSize = order.size();
@@ -114,6 +105,7 @@ int HistTool::Cutorder(std::string ana, std::vector<std::string> CutOrder)
   for (int i = 0; i < CutOrder.size(); ++i)
     temp->GetXaxis()->SetBinLabel(i+1, CutOrder.at(i).c_str());
 
+  BookCutBits(Nbits);
   return CutSize;
 }       // -----  end of function HistTool::Cutorder  -----
 
@@ -653,3 +645,31 @@ bool HistTool::SetWeight(double weight)
 {
   HWeight = weight;
 }       // -----  end of function HistTool::SetWeight  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HistTool::BookCutBits
+//  Description:  
+// ===========================================================================
+bool HistTool::BookCutBits(const unsigned int& Nbits)
+{
+  AddTH1("CutBits", "Bits information of the Cut Flow", Nbits+1, 0, Nbits);
+  return true;
+}       // -----  end of function HistTool::BookCutBits  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HistTool::FillCutBits
+//  Description:  bitset in cpp is fixed length in compile time. Need to use
+//  vector<bool> instead
+// ===========================================================================
+bool HistTool::FillCutBits(const std::vector<bool>  bits)
+{
+  //Set the 0 as the total number of event count
+  FillTH1("CutBits", -1, 1);
+
+  for (std::size_t i = 0; i < bits.size(); ++i)
+    FillTH1("CutBits", static_cast<int>(i), static_cast<int>(bits.at(i)));
+  
+  return true;
+}       // -----  end of function HistTool::FillCutBits  -----
+
+

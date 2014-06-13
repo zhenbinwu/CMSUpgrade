@@ -107,7 +107,7 @@ bool DelCutHiggs::InitCutOrder(std::string ana)
   CutMap["AllCut"]    = "011111111111111";
 
   assert(CutOrder.size() == CutMap.size());
-  His->Cutorder(ana, CutOrder);
+  His->Cutorder(ana, CutOrder, static_cast<unsigned int>(NBITS));
 
   return true;
 }       // -----  end of function DelCutHiggs::InitCutOrder  -----
@@ -217,10 +217,18 @@ bool DelCutHiggs::CheckCut()
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
       it!=Ana->vJet->end(); ++it)
   {
-    if (it->BTag) hasB = true;
+    if (it->BTag & (1<<0)) hasB = true;
     break;
   }
   cutbit.set(12, !hasB);
+
+//----------------------------------------------------------------------------
+//  Always fill in the event cutbits information
+//----------------------------------------------------------------------------
+  std::vector<bool> Vbits;
+  for (std::size_t i = 0; i < cutbit.size(); ++i)
+    Vbits.push_back(cutbit.test(i));
+  His->FillCutBits(Vbits);
 
   return true;
 }       // -----  end of function DelCutHiggs::CheckCut  -----

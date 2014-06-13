@@ -102,7 +102,7 @@ bool DelCut::InitCutOrder(std::string ana)
   CutMap["CTdPhi"]    = "00111111111111111";
 
   assert(CutOrder.size() == CutMap.size());
-  His->Cutorder(ana, CutOrder);
+  His->Cutorder(ana, CutOrder, static_cast<unsigned int>(NBITS));
 
 }       // -----  end of function DelCut::InitCutOrder  -----
 
@@ -170,7 +170,7 @@ bool DelCut::CheckCut()
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
       it!=Ana->vJet->end(); ++it)
   {
-    if (it->BTag) hasB = true;
+    if (it->BTag & (1<<0)) hasB = true;
     break;
   }
   cutbit.set(11, !hasB);
@@ -199,6 +199,7 @@ bool DelCut::CheckCut()
     double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
     cutbit.set(14, std::fabs(deltaphi) <= 1.8 );
   }
+
 
   return true;
 }       // -----  end of function DelCut::CheckDMCut  -----

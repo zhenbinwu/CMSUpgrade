@@ -130,7 +130,23 @@ def my_process():
     for pro in Process:
       for pu in PileUps:
         for det in Detectors:
-          QSUB(Directory, pro, pu, det)
+            for splitpro in SplitPro(dec, pu, pro):
+                QSUB(Directory, splitpro, pu, det)
+
+def SplitPro(detector, pileup, pro):
+    globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (DelDir, detector, pro, pileup))
+    testout=[]
+    for out in globout:
+        file = out.split('/')[-1]
+        #print file
+        match = re.match(r'(%s.*)_%s\.list' % (pro, pileup), file)
+        #match = re.match('%s*%s' % (pro, pileup), file)
+        if match != None:
+            #print match.group(0)
+            print match.group(1)
+            testout.append(match.group(1))
+    return testout
+
 
 def my_CheckFile():
     ## Check the Delphes Dir

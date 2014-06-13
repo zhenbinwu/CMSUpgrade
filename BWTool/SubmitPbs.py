@@ -12,13 +12,19 @@ DelDir    = '/home/benwu/CMSUpgrade/Delphes'
 DelExe    = 'DelFill'
 Directory = 'TEST_5_30'
 UserEMAIL = 'benwu@fnal.gov'
+Detectors = [
+    #'Snowmass',
+    'PhaseI',
+    #'PhaseII3',
+    #'PhaseII4'
+]
 PileUps   = [
     'NoPileUp',
     #'50PileUp',
     #'140PileUp',
 ]
 Process = [
-    'TT_8TEV',
+    #'TT_8TEV',
     #'ZJETS_8TEV_HT1',
     #'ZJETS_8TEV_HT2',
     #'ZJETS_8TEV_HT3',
@@ -29,7 +35,7 @@ Process = [
     #'W4Jet_8TEV',
 ]
 
-def QSUB(Outdir, Process):
+def QSUB(Outdir, Process, Pileup, Detector):
 
     # Open a pipe to the qsub command.
     #output, input = popen2('echo')
@@ -38,9 +44,9 @@ def QSUB(Outdir, Process):
     job_name = "%s_%s" % (Outdir, Process)
 
     walltime = "24:00:00"
-    processors = "nodes=1:ppn=8"
+    processors = "nodes=1:ppn=1"
 
-    command1 = "./RunHT.csh %s %s" % (Process, Outdir)
+    command1 = "../DelFill %s %s %s %s" % (Pileup, Process, Outdir, Detector)
 
 
     job_string = """#!/bin/tcsh
@@ -52,8 +58,9 @@ def QSUB(Outdir, Process):
     #PBS -e ./%s/%s_stderr
     date
     cd $PBS_O_WORKDIR/..
-    source setup.sh
+    source setup.csh
     cd $PBS_O_WORKDIR/%s
+    pwd
     %s
     date""" % (job_name, walltime, processors, DelDir,  Outdir, job_name, Outdir,
                job_name, Outdir, command1)
@@ -116,11 +123,14 @@ def my_process():
             outfile.write(line)
 
     ## Update condor files
+    os.system("chmod 755 %s" % RunHTFile)
     os.chdir(outdir)
     os.system("ln -s ../FileList .")
 
     for pro in Process:
-        QSUB(Directory, pro)
+      for pu in PileUps:
+        for det in Detectors:
+          QSUB(Directory, pro, pu, det)
 
 def my_CheckFile():
     ## Check the Delphes Dir

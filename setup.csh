@@ -21,9 +21,16 @@ endif
 #============================================================================#
 #-------------------------   Setup CMSSW @ Kodiak   -------------------------#
 #============================================================================#
+if (  $HOST =~ n* ) then 
+    source ~cmssoft/cshrc
+    cd $HOME/CMSSW_5_2_5/src
+    cmsenv
+    setenv LANG en_US.UTF-8
+    cd $CURRENTDIR
+endif
 
-setenv DELPHES Delphes-TP
-#setenv DELPHES Delphes-3.0.10
+#setenv DELPHES Delphes-TP
+setenv DELPHES Delphes-3.0.10
 setenv LD_LIBRARY_PATH $CURRENTDIR/$DELPHES/:$LD_LIBRARY_PATH
 setenv PATH  $CURRENTDIR/BWTool/:$PATH
 

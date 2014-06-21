@@ -44,7 +44,7 @@ class DelCut
     DelCut (DelAna *ana, std::shared_ptr<TFile> OutFile, /* constructor      */
             std::string name, std::string cut_ );
     DelCut ( const DelCut &other );                      /* copy constructor */
-    ~DelCut ();                                          /* destructor       */
+    virtual ~DelCut ();                                  /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
     virtual bool BookHistogram();

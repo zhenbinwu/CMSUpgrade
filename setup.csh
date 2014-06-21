@@ -23,14 +23,15 @@ endif
 #============================================================================#
 if (  $HOST =~ n* ) then 
     source ~cmssoft/cshrc
-    cd $HOME/CMSSW_5_2_5/src
+    cd $HOME/CMSSW_5_3_10/src
     cmsenv
     setenv LANG en_US.UTF-8
     cd $CURRENTDIR
 endif
 
-#setenv DELPHES Delphes-TP
-setenv DELPHES Delphes-3.0.10
+#setenv DELPHES Delphes-TP        # TP Version 
+setenv DELPHES Delphes-3.0.10    # ECFA Version
+#setenv DELPHES Delphes-3.0.9      # Snowmass Version
 setenv LD_LIBRARY_PATH $CURRENTDIR/$DELPHES/:$LD_LIBRARY_PATH
 setenv PATH  $CURRENTDIR/BWTool/:$PATH
 

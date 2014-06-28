@@ -2,15 +2,18 @@
 # Example PBS cluster job submission in Python
 
 import os
-from popen2 import popen2
 import time
 import glob
+import re
+import subprocess
 
 
 ###############################
-DelDir    = '/home/benwu/CMSUpgrade/Delphes'
+RunProxy  = True
+DelDir    = '/home/benwu/CMSUpgrade_TP/Delphes'
 DelExe    = 'DelFill'
-Directory = 'TEST_5_30'
+Directory = '/home/benwu/CMSUpgrade_TP/Output/Stop0PU'
+Analysis  = 'DM_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 Detectors = [
     #'Snowmass',
@@ -18,35 +21,148 @@ Detectors = [
     #'PhaseII3',
     #'PhaseII4'
 ]
+
 PileUps   = [
     'NoPileUp',
     #'50PileUp',
     #'140PileUp',
 ]
-Process = [
-    #'TT_8TEV',
-    #'ZJETS_8TEV_HT1',
-    #'ZJETS_8TEV_HT2',
-    #'ZJETS_8TEV_HT3',
-    #'ZJETS_8TEV_HT4',
-    #'W1Jet_8TEV',
-    #'W2Jet_8TEV',
-    #'W3Jet_8TEV',
-    #'W4Jet_8TEV',
+
+Processes = [
+    #'Stopv01_14TeV',
+    #'Wino100_14TeV',
+    #'Wino200_14TeV',
+    #'Wino500_14TeV',
+    ##'WJETS_13TEV',
+    ##'ZJETS_13TEV',
+    ##'TTBAR_13TEV',
+    'B_14TEV_HT1' ,
+    'BJ_14TEV_HT1',
+    'BJ_14TEV_HT2',
+    'BJ_14TEV_HT3',
+    'BJ_14TEV_HT4',
+    'BJ_14TEV_HT5',
+    'BJ_14TEV_HT6',
+    'BJ_14TEV_HT7',
+    'BJJ_14TEV_HT1',
+    'BJJ_14TEV_HT2',
+    'BJJ_14TEV_HT3',
+    'BJJ_14TEV_HT4',
+    'BJJ_14TEV_HT5',
+    'TT_14TEV_HT1',
+    'TT_14TEV_HT2',
+    'TT_14TEV_HT3',
+    'TT_14TEV_HT4',
+    'TT_14TEV_HT5',
+    #'LL_14TEV_HT1',
+    #'LL_14TEV_HT2',
+    #'LL_14TEV_HT3',
+    #'LL_14TEV_HT4',
+    #'LL_14TEV_HT5',
+    #'LL_14TEV_HT6',
+    
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
+    #'B_33TEV_HT1',
+    #'BJ_33TEV_HT1',
+    #'BJ_33TEV_HT2',
+    #'BJ_33TEV_HT3',
+    #'BJ_33TEV_HT4',
+    #'BJ_33TEV_HT5',
+    #'BJ_33TEV_HT6',
+    #'BJ_33TEV_HT7',
+    #'BJJ_33TEV_HT1',
+    #'BJJ_33TEV_HT2',
+    #'BJJ_33TEV_HT3',
+    #'BJJ_33TEV_HT4',
+    #'BJJ_33TEV_HT5',
+    #'TT_33TEV_HT1',
+    #'TT_33TEV_HT2',
+    #'TT_33TEV_HT3',
+    #'TT_33TEV_HT4',
+    #'TT_33TEV_HT5',
+    #'TT_33TEV_HT6',
+
+    ## Below are the files haven't been consider yet
+    #'BB_14TEV_HT1' ,
+    #'BB_14TEV_HT2' ,
+    #'BB_14TEV_HT3' ,
+    #'BB_14TEV_HT4' ,
+    #'BB_14TEV_HT5' ,
+    #'BBB_14TEV_HT1',
+    #'BBB_14TEV_HT2',
+    #'BBB_14TEV_HT3',
+    #'H_14TEV_HT1'  ,
+    #'H_14TEV_HT2'  ,
+    #'H_14TEV_HT3'  ,
+    #'H_14TEV_HT4'  ,
+    #'LL_14TEV_HT1' ,
+    #'LL_14TEV_HT2' ,
+    #'LL_14TEV_HT3' ,
+    #'LL_14TEV_HT4' ,
+    #'LL_14TEV_HT5' ,
+    #'LL_14TEV_HT6' ,
+    #'LLB_14TEV_HT1',
+    #'LLB_14TEV_HT2',
+    #'LLB_14TEV_HT3',
+    #'TB_14TEV_HT1' ,
+    #'TB_14TEV_HT2' ,
+    #'TB_14TEV_HT3' ,
+    #'TB_14TEV_HT4' ,
+    #'TB_14TEV_HT5' ,
+    #'TJ_14TEV_HT1' ,
+    #'TJ_14TEV_HT2' ,
+    #'TJ_14TEV_HT3' ,
+    #'TJ_14TEV_HT4' ,
+    #'TJ_14TEV_HT5' ,
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
+    #'BB_33TEV_HT1',
+    #'BB_33TEV_HT2',
+    #'BB_33TEV_HT3',
+    #'BB_33TEV_HT4',
+    #'BB_33TEV_HT5',
+    #'BBB_33TEV_HT1',
+    #'BBB_33TEV_HT2',
+    #'BBB_33TEV_HT3',
+    #'BBB_33TEV_HT4',
+    #'H_33TEV_HT1',
+    #'H_33TEV_HT2',
+    #'H_33TEV_HT3',
+    #'H_33TEV_HT4',
+    #'H_33TEV_HT5',
+    #'LL_33TEV_HT1',
+    #'LL_33TEV_HT2',
+    #'LL_33TEV_HT3',
+    #'LL_33TEV_HT4',
+    #'LL_33TEV_HT5',
+    #'LLB_33TEV_HT1',
+    #'LLB_33TEV_HT2',
+    #'LLB_33TEV_HT3',
+    #'TB_33TEV_HT1',
+    #'TB_33TEV_HT2',
+    #'TB_33TEV_HT3',
+    #'TB_33TEV_HT4',
+    #'TB_33TEV_HT5',
+    #'TJ_33TEV_HT1',
+    #'TJ_33TEV_HT2',
+    #'TJ_33TEV_HT3',
+    #'TJ_33TEV_HT4',
+    #'TJ_33TEV_HT5',
 ]
 
-def QSUB(Outdir, Process, Pileup, Detector):
+def QSUB(Analysis, Process, Pileup, Detector):
 
     # Open a pipe to the qsub command.
     #output, input = popen2('echo')
-    output, input = popen2('qsub')
+    p = subprocess.Popen('qsub', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    output, input = (p.stdout, p.stdin)
 
-    job_name = "%s_%s" % (Outdir, Process)
+    job_name = "%s_%s_%s_%s" % (Analysis, Process, Detector, Pileup)
 
-    walltime = "24:00:00"
+    walltime = "168:00:00"
     processors = "nodes=1:ppn=1"
 
-    command1 = "../DelFill %s %s %s %s" % (Pileup, Process, Outdir, Detector)
+    command1 = "%s/%s %s %s %s %s" % (DelDir, DelExe, Pileup, Process, Analysis, Detector)
 
 
     job_string = """#!/bin/tcsh
@@ -54,16 +170,16 @@ def QSUB(Outdir, Process, Pileup, Detector):
     #PBS -l walltime=%s
     #PBS -l %s
     #PBS -d %s
-    #PBS -o ./%s/%s_stdout
-    #PBS -e ./%s/%s_stderr
+    #PBS -o ./%s_stdout
+    #PBS -e ./%s_stderr
     date
-    cd $PBS_O_WORKDIR/..
+    cd %s/..
     source setup.csh
-    cd $PBS_O_WORKDIR/%s
+    setenv X509_USER_PROXY ~/.x509_user_proxy
+    cd $PBS_O_WORKDIR
     pwd
     %s
-    date""" % (job_name, walltime, processors, DelDir,  Outdir, job_name, Outdir,
-               job_name, Outdir, command1)
+    date""" % (job_name, walltime, processors, Directory, job_name, job_name, DelDir, command1)
 
     # Send job_string to qsub
     input.write(job_string)
@@ -78,7 +194,7 @@ def QSUB(Outdir, Process, Pileup, Detector):
 
 def CheckQStat():
     while True:
-        stat = os.popen("qstat -u benwu | wc").read()
+        stat = os.popen("qstat -u $USER | wc").read()
         total = stat.split()[0]
         if total == '':
             break
@@ -102,39 +218,28 @@ def my_process():
     my_CheckFile()
 
     ## Create the output directory
-    outdir = DelDir + "/" + Directory
     try:
-        os.mkdir(outdir)
+        os.makedirs(Directory)
     except OSError:
         pass
 
-    ## Update RunHT.csh with DelDir and pileups
-    RunHTFile = outdir + "/" + "RunHT.csh"
-    PUtoRun = '"'
-    for pu in PileUps:
-        PUtoRun += "%s " % pu
-    PUtoRun += '"'
-
-    with open(RunHTFile, "wt") as outfile:
-        for line in open("RunHT.csh", "r"):
-            line = line.replace("PILEUPS", PUtoRun)
-            line = line.replace("DELDIR", DelDir)
-            line = line.replace("DELEXE", DelExe)
-            outfile.write(line)
-
     ## Update condor files
-    os.system("chmod 755 %s" % RunHTFile)
-    os.chdir(outdir)
-    os.system("ln -s ../FileList .")
+    if not os.path.exists("%s/Filelist.tgz" % Directory):
+      print "Copying Filelist to %s" % Directory
+      os.system("cd %s; tar -czf %s/Filelist.tgz FileList" % (DelDir, Directory))
+      os.chdir(Directory)
+      if os.path.exists("Filelist"):
+        os.system("rm -rf Filelist")
+      os.system("tar -xzf Filelist.tgz")
 
-    for pro in Process:
+    for pro in Processes:
       for pu in PileUps:
         for det in Detectors:
-            for splitpro in SplitPro(dec, pu, pro):
-                QSUB(Directory, splitpro, pu, det)
+          for splitpro in SplitPro(det, pu, pro):
+            QSUB(Analysis, splitpro, pu, det)
 
 def SplitPro(detector, pileup, pro):
-    globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (DelDir, detector, pro, pileup))
+    globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (Directory, detector, pro, pileup))
     testout=[]
     for out in globout:
         file = out.split('/')[-1]
@@ -157,14 +262,6 @@ def my_CheckFile():
         quit()
 
 
-    ## Check RunHT.csh file
-    if os.path.isfile("RunHT.csh") and os.access("RunHT.csh", os.X_OK):
-        #print "Found RunHT.csh"
-        pass
-    else:
-        print "Please locate RunHT.csh"
-        quit()
-
     ## Check DelFill to be execute
     DelFill = DelDir + "/" + DelExe
     if os.path.isfile(DelFill) and os.access(DelFill, os.X_OK):
@@ -179,16 +276,21 @@ def my_CheckFile():
         #print "Found HTadd"
         pass
     else:
-        print "Please compile HTadd"
-        return None
-
-    ## Check Delphes_condor
-    if os.path.isfile("Delphes_condor"):
-        #print "Found HTadd"
+        print "Please compile HTadd, which is needed for merging output"
         pass
-    else:
-        print "Please compile HTadd"
-        quit()
+
+
+    ## Check current CMSSW setup
+    if not os.environ.get("SCRAM_ARCH"):
+      print "Please setup Delphes or cmssoft first!"
+      quit()
+
+    if RunProxy:
+      proxyfile = os.path.expanduser("~/.x509_user_proxy")
+      if not os.path.exists(proxyfile) or (time.time() - os.stat(proxyfile).st_ctime) / 60/24 > 1:
+        print "Proxy file is at least one day old. Requesting new proxy"
+        os.system("voms-proxy-init -valid 168:00 -voms cms; cp $X509_USER_PROXY $HOME/.x509_user_proxy")
+
 
 if __name__ == "__main__":
     my_process()

@@ -42,7 +42,7 @@ endif
 
 OBJ        = DelMain.o DelLoop.o DelProcess.o DelAna.o HistTool.o
 OBJ       += DelEvent.o DelEventWino.o DelEventTT.o DelEventZJJ.o DelEventHTB.o DelEventLL.o
-OBJ       += DelCut.o DelCutDM.o DelCutHiggs.o DelCutVBFb.o
+OBJ       += DelCut.o DelCutDM.o DelCutHiggs.o DelCutVBFb.o DelCutISRb.o
 PROGRAM    = DelFill
 
 OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))

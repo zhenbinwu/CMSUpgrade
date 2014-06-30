@@ -26,6 +26,7 @@
 #include "DelCutDM.h"
 #include "DelCutHiggs.h"
 #include "DelCutVBFb.h"
+#include "DelCutISRb.h"
 
 // ===========================================================================
 //        Class:  DelProcess

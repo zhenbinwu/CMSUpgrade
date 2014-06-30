@@ -96,6 +96,8 @@ bool DelProcess::AddCutFlow(std::string cuts)
       MDelCut[cuts] = std::unique_ptr<DelCutHiggs>(new DelCutHiggs(Ana, OutFile, ProName, cuts));
     else if (cuts == "VBFb")
       MDelCut[cuts] = std::unique_ptr<DelCutVBFb>(new DelCutVBFb(Ana, OutFile, ProName, cuts));
+    else if (cuts == "ISRb")
+      MDelCut[cuts] = std::unique_ptr<DelCutISRb>(new DelCutISRb(Ana, OutFile, ProName, cuts));
     else
       throw cuts;
   }

@@ -18,22 +18,26 @@ Delphes.
 
 Below is the code structure:
 
-DelMain  -> Main function, getting input from users
+DelMain    -> Main function, getting input from users
 |
-DelLoop  -> Looping over the TChain
+DelLoop    -> Looping over the TChain
 |
-DelEvent -> For each event in the Delphes sample, load a local DelEvent
-|  \=> DelTT   -> Inherited class for ttbar sample
-|  \=> DelWino -> Inherited class for SUSY Wino sample
-|  \=> DelZJJ  -> Inherited class for Z + jets sample
-|  \=> DelHTB  -> Inherited class for HTbin single boson sample
-|  \=> DelLL   -> Inherited class for LL sample
+DelEvent   -> For each event in the Delphes sample, load a local DelEvent
+|  \=> DelEventTT   -> Inherited class for ttbar sample
+|  \=> DelEventWino -> Inherited class for SUSY Wino sample
+|  \=> DelEventZJJ  -> Inherited class for Z + jets sample
+|  \=> DelEventHTB  -> Inherited class for HTbin single boson sample
+|  \=> DelEventLL   -> Inherited class for LL sample
 |
-DelAna   -> Constructed higher level variables based on DelEvent
+DelAna     -> Constructed higher level variables based on DelEvent
 |
-DelCut   -> Each class will create a root file, storing histograms
+DelProcess -> Split sample into several subprocess output
+|
+DelCut     -> Each class corresponds to an analysis cutflow
+|  \=> DelCutDM     -> Inherited class for VBF SUSY DM search
+|  \=> DelCutHiggs  -> Inherited class for Higgs invisiable search
 
-HistTool -> A tool class for histogram managerment. Used by DelCut
+HistTool   -> A tool class for histogram managerment. Used by DelCut
 
 
 

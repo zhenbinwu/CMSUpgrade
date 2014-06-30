@@ -1,39 +1,67 @@
-DEL           = $(shell echo $(DELPHES))
-#CXX           = ~/.vim/bundle/ClangComplete/bin/cc_args.py g++
-CXX           = g++
-CXXFLAGS      = -Wno-deprecated $(shell root-config --cflags) -I../$(DEL)/external/ -I../$(DEL) -std=c++0x 
-CXXFLAGS     += -I../OxbridgeMT2/include/oxbridgekinetics-1.0/
-LDFLAGS       = 
-LD            = g++
+DEL        = $(shell echo $(DELPHES))
+IDIR       = inc
+ODIR       = obj
+SDIR       = src
 
-LIBS = $(shell root-config --glibs)
-LIBS += -L../$(DEL) -lDelphes
-LIBS += -L../OxbridgeMT2/lib -loxbridgekinetics-1.0
+#CXX       = ~/.vim/bundle/ClangComplete/bin/cc_args.py g++
+CXX        = g++
 
+CXXFLAGS  += -Iinc -std=c++0x
+## Optimization flag
+CXXFLAGS += -O3
+## Enable the maximun warning
+#CXXFLAGS += -Wall -Wextra -Weffc++ -g
 
-OBJS          = DelMain.o DelLoop.o DelEvent.o DelWino.o DelTT.o DelZJJ.o DelAna.o DelCut.o HistTool.o
-OBJS         += DelHTB.o DelLL.o
-PROGRAM       = DelFill
+## Include ROOT
+CXXFLAGS  += $(shell root-config --cflags)
+## Include Delphes
+CXXFLAGS  += -I../$(DEL)/external/ -I../$(DEL)
 
-ifneq (, $(findstring cmslpc, $(shell hostname)))
-  CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
+LD         = g++
+LDFLAGS    =
+
+LIBS       = $(shell root-config --glibs)
+LIBS      += -L../$(DEL) -lDelphes
+
+#============================================================================#
+#--------------------------   Include OxbridgeMT2   -------------------------#
+#============================================================================#
+ifeq ($(shell echo $(OxbridgeMT2)), True)
+  CXXFLAGS  += -I../OxbridgeMT2/include/oxbridgekinetics-1.0/ -DOXBRIDGE_MT2
+  LIBS      += -L../OxbridgeMT2/lib -loxbridgekinetics-1.0
 endif
+
+
+#============================================================================#
+#-----------------------------   Include Boost   ----------------------------#
+#============================================================================#
+ifeq ($(shell echo $(BOOSTROOT)), '')
+  CPPFLAGS  += -I$(shell echo $(BOOSTROOT))
+endif
+
+
+OBJ        = DelMain.o DelLoop.o DelProcess.o DelAna.o HistTool.o
+OBJ       += DelEvent.o DelEventWino.o DelEventTT.o DelEventZJJ.o DelEventHTB.o DelEventLL.o
+OBJ       += DelCut.o DelCutDM.o DelCutHiggs.o DelCutVBFb.o
+PROGRAM    = DelFill
+
+OBJS       = $(patsubst %, $(ODIR)/%, $(OBJ))
 
 all:            $(PROGRAM)
 
+$(ODIR)/%.o : $(SDIR)/%.C $(HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-%.o : %.C $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
+$(ODIR)/%.o : $(SDIR)/%.cc $(HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-%.o : %.cc $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $<
+$(ODIR)/%  :  $(SDIR)/%.cc $(HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 $(PROGRAM):     $(OBJS)
 	@echo "Linking $(PROGRAM) ..."
 	@$(LD) $(OBJS) $(LIBS) -o $(PROGRAM)
 	@echo "done"
-
-
 
 clean:;         @rm -f $(OBJS) $(PROGRAM) core 
 

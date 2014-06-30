@@ -1,6 +1,2 @@
 ### ignore all list
-*.list
-
-### Only keep track of the singal samples
-!Wino*.list
-!Sbottom*.list
+*

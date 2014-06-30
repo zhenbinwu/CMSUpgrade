@@ -15,12 +15,11 @@ LIBS      = $(shell root-config --glibs)
 HEADERS   = $(shell ls *.h *.hh) Makefile
 HEADERS   = Makefile
 
-ifneq (, $(findstring cmslpc, $(shell hostname)))
-  CPPFLAGS += -I/uscmst1/prod/sw/cms/slc5_amd64_gcc462/external/boost/1.50.0-cms2/include
-endif
-
-ifneq (, $(findstring lxplus, $(shell hostname)))
-  CPPFLAGS += -I/afs/cern.ch/cms/slc5_amd64_gcc462/external/boost/1.47.0/include
+#============================================================================#
+#-----------------------------   Include Boost   ----------------------------#
+#============================================================================#
+ifneq ($(shell echo $(BOOSTROOT)), '')
+  CPPFLAGS  += -I$(shell echo $(BOOSTROOT))
 endif
 
 

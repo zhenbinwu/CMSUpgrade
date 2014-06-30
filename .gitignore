@@ -49,3 +49,11 @@ tags
 ## Ignore vim products
 .vimproject
 .clang_complete
+
+## Ignore FileList
+Delphes/FileList/8TEV/*
+Delphes/FileList/PhaseI/*
+Delphes/FileList/PhaseII3/*
+Delphes/FileList/PhaseII4/*
+Delphes/FileList/Snowmass/*
+Delphes/FileList/*gz

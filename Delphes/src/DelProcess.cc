@@ -23,14 +23,7 @@
 // Description:  constructor
 //----------------------------------------------------------------------------
 DelProcess::DelProcess (DelAna *ana, const std::string& name)
-  //: //Ana(ana), ProName(""),His(nullptr), HNEVT(nullptr), HXS(nullptr), HWeight(nullptr)
-  //Ana(ana), ProName(""),His(NULL), HNEVT(NULL), HXS(NULL), HWeight(NULL)
-   //ProName(""),
-   //His(NULL), 
-   //Ana(ana), 
-   //HNEVT(std::nullptr_t), 
-   //HXS(std::nullptr_t),
-   //HWeight(std::nullptr_t)
+  : Ana(ana), ProName("")
 {
   TString OutFileName;
   if (name.find(".root") == std::string::npos)
@@ -217,7 +210,7 @@ bool DelProcess::BookHistogram()
 //         Name:  DelProcess::FillHistogram
 //  Description:  
 // ===========================================================================
-bool DelProcess::FillHistogram(const DelAna *ana)
+bool DelProcess::FillHistogram(const DelAna *Ana)
 {
   His->FillTH1("NEle", (int)Ana->vElectron->size());
   His->FillTH1("NMuon", (int)Ana->vMuon->size());

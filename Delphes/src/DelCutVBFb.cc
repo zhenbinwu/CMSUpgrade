@@ -75,26 +75,28 @@ bool DelCutVBFb::InitCutOrder(std::string ana)
   //Add name and order of the cutflow
   CutOrder.push_back("NoCut");
   CutOrder.push_back("VBFCut");
+  CutOrder.push_back("VBFbVeto");
   CutOrder.push_back("J1J2");
-  CutOrder.push_back("CTMjj");
-  CutOrder.push_back("CTJ3");
-  CutOrder.push_back("CTBJ");
-  CutOrder.push_back("CTLep");
-  CutOrder.push_back("CTMet200");
-  CutOrder.push_back("CTdPhi");
-  CutOrder.push_back("ALL");
+  CutOrder.push_back("Mjj1500");
+  CutOrder.push_back("LepVeto");
+  CutOrder.push_back("Met200");
+  CutOrder.push_back("BjetPT");
+  CutOrder.push_back("1Bjet");
+  CutOrder.push_back("2Bjet");
+  CutOrder.push_back("0Bjet");
 
   //Set the cutbit of each cut
-  CutMap["NoCut"]     = "00000000000000000";
-  CutMap["VBFCut"]    = "00000000001111111";
-  CutMap["J1J2"]      = "00000000111111111";
-  CutMap["CTMjj"]     = "00000001111111111";
-  CutMap["CTJ3"]      = "00000011111111111";
-  CutMap["CTBJ"]      = "00000111111111111";
-  CutMap["CTLep"]     = "00001111111111111";
-  CutMap["CTMet200"]  = "00011111111111111";
-  CutMap["CTdPhi"]    = "00111111111111111";
-  CutMap["ALL"]       = "00111111111111111";
+  CutMap["NoCut"]    = "00000000000000000";
+  CutMap["VBFCut"]   = "00000000001111111";
+  CutMap["VBFbVeto"] = "00000000011111111";
+  CutMap["J1J2"]     = "00000001111111111";
+  CutMap["Mjj1500"]  = "00000011111111111";
+  CutMap["LepVeto"]  = "00000111111111111";
+  CutMap["Met200"]   = "00001111111111111";
+  CutMap["BjetPT"]   = "00011111111111111";
+  CutMap["1Bjet"]    = "00111111111111111";
+  CutMap["2Bjet"]    = "01011111111111111";
+  CutMap["0Bjet"]    = "10001111111111111";
 
   assert(CutOrder.size() == CutMap.size());
   His->Cutorder(ana, CutOrder, static_cast<unsigned int>(NBITS));
@@ -131,46 +133,43 @@ bool DelCutVBFb::CheckCut()
   if (Ana->J1 != 0 && Ana->J2 != 0)
     cutbit.set(6, fabs(Ana->J1->Eta - Ana->J2->Eta ) >= 4.2);
 
+  // Veto the bjet in VBF jets
+  if (Ana->J1 != 0 && Ana->J2 != 0)
+    cutbit.set(7, !(Ana->J1->BTag & (1<<0) || Ana->J2->BTag & (1<<0)));
+
 //----------------------------------------------------------------------------
 //  Leading jet cut
 //----------------------------------------------------------------------------
   if (Ana->PileUp == "140PileUp")
-    cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 200);
+    cutbit.set(8,  Ana->J1 != 0 && Ana->J1->PT >= 200);
   else
-    cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 50);
+    cutbit.set(8,  Ana->J1 != 0 && Ana->J1->PT >= 50);
 
   if (Ana->PileUp == "140PileUp")
-    cutbit.set(8,  Ana->J2 != 0 && Ana->J2->PT >= 100);
+    cutbit.set(9,  Ana->J2 != 0 && Ana->J2->PT >= 100);
   else
-    cutbit.set(8,  Ana->J2 != 0 && Ana->J2->PT >= 50);
+    cutbit.set(9,  Ana->J2 != 0 && Ana->J2->PT >= 50);
 
-  cutbit.set(9,  Ana->Mjj >= 1500. );
+  cutbit.set(10,  Ana->Mjj >= 1500. );
 
 
-  // By default, passed central jet veto
-  if (Ana->J1 != 0 && Ana->J2 != 0 )
-  {
-    cutbit.set(10,  true);
-    if (Ana->J3 != 0)
-    {
+  /*
+   * // By default, passed central jet veto
+   *if (Ana->J1 != 0 && Ana->J2 != 0 )
+   *{
+   *  cutbit.set(10,  true);
+   *  if (Ana->J3 != 0)
+   *  {
+   *    // Jet3 is within jet1 and jet2 
+   *    if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
+   *        (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
+   *    {
+   *      cutbit.set(10,  Ana->J3->PT < 30 );
+   *    }
+   *  }
+   *}
+   */
 
-      // Jet3 is within jet1 and jet2 
-      if ( (Ana->J3->Eta > Ana->J1->Eta && Ana->J3->Eta < Ana->J2->Eta) || 
-          (Ana->J3->Eta > Ana->J2->Eta && Ana->J3->Eta < Ana->J1->Eta))
-      {
-        cutbit.set(10,  Ana->J3->PT < 30);
-      }
-    }
-  }
-
-  bool hasB = false;
-  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); ++it)
-  {
-    if (it->BTag & (1<<0)) hasB = true;
-    break;
-  }
-  cutbit.set(11, !hasB);
 
   bool hasTau = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
@@ -181,20 +180,25 @@ bool DelCutVBFb::CheckCut()
   }
 
   if (ProName.find("Sys") == std::string::npos)
-    cutbit.set(12, !hasTau && Ana->vElectron->size() == 0 &&  Ana->vMuon->size() == 0);
+    cutbit.set(11, !hasTau && Ana->vElectron->size() == 0 &&  Ana->vMuon->size() == 0);
   else 
     if (CheckSysLep() == false) return false;
 
-  cutbit.set(13, Ana->Met >= 200);
+  cutbit.set(12, Ana->Met >= 200);
 
-//----------------------------------------------------------------------------
-//  Delta Phi 
-//----------------------------------------------------------------------------
-  if (Ana->J1 != 0 && Ana->J2 != 0)
+  
+  // Count Nbjet with tight tag and PT < 80GeV
+  int Nbjet = 0;
+  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); ++it)
   {
-    double deltaphi = Ana->J1->P4().DeltaPhi(Ana->J2->P4());
-    cutbit.set(14, std::fabs(deltaphi) <= 1.8 );
+    if (it->BTag & (1<<0) && it->PT < 80) Nbjet++;
   }
+  cutbit.set(13, Nbjet > 0);
+
+  cutbit.set(14, Nbjet == 1);
+  cutbit.set(15, Nbjet == 2);
+  cutbit.set(16, Nbjet == 0);
 
 //----------------------------------------------------------------------------
 //  Always fill in the event cutbits information

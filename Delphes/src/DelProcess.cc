@@ -15,14 +15,22 @@
 // ===========================================================================
 
 #include "DelProcess.h"
+#include <memory>
 
 //----------------------------------------------------------------------------
 //       Class:  DelProcess
 //      Method:  DelProcess
 // Description:  constructor
 //----------------------------------------------------------------------------
-DelProcess::DelProcess (DelAna *ana, const std::string& name):
-  Ana(ana), ProName(""),His(nullptr), HNEVT(nullptr), HXS(nullptr), HWeight(nullptr)
+DelProcess::DelProcess (DelAna *ana, const std::string& name)
+  //: //Ana(ana), ProName(""),His(nullptr), HNEVT(nullptr), HXS(nullptr), HWeight(nullptr)
+  //Ana(ana), ProName(""),His(NULL), HNEVT(NULL), HXS(NULL), HWeight(NULL)
+   //ProName(""),
+   //His(NULL), 
+   //Ana(ana), 
+   //HNEVT(std::nullptr_t), 
+   //HXS(std::nullptr_t),
+   //HWeight(std::nullptr_t)
 {
   TString OutFileName;
   if (name.find(".root") == std::string::npos)
@@ -93,6 +101,8 @@ bool DelProcess::AddCutFlow(std::string cuts)
       MDelCut[cuts] = std::unique_ptr<DelCutDM>(new DelCutDM(Ana, OutFile, ProName, cuts));
     else if (cuts == "Higgs")
       MDelCut[cuts] = std::unique_ptr<DelCutHiggs>(new DelCutHiggs(Ana, OutFile, ProName, cuts));
+    else if (cuts == "VBFb")
+      MDelCut[cuts] = std::unique_ptr<DelCutVBFb>(new DelCutVBFb(Ana, OutFile, ProName, cuts));
     else
       throw cuts;
   }

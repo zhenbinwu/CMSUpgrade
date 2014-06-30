@@ -20,10 +20,12 @@
 #define  __DELPROCESS_INC__
 
 #include <memory>
+#include <cstddef>
 
 #include "DelCut.h"
 #include "DelCutDM.h"
 #include "DelCutHiggs.h"
+#include "DelCutVBFb.h"
 
 // ===========================================================================
 //        Class:  DelProcess

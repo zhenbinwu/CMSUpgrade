@@ -21,12 +21,23 @@ WJETS_13TEV              63066               1075.5           #Inclusive W(lv) +
 ZJETS_13TEV              12930               213              #Inclusive Z(vv) + jets at 14TeV
 TTBAR_13TEV              882.29              117.38           #Inclusive TTbar + jets at 14TeV
 QCD_14TeV                100000              0.00001          #99% Wino at 100 GeV at 14TeV
-StopV01_14TeV            0.757               0.00001          #Stop coannihilation from Oliver
-StopV02_14TeV            1.12                0.00001          #Stop coannihilation with mc
-StopV03_14TeV            1.15                0.00001          #Stop coannihilation with minuit 
+Stopv01_14TeV            0.757               0.00001          #Stop coannihilation from Oliver
+Stopv02_14TeV            1.12                0.00001          #Stop coannihilation with mc
+Stopv03_14TeV            1.15                0.00001          #Stop coannihilation with minuit 
 T2cc450_14TeV            1.14                0.00001          #T2cc with stop mass 450GeV
 T2cc400_14TeV            2.18                0.00001          #T2cc with stop mass 400GeV
 T2cc350_14TeV            4.41                0.00001          #T2cc with stop mass 350GeV
+Sbottom15_14TEV          704.19              0.00001
+Sbottom50_14TEV          74.7228584          0.032904079
+Sbottom100_14TEV         11.100343462        0.004304996204
+Sbottom150_14TEV         2.6993305218        0.00001
+Sbottom200_14TEV         0.9056493207        0.00001
+Sbottom300_14TEV         0.15860836074       0.00001
+Sbottom400_14TEV         0.04076524936       0.00001
+Sbottom500_14TEV         0.01297491829       0.00001
+Sbottom600_14TEV         0.00479774937       0.00001
+Sbottom700_14TEV         0.001957529701      0.00001
+Sbottom1000_14TEV        0.000194322864      0.00001
 
 #============================================================================#
 #----------------------   Delphes-3.0.9.1 14TEV HTBin   ---------------------#

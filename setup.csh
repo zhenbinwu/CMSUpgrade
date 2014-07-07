@@ -16,6 +16,16 @@ endif
 #============================================================================#
 #--------------------------   Setup CMSSW @ CERN   --------------------------#
 #============================================================================#
+if (  $HOST =~ lxplus* ) then 
+    source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.csh
+    source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.csh
+    ##grid-proxy-init -debug -verify
+    ##voms-proxy-init -voms cms
+    cd $HOME/CMSSW_5_3_8/src
+    cmsenv
+    setenv LANG en_US.UTF-8
+    cd $CURRENTDIR
+endif
 
 
 #============================================================================#

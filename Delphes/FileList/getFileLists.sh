@@ -24,8 +24,8 @@ fi
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.1
 #baseDir=/pnfs/cms/WAX/11/store/user/snowmass/HTBinned/Delphes-3.0.9.2
 
-eoscms=''
-#eoscms=/afs/cern.ch/project/eos/installation/0.2.31/bin/eos.select
+#eoscms=''
+eoscms=/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select
 
 mkdir -p ntuples
 
@@ -41,7 +41,7 @@ do
         else
           dcachePath=root://eoscms.cern.ch/${baseDir}/${PU}PileUp/${background}/${file}
         fi
-        dcachePath=${baseDir}/${PU}PileUp/${background}/${file}
+        #dcachePath=${baseDir}/${PU}PileUp/${background}/${file}
         echo $dcachePath >> ntuples/${background}_${PU}PileUp.list
       fi
     done

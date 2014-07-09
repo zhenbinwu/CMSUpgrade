@@ -12,12 +12,12 @@ import subprocess
 RunProxy  = True
 DelDir    = '/home/benwu/CMSUpgrade_TP/Delphes'
 DelExe    = 'DelFill'
-Directory = '/home/benwu/CMSUpgrade_TP/Output/Stop0PU'
+Directory = '/home/benwu/CMSUpgrade_TP/Output/Sbottom300'
 Analysis  = 'DM_5_30'
 UserEMAIL = 'benwu@fnal.gov'
 Detectors = [
-    #'Snowmass',
-    'PhaseI',
+    'Snowmass',
+    #'PhaseI',
     #'PhaseII3',
     #'PhaseII4'
 ]
@@ -36,24 +36,29 @@ Processes = [
     ##'WJETS_13TEV',
     ##'ZJETS_13TEV',
     ##'TTBAR_13TEV',
-    'B_14TEV_HT1' ,
-    'BJ_14TEV_HT1',
-    'BJ_14TEV_HT2',
-    'BJ_14TEV_HT3',
-    'BJ_14TEV_HT4',
-    'BJ_14TEV_HT5',
-    'BJ_14TEV_HT6',
-    'BJ_14TEV_HT7',
-    'BJJ_14TEV_HT1',
-    'BJJ_14TEV_HT2',
-    'BJJ_14TEV_HT3',
-    'BJJ_14TEV_HT4',
-    'BJJ_14TEV_HT5',
-    'TT_14TEV_HT1',
-    'TT_14TEV_HT2',
-    'TT_14TEV_HT3',
-    'TT_14TEV_HT4',
-    'TT_14TEV_HT5',
+    'Sbottom300_2p_14TeV', 
+    'Sbottom300_QCD0_14TeV', 
+    'Sbottom300_QED0_14TeV',    
+    'Sbottom300_QCD2QED2_14TeV', 
+
+    #'B_14TEV_HT1' ,
+    #'BJ_14TEV_HT1',
+    #'BJ_14TEV_HT2',
+    #'BJ_14TEV_HT3',
+    #'BJ_14TEV_HT4',
+    #'BJ_14TEV_HT5',
+    #'BJ_14TEV_HT6',
+    #'BJ_14TEV_HT7',
+    #'BJJ_14TEV_HT1',
+    #'BJJ_14TEV_HT2',
+    #'BJJ_14TEV_HT3',
+    #'BJJ_14TEV_HT4',
+    #'BJJ_14TEV_HT5',
+    #'TT_14TEV_HT1',
+    #'TT_14TEV_HT2',
+    #'TT_14TEV_HT3',
+    #'TT_14TEV_HT4',
+    #'TT_14TEV_HT5',
     #'LL_14TEV_HT1',
     #'LL_14TEV_HT2',
     #'LL_14TEV_HT3',
@@ -233,9 +238,13 @@ def my_process():
       os.system("tar -xzf Filelist.tgz")
 
     for pro in Processes:
+      print pro
       for pu in PileUps:
+        print pu
         for det in Detectors:
+          print det
           for splitpro in SplitPro(det, pu, pro):
+            print splitpro
             QSUB(Analysis, splitpro, pu, det)
 
 def SplitPro(detector, pileup, pro):

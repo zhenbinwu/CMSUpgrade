@@ -30,8 +30,8 @@ if (  $HOST =~ n* ) then
 endif
 
 #setenv DELPHES Delphes-TP        # TP Version 
-setenv DELPHES Delphes-3.0.10    # ECFA Version
-#setenv DELPHES Delphes-3.0.9      # Snowmass Version
+#setenv DELPHES Delphes-3.0.10    # ECFA Version
+setenv DELPHES Delphes-3.0.9      # Snowmass Version
 setenv LD_LIBRARY_PATH $CURRENTDIR/$DELPHES/:$LD_LIBRARY_PATH
 setenv PATH  $CURRENTDIR/BWTool/:$PATH
 

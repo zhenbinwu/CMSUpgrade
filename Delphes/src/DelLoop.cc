@@ -213,26 +213,26 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     //tempname = ModifiedPreName(name, "B", "W");
     //MDelPro["W"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    tempname = ModifiedPreName(name, "B", "Wev");
-    MDelPro["Wev"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    //tempname = ModifiedPreName(name, "B", "Wev");
+    //MDelPro["Wev"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    tempname = ModifiedPreName(name, "B", "Wmv");
-    MDelPro["Wmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    //tempname = ModifiedPreName(name, "B", "Wmv");
+    //MDelPro["Wmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "Wtv");
     //MDelPro["Wtv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "Wlv");
-    //MDelPro["Wlv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "Wlv");
+    MDelPro["Wlv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "Whad");
-    //MDelPro["Whad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "Whad");
+    MDelPro["Whad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "SysWev");
     //MDelPro["SysWev"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "SysWmv");
-    //MDelPro["SysWmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "SysWmv");
+    MDelPro["SysWmv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Z + Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "Z");
     //MDelPro["Z"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
@@ -246,20 +246,20 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     //tempname = ModifiedPreName(name, "B", "Ztt");
     //MDelPro["Ztt"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "Zll");
-    //MDelPro["Zll"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "Zll");
+    MDelPro["Zll"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "Zvv");
-    //MDelPro["Zvv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "Zvv");
+    MDelPro["Zvv"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "Zhad");
-    //MDelPro["Zhad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "Zhad");
+    MDelPro["Zhad"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     //tempname = ModifiedPreName(name, "B", "SysZee");
     //MDelPro["SysZee"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    //tempname = ModifiedPreName(name, "B", "SysZmm");
-    //MDelPro["SysZmm"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    tempname = ModifiedPreName(name, "B", "SysZmm");
+    MDelPro["SysZmm"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Photon + Jets ~~~~~
     //tempname = ModifiedPreName(name, "B", "Photon");
     //MDelPro["Photon"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
@@ -366,7 +366,7 @@ int DPhes::PreLooping(const std::vector<std::string>& VCuts)
 //----------------------------------------------------------------------------
 //  Enable TTree Cache for speeding
 //----------------------------------------------------------------------------
-  fChain->SetCacheSize(20*1024*1024);
+  fChain->SetCacheSize(200*1024*1024);
   TTreeCache::SetLearnEntries(1);
 
   return 1;

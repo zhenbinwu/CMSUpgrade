@@ -1,11 +1,17 @@
 #!/bin/csh
 
-set DIR       = $1
-set SplitLine = 20
+set DIR        = $1
+set SplitLine  = 20
+set GetNewList = 0
 
-rm ${DIR}/*
-rm -rf ${DIR}/ntuples
-./getFileLists.sh ${DIR}
+if (GetNewList == 1) then
+  rm ${DIR}/*
+  rm -rf ${DIR}/ntuples
+  ./getFileLists.sh ${DIR}
+else if (GetNewList == -1) then
+  rm ${DIR}/*.list
+  find ${DIR} -type f -exec mv '{}' '{}'.list \;
+endif
 
 
 foreach file (`ls ${DIR}/*list`)

@@ -80,8 +80,8 @@ int main ( int argc, char *argv[] )
   {
     TreeList = "./FileList/PhaseII4v2/"+Process+"_"+Pileup+".list";
   } else if (Detector == "Test") {
-    //TreeList = "./Sample/Bj-4p-300-600-v1510_14TEV_NoPileUp_99966708.root";
-    TreeList = "../out2.root";
+    TreeList = "/data3/chaverin/Phase_I/NoPileUp/stopco/stopco_v02_run24798_stop_charmLSP_0_NoPileUp.root";
+    //TreeList = "../out2.root";
     //TreeList = "../out.root";
   }
 

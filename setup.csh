@@ -16,17 +16,19 @@ endif
 #============================================================================#
 #--------------------------   Setup CMSSW @ CERN   --------------------------#
 #============================================================================#
-if (  $HOST =~ lxplus* ) then 
+if (  $HOST =~ lxplus4* ) then  ##SL5
     source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.csh
     source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.csh
+endif
+
+if (  $HOST =~ *cern.ch ) then  ##SL6
     ##grid-proxy-init -debug -verify
     ##voms-proxy-init -voms cms
     cd $HOME/CMSSW_5_3_8/src
-    cmsenv
+    eval `scramv1 runtime -csh`
     setenv LANG en_US.UTF-8
     cd $CURRENTDIR
 endif
-
 
 #============================================================================#
 #-------------------------   Setup CMSSW @ Kodiak   -------------------------#

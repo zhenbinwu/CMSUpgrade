@@ -2,61 +2,65 @@
 # Example PBS cluster job submission in Python
 
 import os
-from popen2 import popen2
 import time
 import glob
 import re
+import subprocess
 
 
 ###############################
-DelDir    = '/afs/cern.ch/work/b/benwu/CMSUpgrade/Delphes/'
+RunProxy  = True
+DelDir    = '/afs/cern.ch/work/b/benwu/CMSUpgrade_TP/Delphes/'
 DelExe    = 'DelFill'
-Directory = '5KPhaseI_5_30'
+Directory = '/afs/cern.ch/work/b/benwu/CMSUpgrade_TP/Output/TestSL6AGAIN'
+Analysis  = 'DM_5_30'
 UserEMAIL = 'benwu@fnal.gov'
+Detectors = [
+    #'Snowmass',
+    'PhaseI',
+    #'PhaseII3',
+    #'PhaseII4'
+]
+
 PileUps   = [
     'NoPileUp',
     #'50PileUp',
-    '140PileUp',
+    #'140PileUp',
 ]
 
-Detector = [
-    #'PhaseII4',
-    #'PhaseII3',
-    'PhaseI',
-]
-
-Projects  = [
-    'Wino100_14TeV',
-    'Wino200_14TeV',
-    'Wino500_14TeV',
+Processes = [
+    #'Stopv01_14TeV',
+    #'Wino100_14TeV',
+    #'Wino200_14TeV',
+    #'Wino500_14TeV',
     #'WJETS_13TEV',
     #'ZJETS_13TEV',
     #'TTBAR_13TEV',
     'B_14TEV_HT1' ,
-    'BJ_14TEV_HT1',
-    'BJ_14TEV_HT2',
-    'BJ_14TEV_HT3',
-    'BJ_14TEV_HT4',
-    'BJ_14TEV_HT5',
-    'BJ_14TEV_HT6',
-    'BJ_14TEV_HT7',
-    'BJJ_14TEV_HT1',
-    'BJJ_14TEV_HT2',
-    'BJJ_14TEV_HT3',
-    'BJJ_14TEV_HT4',
-    'BJJ_14TEV_HT5',
-    'TT_14TEV_HT1',
-    'TT_14TEV_HT2',
-    'TT_14TEV_HT3',
-    'TT_14TEV_HT4',
-    'TT_14TEV_HT5',
-    'LL_14TEV_HT1' ,
-    'LL_14TEV_HT2' ,
-    'LL_14TEV_HT3' ,
-    'LL_14TEV_HT4' ,
-    'LL_14TEV_HT5' ,
-    'LL_14TEV_HT6' ,
-    
+    #'BJ_14TEV_HT1',
+    #'BJ_14TEV_HT2',
+    #'BJ_14TEV_HT3',
+    #'BJ_14TEV_HT4',
+    #'BJ_14TEV_HT5',
+    #'BJ_14TEV_HT6',
+    #'BJ_14TEV_HT7',
+    #'BJJ_14TEV_HT1',
+    #'BJJ_14TEV_HT2',
+    #'BJJ_14TEV_HT3',
+    #'BJJ_14TEV_HT4',
+    #'BJJ_14TEV_HT5',
+    #'TT_14TEV_HT1',
+    #'TT_14TEV_HT2',
+    #'TT_14TEV_HT3',
+    #'TT_14TEV_HT4',
+    #'TT_14TEV_HT5',
+    #'LL_14TEV_HT1',
+    #'LL_14TEV_HT2',
+    #'LL_14TEV_HT3',
+    #'LL_14TEV_HT4',
+    #'LL_14TEV_HT5',
+    #'LL_14TEV_HT6',
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
     #'BJ_33TEV_HT1',
@@ -91,6 +95,12 @@ Projects  = [
     #'H_14TEV_HT2'  ,
     #'H_14TEV_HT3'  ,
     #'H_14TEV_HT4'  ,
+    #'LL_14TEV_HT1' ,
+    #'LL_14TEV_HT2' ,
+    #'LL_14TEV_HT3' ,
+    #'LL_14TEV_HT4' ,
+    #'LL_14TEV_HT5' ,
+    #'LL_14TEV_HT6' ,
     #'LLB_14TEV_HT1',
     #'LLB_14TEV_HT2',
     #'LLB_14TEV_HT3',
@@ -141,21 +151,90 @@ Projects  = [
 
 ]
 
-def BSUB():
-    for pu in PileUps:
-        for dec in Detector:
-            for pro in Projects:
-                for splitpro in SplitPro(dec, pu, pro):
-                    cms = 'bsub '
-                    cms += ' -q 8nh '
-                    cms += "%s/%s/RunCERN.csh " % (DelDir, Directory)
-                    cms += "%s " % splitpro
-                    cms += "%s " % Directory
-                    cms += "%s " % pu
-                    cms += "%s " % dec
-                    print cms
-                    stat = os.popen(cms).read()
-                    print stat
+def BSUB(Analysis, Process, Pileup, Detector):
+
+    # Open a pipe to the qsub command.
+    #output, input = popen2('echo')
+    p = subprocess.Popen('bsub', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    output, input = (p.stdout, p.stdin)
+
+    job_name = "%s_%s_%s_%s" % (Analysis, Process, Detector, Pileup)
+    command1 = "%s/%s %s %s %s %s" % (DelDir, DelExe, Pileup, Process, Analysis, Detector)
+    que = '1nd'
+
+    ## -J Job name
+    ## -o output -e error
+    ## -q Que:
+    ### 8nm (8 minutes)
+    ### 1nh (1 hour)
+    ### 8nh
+    ### 1nd (1day)
+    ### 2nd
+    ### 1nw (1 week)
+    ### 2nw
+    job_string = """#!/bin/tcsh
+    #BSUB -q %s
+    #BSUB -J %s
+    #BSUB -o ./%s_stdout
+    #BSUB -e ./%s_stderr
+    date
+    ## Need this to fix the problem with batch node
+    setenv LD_LIBRARY_PATH ''
+    cd %s/..
+    source setup.csh
+    cd %s
+    %s
+    date""" % (que, job_name, job_name, job_name, DelDir, Directory, command1)
+
+    # Send job_string to qsub
+    input.write(job_string)
+    input.close()
+
+    # Print your job and the response to the screen
+    print job_string
+    print output.read()
+
+    time.sleep(0.1)
+
+def my_process():
+    ## Some checking first
+    my_CheckFile()
+
+    ## Create the output directory
+    try:
+        os.makedirs(Directory)
+    except OSError:
+        pass
+
+    ## Update condor files
+    if not os.path.exists("%s/Filelist.tgz" % Directory):
+      print "Copying Filelist to %s" % Directory
+      os.system("cd %s; tar -czf %s/Filelist.tgz FileList" % (DelDir, Directory))
+      os.chdir(Directory)
+      if os.path.exists("Filelist"):
+        os.system("rm -rf Filelist")
+      os.system("tar -xzf Filelist.tgz")
+
+    for pro in Processes:
+      for pu in PileUps:
+        for det in Detectors:
+          for splitpro in SplitPro(det, pu, pro):
+            BSUB(Analysis, splitpro, pu, det)
+
+def SplitPro(detector, pileup, pro):
+    globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (Directory, detector, pro, pileup))
+    testout=[]
+    for out in globout:
+        file = out.split('/')[-1]
+        #print file
+        match = re.match(r'(%s.*)_%s\.list' % (pro, pileup), file)
+        #match = re.match('%s*%s' % (pro, pileup), file)
+        if match != None:
+            #print match.group(0)
+            print match.group(1)
+            testout.append(match.group(1))
+    return testout
+
 
 def my_CheckFile():
     ## Check the Delphes Dir
@@ -165,14 +244,6 @@ def my_CheckFile():
         print "Please input the path to Delphes"
         quit()
 
-
-    ## Check RunHT.csh file
-    if os.path.isfile("RunCERN.csh") and os.access("RunCERN.csh", os.X_OK):
-        #print "Found RunCERN.csh"
-        pass
-    else:
-        print "Please locate RunCERN.csh"
-        quit()
 
     ## Check DelFill to be execute
     DelFill = DelDir + "/" + DelExe
@@ -188,62 +259,9 @@ def my_CheckFile():
         #print "Found HTadd"
         pass
     else:
-        print "Please compile HTadd"
-        return None
-
-    ## Check Delphes_condor
-    if os.path.isfile("Delphes_condor"):
-        #print "Found HTadd"
-        pass
-    else:
-        print "Please compile HTadd"
-        quit()
-
-def SplitPro(detector, pileup, pro):
-    globout=glob.glob('FileList/%s/%s*%s.list'  % (detector, pro, pileup))
-    testout=[]
-    for out in globout:
-        file = out.split('/')[-1]
-        #print file
-        match = re.match(r'(%s.*)_%s\.list' % (pro, pileup), file)
-        #match = re.match('%s*%s' % (pro, pileup), file)
-        if match != None:
-            #print match.group(0)
-            print match.group(1)
-            testout.append(match.group(1))
-    return testout
-
-def my_process():
-    ## Some checking first
-    my_CheckFile()
-
-    ## Create the output directory
-    outdir = DelDir + "/" + Directory
-    try:
-        os.mkdir(outdir)
-    except OSError:
+        print "Please compile HTadd, which is needed for merging output"
         pass
 
-    ## Update RunHT.csh with DelDir and pileups
-    RunHTFile = outdir + "/" + "RunCERN.csh"
-    #with open(RunHTFile, "wt") as outfile:
-    outfile = open(RunHTFile, "wt")
-    for line in open("RunCERN.csh", "r"):
-        line = line.replace("DELDIR", DelDir)
-        line = line.replace("DELEXE", DelExe)
-        outfile.write(line)
-    os.system("chmod 755 %s" % RunHTFile)
-
-    ## Update condor files
-    os.system("cp mergeHT.csh %s" % outdir)
-    os.chdir(DelDir)
-    os.system("tar -czf FileList.tgz ./FileList")
-    os.system("mv FileList.tgz %s" % outdir)
-    os.chdir(outdir)
-    print "Untaring Filelist ....... "
-    os.system("tar -xzf FileList.tgz")
-    BSUB()
 
 if __name__ == "__main__":
     my_process()
-

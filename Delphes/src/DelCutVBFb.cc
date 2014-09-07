@@ -131,7 +131,7 @@ bool DelCutVBFb::CheckCut()
   if (Ana->J1 != 0 && Ana->J2 != 0)
     cutbit.set(5, Ana->J1->Eta * Ana->J2->Eta < 0);
   if (Ana->J1 != 0 && Ana->J2 != 0)
-    cutbit.set(6, fabs(Ana->J1->Eta - Ana->J2->Eta ) >= 4.2);
+    cutbit.set(6, fabs(Ana->J1->Eta - Ana->J2->Eta ) >= 3.5);
 
   // Veto the bjet in VBF jets
   if (Ana->J1 != 0 && Ana->J2 != 0)

@@ -244,6 +244,7 @@ int DelCutVBFb::FillCut()
 // ===========================================================================
 bool DelCutVBFb::BookHistogram()
 {
-  BookJetEff();
+  //BookJetEff();
+  DelCut::BookHistogram();
   return true;
 }       // -----  end of function DelCutVBFb::BookHistogram  -----

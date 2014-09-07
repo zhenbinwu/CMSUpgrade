@@ -279,9 +279,9 @@ int DelCutDM::FillCut()
 bool DelCutDM::BookHistogram()
 {
   
-  BookLeptonEff();
-  BookJetEff();
-  BookSUSYVar();
+  //BookLeptonEff();
+  //BookJetEff();
+  //BookSUSYVar();
   BookBJet();
 //----------------------------------------------------------------------------
 //  Booking global histogram

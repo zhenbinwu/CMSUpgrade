@@ -37,7 +37,7 @@ DelAna::DelAna (DelEvent *DE, std::string pileup_,  std::string detector_)
   vGenJet = &DEV->vGenJet;
   vMissingET = &DEV->vMissingET;
 
-  PUCorMet = &DE->PUCorMet;
+  PUCorMet = &DEV->PUCorMet;
   MHT = &DE->MHT;
   HT = &DE->HT;
 

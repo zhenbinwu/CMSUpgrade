@@ -243,6 +243,7 @@ int DelCutISRb::FillCut()
 // ===========================================================================
 bool DelCutISRb::BookHistogram()
 {
-  BookJetEff();
+  //BookJetEff();
+  DelCut::BookHistogram();
   return true;
 }       // -----  end of function DelCutISRb::BookHistogram  -----

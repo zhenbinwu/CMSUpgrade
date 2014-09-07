@@ -268,9 +268,9 @@ int DelCut::FillCut()
 bool DelCut::BookHistogram()
 {
   
-  BookLeptonEff();
-  BookJetEff();
-  BookSUSYVar();
+  //BookLeptonEff();
+  //BookJetEff();
+  //BookSUSYVar();
   BookBJet();
 
 

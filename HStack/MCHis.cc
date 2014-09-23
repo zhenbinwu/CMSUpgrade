@@ -134,3 +134,23 @@ bool MCHis::SetAnalysis(const std::string& analysis_)
   analysis = analysis_;
   return true;
 }       // -----  end of function MCHis::SetAnalysis  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  MCHis::GetTH2D
+//  Description:  
+// ===========================================================================
+TH2D* MCHis::GetTH2D(std::string hname, int NCut, bool WithScale)
+{
+  if (analysis != "") hname = analysis + "/" + hname;
+  std::stringstream ss;
+  ss<< hname <<"_" <<NCut;
+  TH2D* his = (TH2D*)File->Get(ss.str().c_str());
+
+  if (his->Integral() != 0.0)
+  {
+    if (WithScale)
+      his->Scale(Scale* his->Integral(0, his->GetNbinsX()+1)/his->Integral());
+  }
+
+  return his;
+}       // -----  end of function MCHis::GetTH2D  -----

@@ -33,9 +33,15 @@ std::vector<std::string> order; // Order of the cut
 int CutTable(std::string dir, std::string sample, std::string pileup);
 int ElogTable(std::string dir, std::string pileup, std::vector<std::string> sample);
 int LatexTable(std::string dir, std::string pileup, std::vector<std::string> Sample);
-std::vector<std::string> GetCutOrder(std::string dir);
+std::vector<std::string> GetCutOrder(const std::string& dir, const std::string& ana);
+int LatexSB(std::string dir, std::string pileup, std::vector<std::string> Sample);
+double SBWithSys(double sig, double background, double sys);
 
 std::string DEC = "Snowmass";
+const std::string& Ana = "DM";
+//const std::string& Ana = "VBFb";
+//const std::string& Ana = "ISRb";
+
 int main ( int argc, char *argv[] )
 {
 
@@ -48,7 +54,7 @@ int main ( int argc, char *argv[] )
   //Dir.push_back("./ECFA/");
   //Dir.push_back("./Preapproval/");
   //Dir.push_back("./Snowmass_5_30/");
-  Dir.push_back("./SbottomMar_5_30/");
+  Dir.push_back("./Sbottom/");
   //Dir.push_back("./LPC/");
   //Dir.push_back("./TOOL/");
   //Dir.push_back("./Snowmass/");
@@ -69,7 +75,7 @@ int main ( int argc, char *argv[] )
   std::vector<std::string> PU;
   PU.push_back("NoPileUp");
   //PU.push_back("50PileUp");
-  PU.push_back("140PileUp");
+  //PU.push_back("140PileUp");
   
 
   std::vector<std::string> Sample;
@@ -81,13 +87,19 @@ int main ( int argc, char *argv[] )
   //Sample.push_back("BJ_14TEV_HT");
   //Sample.push_back("BJJ_14TEV_HT");
   //
-  Sample.push_back("Sbottom15_14TeV");
-  //Sample.push_back("Sbottom50_14TeV");
-  Sample.push_back("Sbottom100_14TeV");
-  Sample.push_back("Sbottom150_14TeV");
-  Sample.push_back("Sbottom200_14TeV");
-  Sample.push_back("Sbottom300_14TeV");
+  //Sample.push_back("Sbottom15_14TeV");
+  //Sample.push_back("Sbottom50_QCD4QED4_14TEV");
+  //Sample.push_back("Sbottom100_QCD4QED4_14TEV");
+  //Sample.push_back("Sbottom150_14TeV");
+  //Sample.push_back("Sbottom200_QCD4QED4_14TEV");
+  Sample.push_back("Sbottom300_QCD4QED4_14TEV");
   //Sample.push_back("Wino100_14TeV");
+  Sample.push_back("Sbottom600_QCD4QED4_14TEV");
+  //Sample.push_back("Sbottom700_QCD4QED4_14TEV");
+  //Sample.push_back("Wino200_14TeV");
+  //Sample.push_back("Wlv*_14TEV_HT");
+  //Sample.push_back("Zvv*_14TEV_HT");
+  //Sample.push_back("Zvv_14TEV_HT");
   //Sample.push_back("Wino200_14TeV");
   //Sample.push_back("Wlv*_14TEV_HT");
   //Sample.push_back("Zvv*_14TEV_HT");
@@ -105,11 +117,13 @@ int main ( int argc, char *argv[] )
   //Sample.push_back("SysZeeJJ_14TEV_HT");
   //Sample.push_back("SysZmm*_14TEV_HT");
   //Sample.push_back("SysZee*_14TEV_HT");
-  Sample.push_back("Zvv*_14TEV_HT");
+  //Sample.push_back("Zvv*_14TEV_HT");
   //Sample.push_back("Wlv*_14TEV_HT");
-  Sample.push_back("Wev*_14TEV_HT");
-  Sample.push_back("Wmv*_14TEV_HT");
-  Sample.push_back("Wtv*_14TEV_HT");
+  Sample.push_back("Z*_14TEV_HT");
+  Sample.push_back("W*_14TEV_HT");
+  //Sample.push_back("Wev*_14TEV_HT");
+  //Sample.push_back("Wmv*_14TEV_HT");
+  //Sample.push_back("Wtv*_14TEV_HT");
   Sample.push_back("TT_14TEV_HT");
   //Sample.push_back("Wlv*_14TEV_HT");
   //Sample.push_back("H*_14TEV_HT");
@@ -140,7 +154,7 @@ int main ( int argc, char *argv[] )
 
   // The Cut flow
 
-  order = GetCutOrder(Dir.front());
+  order = GetCutOrder(Dir.front(), Ana);
 
   for(std::vector<std::string>::iterator Dit=Dir.begin();
       Dit!=Dir.end(); Dit++)
@@ -148,7 +162,10 @@ int main ( int argc, char *argv[] )
     for(std::vector<std::string>::iterator Pit=PU.begin();
         Pit!=PU.end(); Pit++)
     {
-      ElogTable(*Dit, *Pit, Sample);
+      //ElogTable(*Dit, *Pit, Sample);
+      LatexTable(*Dit, *Pit, Sample);
+      LatexSB(*Dit, *Pit, Sample);
+
       //for(std::vector<std::string>::iterator Sit=Sample.begin();
           //Sit!=Sample.end(); Sit++)
       //{
@@ -262,10 +279,12 @@ int ElogTable(std::string dir, std::string pileup, std::vector<std::string> Samp
     for (int i = 0; i < order.size(); ++i)
     {
       std::stringstream ss;
-      ss<< "MHT_" <<i;
-      std::cout << "  " << ss.str();
-      TH1F* c1 = temp.GetTH1("MHT", i); 
-      //TH1F* c1 = temp.GetTH1(ss.str().c_str()); 
+      ss<< Ana<<"/"<<"MJJMHT";
+
+      //TH1F* c1 = temp.GetTH1("MJJMHT", i); 
+      TH2D* c1 = temp.GetTH2D(ss.str().c_str(), i);
+
+      std::cout << " " << std::endl;
       itgl.push_back(c1->Integral());
 
       entry.push_back(c1->GetEntries());
@@ -327,12 +346,11 @@ int ElogTable(std::string dir, std::string pileup, std::vector<std::string> Samp
   return 1;
 }       // -----  end of function ElogTable  -----
 
-
 // ===  FUNCTION  ============================================================
 //         Name:  GetCutOrder
 //  Description:  return the cut order
 // ===========================================================================
-std::vector<std::string> GetCutOrder(std::string dir)
+std::vector<std::string> GetCutOrder(const std::string& dir, const std::string& ana)
 {
   glob_t glob_result;
   char pat[100];
@@ -351,18 +369,19 @@ std::vector<std::string> GetCutOrder(std::string dir)
 
   assert(f != NULL);
 
-  TH1F* cut = (TH1F*) f->Get("CutFlow");
+  TString cutflow = ana + "/CutFlow";
+  TH1F* cut = (TH1F*) f->Get(cutflow);
 
   for (int i = 0; i < cut->GetNbinsX(); ++i)
   {
     std::string d = cut->GetXaxis()->GetBinLabel(i+1);
-    //std::cout <<i << " "<<  d << std::endl;
     order.push_back(d);
   }
 
   return order;
 
 }       // -----  end of function GetCutOrder  -----
+
 
 // ===  FUNCTION  ============================================================
 //         Name:  LatexTable
@@ -411,9 +430,10 @@ int LatexTable(std::string dir, std::string pileup, std::vector<std::string> Sam
     for (int i = 0; i < order.size(); ++i)
     {
       std::stringstream ss;
-      ss<< "MHT_" <<i;
-      std::cout << "  " << ss.str();
-      TH1F* c1 = temp.GetTH1("MHT", i); 
+      ss<< Ana<<"/"<<"MJJMHT";
+
+      //TH1F* c1 = temp.GetTH1("MHT", i); 
+      TH2D* c1 = temp.GetTH2D(ss.str().c_str(), i);
       //TH1F* c1 = temp.GetTH1(ss.str().c_str()); 
       itgl.push_back(c1->Integral());
 
@@ -431,7 +451,8 @@ int LatexTable(std::string dir, std::string pileup, std::vector<std::string> Sam
         frac = itgl.at(i)/itgl.at(i-1);
 
       //std::cout << "frac " << frac << std::endl;
-      sprintf(buf, "%.f+-%.f(%.0f%%)", itgl.at(i), error, frac*100);
+      sprintf(buf, "%.f(%.0f\\%%)", itgl.at(i), frac*100);
+      //sprintf(buf, "%.f$\\pm$%.f(%.0f\\%%)", itgl.at(i), error, frac*100);
       //std::cout << " buff "  << buf << std::endl;
       table[*Sit].push_back(buf);
 
@@ -444,34 +465,150 @@ int LatexTable(std::string dir, std::string pileup, std::vector<std::string> Sam
   std::cout << std::endl;
   std::cout << std::endl;
   std::cout << "================================================================= " << std::endl;
-  std::cout <<  "[b]" <<"Detector: " << DEC << " Jet selection: " << "Pt > 30, |Eta| < 5" <<  " PileUp : " << pileup  << "[/b]"<< std::endl;
-  std::cout <<  "[table border=\"1\"] " << std::endl;
-
-  // The first row of name
-  std::cout <<  "[b][center]Cut[/center][/b]  |";
+  std::cout <<  "\\begin{tabular}{|c|";
   for(std::vector<std::string>::iterator Sit=Sample.begin();
       Sit!=Sample.end(); Sit++)
   {
-    std::cout <<  "[b][center]" << *Sit<< "[/center][/b]  |";
+    std::cout <<  "c|";
   }
-  std::cout << "-" << std::endl;
+  std::cout << "}" << std::endl;
 
+  std::cout << "\\hline" << std::endl;
+
+  // The first row of name
+  std::cout <<  "\\textbf{Cut} & ";
+  for(std::vector<std::string>::iterator Sit=Sample.begin(); Sit!=Sample.end(); Sit++)
+  {
+    if (Sit == Sample.end() - 1)
+      std::cout <<  " \\textbf{" << Sit->substr(0, Sit->find_first_of("_"))<< "} ";
+    else
+      std::cout <<  " \\textbf{" << Sit->substr(0, Sit->find_first_of("_")) << "} &";
+
+  }
+  std::cout << " \\\\" << std::endl;
+
+  std::cout << "\\hline" << std::endl;
   // Start to fill in the Cut flow
   for (int i = 0; i < order.size(); ++i)
   {
-    std::cout << "[center]" << order.at(i)<< "[/center] |";
+    std::cout << " \\textit{" << order.at(i)<< "} & ";
     for(std::vector<std::string>::iterator Sit=Sample.begin();
         Sit!=Sample.end(); Sit++)
     {
-      std::cout << "[center]" << table[*Sit].at(i)<< "[/center] |";
+      if (Sit == Sample.end() -1)
+      std::cout << " " << table[*Sit].at(i)<< "  ";
+      else
+      std::cout << " " << table[*Sit].at(i)<< " & ";
     }
-    std::cout << "-" << std::endl;
-
+    std::cout << " \\\\ " << std::endl;
   }
 
-  std::cout <<  "[/table]" << std::endl;
+  std::cout << "\\hline" << std::endl;
+  std::cout <<  "\\end{tabular}" << std::endl;
   std::cout << std::endl;
   std::cout << std::endl;
 
   return 1;
 }       // -----  end of function LatexTable  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  LatexTable
+//  Description:  
+// ===========================================================================
+int LatexSB(std::string dir, std::string pileup, std::vector<std::string> Sample)
+{
+  std::map<string, std::vector<std::string> > table;
+  std::map<std::string, std::map<int, double> > Integral;
+  const std::string& Signal = "Sbottom300_QCD4QED4_14TEV";
+  std::cout << "======================================= Signal " << Signal << std::endl;
+  std::vector<std::string> Backgrounds;
+  Backgrounds.push_back("W*_14TEV_HT");
+  Backgrounds.push_back("Z*_14TEV_HT");
+  Backgrounds.push_back("TT_14TEV_HT");
+
+  for(std::vector<std::string>::iterator Sit=Sample.begin();
+      Sit!=Sample.end(); Sit++)
+  {
+    HTSample temp(dir, *Sit, pileup, DEC);
+    temp.InitSample(3000*1000);
+    std::vector<double> itgl;
+    std::vector<double> entry;
+
+    for (int i = 0; i < order.size(); ++i)
+    {
+      std::stringstream ss;
+      ss<< Ana<<"/"<<"MJJMHT";
+
+      //TH1F* c1 = temp.GetTH1("MHT", i); 
+      TH2D* c1 = temp.GetTH2D(ss.str().c_str(), i);
+      //TH1F* c1 = temp.GetTH1(ss.str().c_str()); 
+      itgl.push_back(c1->Integral());
+      Integral[*Sit][i] = c1->Integral();
+
+      std::cout << "   Signal " << *Sit <<" index " << i << " " << Integral[*Sit][i] << std::endl;
+      entry.push_back(c1->GetEntries());
+
+      std::cout <<  "  "<< c1->Integral() << " " << c1->GetEntries() << std::endl;
+    }
+
+  }
+
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << "================================================================= " << std::endl;
+  std::cout <<  "\\begin{tabular}{|c|";
+  for (int i = 0; i < 5; ++i)
+  {
+    std::cout <<  "c|";
+  }
+  std::cout << "}" << std::endl;
+
+  std::cout << "\\hline" << std::endl;
+
+  // The first row of name
+  std::cout <<  "\\textbf{Cut} & \\textbf{Signal} & \\textbf{Background} & \\textbf{S/B} & \\textbf{Sig} & \\textbf{5\\\%} \\\\" << std::endl;
+  std::cout << "\\hline" << std::endl;
+  // Start to fill in the Cut flow
+  for (int i = 0; i < order.size(); ++i)
+  {
+    std::cout << " \\textit{" << order.at(i)<< "} & ";
+    double s = Integral[Signal][i];
+    double b = 0;
+    for (int j = 0; j < Backgrounds.size(); ++j)
+    {
+      b+=Integral[Backgrounds.at(j)][i];
+    }
+
+    std::cout << " " << s << " & ";
+    std::cout << " " << b << " & ";
+    std::cout << " " << s/b << " & ";
+    std::cout << " " << SBWithSys(s, b, 0) << " & ";
+    std::cout << " " << SBWithSys(s, b, 0.05) << " ";
+    std::cout << " \\\\ " << std::endl;
+  }
+
+  std::cout << "\\hline" << std::endl;
+  std::cout <<  "\\end{tabular}" << std::endl;
+  std::cout << std::endl;
+  std::cout << std::endl;
+
+  return 1;
+}       // -----  end of function LatexTable  -----
+
+
+// ===  FUNCTION  ============================================================
+//         Name:  SBWithSys
+//  Description:  
+// ===========================================================================
+double SBWithSys(double sig, double background, double sys)
+{
+  //double sys = 0; // 10% systematics
+  //double sys = 0.01; // 10% systematics
+  //double sys = 0.1; // 10% systematics
+
+  double domi = background + pow(sys*background, 2);
+  return sig/sqrt(sig+domi);
+  
+}       // -----  end of function SBWithSys  -----

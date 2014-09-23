@@ -22,6 +22,7 @@
 
 #include "TFile.h"
 #include "TH1F.h"
+#include "TH2D.h"
 #include <sstream>
 #include <iostream>
 
@@ -52,6 +53,7 @@ class MCHis
     bool GetFile();
     bool GetScale(const int Lumi);
     TH1F* GetTH1(std::string hname, bool WithScale=true);
+    TH2D* GetTH2D(std::string hname, int NCut, bool WithScale=true);
     TH1F* GetTH1(std::string hname, int NCut, bool WithScale=true);
   protected:
     /* ====================  DATA MEMBERS  ======================================= */

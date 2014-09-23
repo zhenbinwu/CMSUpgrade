@@ -490,7 +490,6 @@ int main ( int argc, char *argv[] )
       //h->GetYaxis()->SetTitle("Normalized to Unit Area");
       //c1->SetLogy();
 
-
       ymin = ymin < h->GetMinimum() ? ymin : h->GetMinimum();
       ymax = ymax > h->GetMaximum() ? ymax : h->GetMaximum();
 

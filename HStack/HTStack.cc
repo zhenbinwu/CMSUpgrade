@@ -57,8 +57,8 @@ std::vector<std::string> GetCutOrder(const std::string& dir, const std::string& 
 const   int    InitLumifb = 3000; // in the unit of pb
 
 const std::string DET = "Snowmass";
-const std::string Ana = "Snowmass";
-const std::string Dir="./Snowmass_5_30/";
+const std::string Ana = "VBFb";
+const std::string Dir="./Sbottom/";
 
 
 int main ( int argc, char *argv[] )
@@ -70,23 +70,13 @@ int main ( int argc, char *argv[] )
 //----------------------------------------------------------------------------
   std::vector<std::string> VPU;
   VPU.push_back("NoPileUp");
-  VPU.push_back("50PileUp");
-  VPU.push_back("140PileUp");
+  //VPU.push_back("50PileUp");
+  //VPU.push_back("140PileUp");
 
 //----------------------------------------------------------------------------
 //  Cut to check
 //----------------------------------------------------------------------------
-  std::vector<std::string> VCut;
-  //VCut.push_back("NoCut");
-  //VCut.push_back("CTVBF");
-  //VCut.push_back("CTJ1");
-  //VCut.push_back("CTJ2");
-  //VCut.push_back("CTMjj");
-  //VCut.push_back("CTJ3");
-  //VCut.push_back("CTBJ");
-  //VCut.push_back("CTLep");
-  VCut.push_back("CTMet200");
-  //VCut.push_back("AllCut");
+  std::vector<std::string> VCut = GetCutOrder("./Sbottom/", Ana);
 
 //----------------------------------------------------------------------------
 //  Start to loop over the PU and Cut
@@ -94,10 +84,12 @@ int main ( int argc, char *argv[] )
   for(std::vector<std::string>::iterator it=VPU.begin();
     it!=VPU.end(); it++)
   {
+    //std::vector<std::string>::iterator cit=VCut.end()-1;
     for(std::vector<std::string>::iterator cit=VCut.begin();
         cit!=VCut.end(); cit++)
     {
       Plot(*it, *cit);
+      //Plot(*it, "1Bjet");
     }
   }
 
@@ -119,94 +111,49 @@ int Plot (std::string PU, std::string Cut)
   std::vector<std::string>::iterator cit =std::find(order.begin(), order.end(), Cut.c_str());
   if (cit == order.end())
   {
-    std::cout << " Can't find this Cut !! Exiting... " << std::endl;
+    std::cout << " Can't find this Cut !! Exiting... "  << std::endl;
     return 0;
   } else hisIdx = static_cast<int>(std::distance(order.begin(), cit));
 
   if (hisIdx == -1) return 0;
 
-  TString Label = "14TEV_" + PU + "_" + DET;
+  TString Label = Ana+ "_" + PU + "_" + DET;
 
   std::map<std::string, HTSample*> MCSample;
   // Initial the process
-  MCSample["Sbottom15"] = new HTSample(Dir, "Sbottom15_14TeV",    PU, DET);
-  MCSample["Wino100"] = new HTSample(Dir, "Wino100_14TeV",    PU, DET);
-  MCSample["Wino200"] = new HTSample(Dir, "Wino200_14TeV",    PU, DET);
-  MCSample["Wino500"] = new HTSample(Dir, "Wino500_14TeV",    PU, DET);
-  //MCSample["TT"]      = new HTSample(Dir, "TT_8TEV",      PU);
-  //MCSample["TT"]      = new HTSample(Dir, "TT_33TEV_HT",      PU);
-  MCSample["TT"]      = new HTSample(Dir, "TT_14TEV_HT",      PU, DET);
-  //MCSample["B"]       = new HTSample(Dir, "B_14TEV_HT",       PU);
-  //MCSample["BJ"]      = new HTSample(Dir, "BJ_14TEV_HT",      PU);
-  //MCSample["BJJ"]     = new HTSample(Dir, "BJJ_14TEV_HT",     PU);
-  //MCSample["Wlv"]     = new HTSample(Dir, "W*Jet_8TEV_HT",    PU);
-  //MCSample["Wlv"]     = new HTSample(Dir, "Wlv*_33TEV_HT",    PU);
-  MCSample["Wlv"]     = new HTSample(Dir, "Wlv*_14TEV_HT",    PU, DET);
-  //MCSample["Wev"]     = new HTSample(Dir, "Wev*_14TEV_HT",    PU, DET);
-  //MCSample["Wmv"]     = new HTSample(Dir, "Wmv*_14TEV_HT",    PU, DET);
-  //MCSample["Wtv"]     = new HTSample(Dir, "Wtv*_14TEV_HT",    PU, DET);
-  //MCSample["W"]       = new HTSample(Dir, "WJ*_14TEV_HT",      PU);
-  //MCSample["Z"]       = new HTSample(Dir, "Zvv*_14TEV_HT",      PU);
-  //MCSample["H"]       = new HTSample(Dir, "H*_14TEV_HT",      PU);
-  //MCSample["Photon"]  = new HTSample(Dir, "PhotonJ*_14TEV_HT", PU);
-  //MCSample["Whad"]    = new HTSample(Dir, "Whad*_14TEV_HT",   PU);
-  //MCSample["WJ"]       = new HTSample(Dir, "WJ_14TEV_HT",      PU);
-  //MCSample["ZJ"]       = new HTSample(Dir, "ZJ_14TEV_HT",      PU);
-  //MCSample["Zll"]       = new HTSample(Dir, "Zll*_14TEV_HT",      PU);
-  //MCSample["Zvv"]       = new HTSample(Dir, "ZJETS_8TEV_HT",      PU);
-  //MCSample["Zvv"]       = new HTSample(Dir, "Zvv*_33TEV_HT",      PU);
-  MCSample["Zvv"]       = new HTSample(Dir, "Zvv*_14TEV_HT",      PU, DET);
-  //MCSample["LL"]       = new HTSample(Dir, "LL*_14TEV_HT",      PU, DET);
-  ////MCSample["HJ"]       = new HTSample(Dir, "HJ_14TEV_HT",      PU);
-  //MCSample["PhotonJ"]  = new HTSample(Dir, "PhotonJ_14TEV_HT", PU);
-  //MCSample["WJJ"]       = new HTSample(Dir, "WJJ_14TEV_HT",      PU);
-  //MCSample["ZJJ"]       = new HTSample(Dir, "ZJJ_14TEV_HT",      PU);
-  ////MCSample["HJJ"]       = new HTSample(Dir, "HJJ_14TEV_HT",      PU);
-  //MCSample["PhotonJJ"]  = new HTSample(Dir, "PhotonJJ_14TEV_HT", PU);
-  //MCSample["TTBAR"]   = new HTSample(Dir, "TTBAR_13TEV",      PU);
-  //MCSample["WJETS"]   = new HTSample(Dir, "WJETS_13TEV",      PU);
-  //MCSample["ZJETS"]   = new HTSample(Dir, "ZJETS_13TEV",      PU);
+  MCSample["Sbottom50"]  = new HTSample(Dir, "Sbottom50_QCD4QED4_14TEV",  PU, DET);
+  MCSample["Sbottom100"] = new HTSample(Dir, "Sbottom100_QCD4QED4_14TEV", PU, DET);
+  MCSample["Sbottom200"] = new HTSample(Dir, "Sbottom200_QCD4QED4_14TEV", PU, DET);
+  MCSample["Sbottom300"] = new HTSample(Dir, "Sbottom300_QCD4QED4_14TEV", PU, DET);
+  MCSample["Sbottom600"] = new HTSample(Dir, "Sbottom600_QCD4QED4_14TEV", PU, DET);
+  MCSample["Sbottom700"] = new HTSample(Dir, "Sbottom700_QCD4QED4_14TEV", PU, DET);
+
+  // Background
+  MCSample["TT"]         = new HTSample(Dir, "TT_14TEV_HT",               PU, DET);
+  MCSample["Whad"]       = new HTSample(Dir, "Whad*_14TEV_HT",            PU, DET);
+  MCSample["Wlv"]        = new HTSample(Dir, "Wlv*_14TEV_HT",             PU, DET);
+  MCSample["Zhad"]       = new HTSample(Dir, "Zhad*_14TEV_HT",            PU, DET);
+  MCSample["Zvv"]        = new HTSample(Dir, "Zvv*_14TEV_HT",             PU, DET);
+  MCSample["Zll"]        = new HTSample(Dir, "Zll*_14TEV_HT",             PU, DET);
 
   // Set the option for each process
-  MCSample["Sbottom15"] -> SetOptions(true,  2);
-  MCSample["Wino100"] -> SetOptions(true,  1);
-  MCSample["Wino200"] -> SetOptions(true,  8);
-  MCSample["Wino500"] -> SetOptions(true,  3);
-  MCSample["TT"]      -> SetOptions(false, 40);
-  //MCSample["Wev"]     -> SetOptions(false, 2);
-  //MCSample["Wmv"]     -> SetOptions(false, 2);
-  //MCSample["Wtv"]     -> SetOptions(false, 2);
-  MCSample["Wlv"]     -> SetOptions(false, 3);
-  //MCSample["Whad"]    -> SetOptions(false, 1);
-  //MCSample["WJ"]       -> SetOptions(false, 2);
-  //MCSample["ZJ"]       -> SetOptions(false, 7);
-  ////MCSample["HJ"]       -> SetOptions(false, 4);
-  //MCSample["PhotonJ"]  -> SetOptions(false, 3);
-  //MCSample["WJJ"]       -> SetOptions(false, 2);
-  //MCSample["ZJJ"]       -> SetOptions(false, 7);
-  //MCSample["HJJ"]       -> SetOptions(false, 4);
-  //MCSample["Photon"]  -> SetOptions(false, 3);
-  //MCSample["Wtv"]       -> SetOptions(false, 2);
-  //MCSample["Whad"]       -> SetOptions(false, 3);
-  //MCSample["Zll"]       -> SetOptions(false, 8);
-  MCSample["Zvv"]       -> SetOptions(false, kOrange);
-  //MCSample["LL"]       -> SetOptions(false, kRed);
-  //MCSample["Zmm"]       -> SetOptions(false, kRed);
-  //MCSample["W"]       -> SetOptions(false, 2);
-  //MCSample["Z"]       -> SetOptions(false, 7);
-  //MCSample["H"]       -> SetOptions(false, 4);
-  //MCSample["Photon"]  -> SetOptions(false, 3);
-  //MCSample["B"]       -> SetOptions(false, 2);
-  //MCSample["BJ"]      -> SetOptions(false, 43);
-  //MCSample["BJJ"]     -> SetOptions(false, 73);
-  //MCSample["TTBAR"] -> SetOptions(false, 73);
-  //MCSample["WJETS"]   -> SetOptions(false, 53);
-  //MCSample["ZJETS"]   -> SetOptions(false, 33);
+  MCSample["Sbottom50"]  -> SetOptions(true,  2);
+  MCSample["Sbottom300"] -> SetOptions(true,  1);
+  //MCSample["Wino100"]  -> SetOptions(true,  1);
+  //MCSample["Wino200"]  -> SetOptions(true,  8);
+  //MCSample["Wino500"]  -> SetOptions(true,  3);
+  MCSample["TT"]         -> SetOptions(false, 5);
+  MCSample["Wlv"]        -> SetOptions(false, 7);
+  MCSample["Whad"]       -> SetOptions(false, 7);
+  MCSample["Zll"]        -> SetOptions(false, 8);
+  MCSample["Zhad"]       -> SetOptions(false, 8);
+  MCSample["Zvv"]        -> SetOptions(false, 8);
 
   for(std::map<std::string, HTSample*>::iterator it=MCSample.begin();
     it!=MCSample.end(); it++)
   {
     it->second->InitSample(InitLumifb*1000);
+    it->second->SetAnalysis(Ana);
   }
 
 
@@ -214,37 +161,14 @@ int Plot (std::string PU, std::string Cut)
   // Setting the drawing order by a vector 
   //----------------------------------------------------------------------------
   std::vector<std::string> ProList; 
-  //ProList.push_back("TTBAR");
-  //ProList.push_back("WJETS");
-  //ProList.push_back("ZJETS");
+  ProList.push_back("Sbottom50");
+  ProList.push_back("Sbottom300");
   ProList.push_back("TT");
-  //ProList.push_back("B");
-  //ProList.push_back("BJ");
-  //ProList.push_back("BJJ");
-  //ProList.push_back("H");
-  //ProList.push_back("Wtv");
-  //ProList.push_back("Whad");
-  //ProList.push_back("W");
-  //ProList.push_back("Z");
-  //ProList.push_back("Zll");
-  //ProList.push_back("Photon");
-  //ProList.push_back("WJ");
-  //ProList.push_back("ZJ");
-  //ProList.push_back("PhotonJ");
-  //ProList.push_back("WJJ");
-  //ProList.push_back("ZJJ");
-  //ProList.push_back("PhotonJJ");
   ProList.push_back("Wlv");
-  //ProList.push_back("LL");
-  //ProList.push_back("Wev");
-  //ProList.push_back("Wmv");
-  //ProList.push_back("Wtv");
+  ProList.push_back("Whad");
   ProList.push_back("Zvv");
-  //ProList.push_back("Whad");
-  ProList.push_back("Sbottom15");
-  ProList.push_back("Wino100");
-  ProList.push_back("Wino200");
-  //ProList.push_back("Wino500");
+  ProList.push_back("Zll");
+  ProList.push_back("Zhad");
 
   //return true;
   //----------------------------------------------------------------------------
@@ -271,18 +195,18 @@ int Plot (std::string PU, std::string Cut)
   //passive_var.push_back("MetAsys");
   //passive_var.push_back("MET");
   //passive_var.push_back("MJJ");
-  passive_var.push_back("GenEleEta");
-  passive_var.push_back("GenElePt");
-  passive_var.push_back("GenMuonPt");
-  passive_var.push_back("GenMuonEta");
-  passive_var.push_back("GenTauPt");
-  passive_var.push_back("GenTauEta");
-  passive_var.push_back("GenJetPt");
-  passive_var.push_back("GenJetEta");
-  passive_var.push_back("MHT");
-  passive_var.push_back("MET");
+  //passive_var.push_back("GenEleEta");
+  //passive_var.push_back("GenElePt");
+  //passive_var.push_back("GenMuonPt");
+  //passive_var.push_back("GenMuonEta");
+  //passive_var.push_back("GenTauPt");
+  //passive_var.push_back("GenTauEta");
+  //passive_var.push_back("GenJetPt");
+  //passive_var.push_back("GenJetEta");
+  //passive_var.push_back("MHT");
+  //passive_var.push_back("MET");
   //passive_var.push_back("MetAsys");
-  passive_var = GetAllHis("./Condor5M_5_30/Wino200_14TeV_NoPileUp.root");
+  passive_var = GetAllHis("./Sbottom/Sbottom100_QCD4QED4_14TEV_NoPileUp_Snowmass.root", Ana);
   //passive_var.push_back("MJJ");
 
   //The canvas to draw plots
@@ -316,7 +240,7 @@ int Plot (std::string PU, std::string Cut)
     //double miny = 0;
     //TAxis* yaix = 0;
     //TLegend *f = new TLegend(0.6879195,0.6525424,0.9244966,0.9470339,NULL,"brNDC");
-   TLegend *f = new TLegend(0.5889262,0.6483051,0.8255034,0.9427966,NULL,"brNDC");
+    TLegend *f = new TLegend(0.5889262,0.6483051,0.8255034,0.9427966,NULL,"brNDC");
     //TLegend *f = new TLegend(0.1996644,0.190678,0.4362416,0.4851695,NULL,"brNDC"); //ABS DPhi 
    //TLegend *f = new TLegend(0.6879195,0.6525424,0.9244966,0.9470339,NULL,"brNDC"); //Pt 
     f->SetBorderSize(0);
@@ -346,7 +270,7 @@ int Plot (std::string PU, std::string Cut)
         it!=ProList.end(); it++)
     {
 
-      std::cout << "=====" << *it << std::endl;
+      //std::cout << "=====" << *it << std::endl;
       //TH1F* h = MCSample[*it]->GetTH1("CMet_9");
       TH1F* h = MCSample[*it]->GetTH1(*hit, hisIdx);
       //h->Sumw2();
@@ -372,6 +296,7 @@ int Plot (std::string PU, std::string Cut)
         //SNstack = h;
         h->SetLineWidth(3);
         h->SetLineStyle(MCSample[*it]->Color);
+        h->SetLineColor(MCSample[*it]->Color);
         if (*it == "Wino100") h->SetLineColor(1);
         if (*it == "Wino200") h->SetLineColor(2);
         if (*it == "Wino500") h->SetLineColor(4);
@@ -407,7 +332,14 @@ int Plot (std::string PU, std::string Cut)
       if (*it == "Sbottom15")
       {
         f->AddEntry(h, "m(Sbottom) = 15 GeV", "fl");
-        //f->AddEntry(h, "99% Wino, m(#tilde{#chi}^{0}_{1}) = 500 GeV", "fl");
+      }
+      if (*it == "Sbottom50")
+      {
+        f->AddEntry(h, "m(Sbottom) = 50 GeV", "fl");
+      }
+      if (*it == "Sbottom300")
+      {
+        f->AddEntry(h, "m(Sbottom) = 300 GeV", "fl");
       }
       if (*it == "TT")
       {
@@ -419,7 +351,8 @@ int Plot (std::string PU, std::string Cut)
       }
       if (*it == "Zvv")
       {
-        f->AddEntry(h, "Z(#rightarrow#nu#bar{#nu}) + jets", "fl");
+        f->AddEntry(h, "Z + jets", "fl");
+        //f->AddEntry(h, "Z(#rightarrow#nu#bar{#nu}) + jets", "fl");
       }
 
 
@@ -439,7 +372,7 @@ int Plot (std::string PU, std::string Cut)
       BGstack->SetTitle(h->GetTitle());
     }
 
-    BGstack->SetMaximum(10*BGstack->GetMaximum());
+    BGstack->SetMaximum(50*BGstack->GetMaximum());
     BGstack->SetMinimum(1);
     //BGstack->Draw();
     BGstack->Draw(nostk.c_str());
@@ -453,7 +386,6 @@ int Plot (std::string PU, std::string Cut)
     BOOST_FOREACH(TH1F* h, SNstack)
     {
       h->Draw("Lsame");
-      
     }
     //SNstack->Draw("noStacksame");
     //SNstack->Draw("noStacksame");
@@ -462,16 +394,17 @@ int Plot (std::string PU, std::string Cut)
 
     //Print out the plots
     TString outname = Label+"_"+*hit +"_"+Cut+ ".png";
-    //TString outname = Label+"_"+*hit +"_"+Cut+"_"+DET+".png";
+    c1->Print(outname);
+    outname = Label+"_"+*hit +"_"+Cut+ ".pdf";
     c1->Print(outname);
 
-//----------------------------------------------------------------------------
-  //Calculate the current S/B
-//----------------------------------------------------------------------------
- //if (SNstack->GetStack()->GetEntries() != 0)
- //{
-    //CalSB(SNstack, BGstack);
- //}
+    //----------------------------------------------------------------------------
+    //Calculate the current S/B
+    //----------------------------------------------------------------------------
+    //if (SNstack->GetStack()->GetEntries() != 0)
+    //{
+      //CalSB(SNstack, BGstack);
+    //}
 
     //----------------------------------------------------------------------------
       //Clean out the memory
@@ -501,7 +434,6 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
   double bk = 0;
   double sg = 0;
   const int metcut = 200;
-
 
 
   //for (int i = 0; i < BGstack->GetStack()->GetEntries(); ++i)
@@ -545,11 +477,8 @@ std::vector<double> CalSB(THStack *SNstack, THStack *BGstack)
     std::cout << " SB "<< SBWithSys(temp2->Integral() - temp1->Integral(), bk, 0) << std::endl;
     //std::cout << " name " << temp->GetName() << " int "<< temp->Integral() << std::endl;
     //bk += temp->Integral();
-    
     //std::cout << " bk " << bk << std::endl;
   }
-
-
 
 
   sb.push_back(bk);
@@ -741,23 +670,23 @@ std::vector<std::string> GetAllHis (std::string fname, const std::string& ana)
   std::map<std::string, int> variable;
   std::vector<std::string> varVec;
   TKey *key;
-      std::string name;
   while ((key= (TKey*) next()))
   {
     std::string stdname=key->GetName();
-    variable.insert(std::pair<std::string, int>(stdname, 1));
+    if(gDirectory->Get(stdname.c_str())->IsA() == TH1F::Class())
+      variable.insert(std::pair<std::string, int>(stdname, 1));
   }
 
   for (std::map<std::string, int>::iterator it = variable.begin(); 
       it != variable.end(); ++it)
   {
-    if (it->first.find_last_of("_") == std::string::npos)
+    if (it->first.find_last_of("_") != std::string::npos)
     {
-      varVec.push_back(it->first);
-      std::cout << " it->first" << it->first  << std::endl;
+      std::string newname = it->first.substr(0, it->first.find_last_of("_"));
+      varVec.push_back(newname);
     }
   }
-  varVec.push_back("CMet");
+
   return varVec;
 }		 //-----  end of method MethodIICalc::GetAllHisFromM2Info  -----
 
@@ -790,7 +719,6 @@ std::vector<std::string> GetCutOrder(const std::string& dir, const std::string& 
   for (int i = 0; i < cut->GetNbinsX(); ++i)
   {
     std::string d = cut->GetXaxis()->GetBinLabel(i+1);
-    //std::cout <<i << " "<<  d << std::endl;
     order.push_back(d);
   }
 

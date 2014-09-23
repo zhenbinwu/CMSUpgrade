@@ -133,7 +133,7 @@ TH2D* HTSample::GetTH2D(std::string hname, int NCut, bool WithScale) const
   if (isHT)
     return  HT->GetTH2D(hname, NCut, WithScale);
   else
-    return NULL;
+    return MC->GetTH2D(hname, NCut, WithScale);
 }       // -----  end of function HTSample::GetTH2D  -----
 
 // ===  FUNCTION  ============================================================

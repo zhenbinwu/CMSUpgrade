@@ -124,11 +124,12 @@ bool HTHis::GetTH1Fs(std::string hisname)
 {
   if (analysis != "") hisname = analysis + "/" + hisname;
 
+  //std::cout << " hisname " << hisname << std::endl;
   assert(vFiles.front()->Get(hisname.c_str())->IsA() == TH1F::Class());
   vHists.clear();
   BOOST_FOREACH(TFile* f, vFiles)
   {
-    std::cout << "find file " << f->GetName() << std::endl;
+    //std::cout << "find file " << f->GetName() << std::endl;
     TH1F* histemp_ = (TH1F*)f->Get(hisname.c_str());
     //TH1F* histemp = (TH1F*) histemp_->Clone();
     ////Sumup the underflow bin
@@ -141,8 +142,8 @@ bool HTHis::GetTH1Fs(std::string hisname)
     //vHists.push_back(histemp);
     
 
-    std::cout << " f " << hisname <<" " << histemp_->GetEntries()
-      <<"      " <<histemp_->Integral() << std::endl;
+    //std::cout << " f " << hisname <<" " << histemp_->GetEntries()
+      //<<"      " <<histemp_->Integral() << std::endl;
     //std::cout << " f " << hisname <<" " << ((TH1F*)f->Get(hisname.c_str()))->GetEntries() 
       //<<"      " << ((TH1F*)f->Get(hisname.c_str()))->Integral() << std::endl;
     vHists.push_back((TH1F*)f->Get(hisname.c_str()));
@@ -164,8 +165,8 @@ bool HTHis::GetScale(const int Lumi)
       TH1F* hisevt = (TH1F*)f->Get("NEVT");
       double evt = hisevt->GetEntries(); 
       vScales.push_back(Lumi*xs/evt);
-      std::cout << " File name " << f->GetName() << " Cross Section " << xs
-      << " event " << evt << "Lumi " <<Lumi<< " scale " << Lumi*xs/evt<< std::endl;
+      //std::cout << " File name " << f->GetName() << " Cross Section " << xs
+      //<< " event " << evt << "Lumi " <<Lumi<< " scale " << Lumi*xs/evt<< std::endl;
   }
   return true;
 }       // -----  end of function HTHis::GetScale  -----

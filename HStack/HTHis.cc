@@ -22,7 +22,7 @@
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 HTHis::HTHis(std::string dir_, std::string sample_, std::string pileup_ , std::string detector_) :
-  dir(dir_), sample(sample_), pileup(pileup_), detector(detector_)
+  dir(dir_), sample(sample_), pileup(pileup_), detector(detector_),analysis("")
 {
   GetFiles();
 }  // ~~~~~  end of method HTHis::HTHis  (constructor)  ~~~~~
@@ -122,6 +122,8 @@ bool HTHis::Print() const
 // ===========================================================================
 bool HTHis::GetTH1Fs(std::string hisname)
 {
+  if (analysis != "") hisname = analysis + "/" + hisname;
+
   assert(vFiles.front()->Get(hisname.c_str())->IsA() == TH1F::Class());
   vHists.clear();
   BOOST_FOREACH(TFile* f, vFiles)
@@ -256,6 +258,7 @@ TH1F* HTHis::GetTH1(std::string hname, int NCut, bool WithScale)
 bool HTHis::GetTH2Ds(std::string hisname)
 {
   vHist2Ds.clear();
+  if (analysis != "") hisname = analysis + "/" + hisname;
   assert(vFiles.front()->Get(hisname.c_str())->IsA() == TH2D::Class());
 
   BOOST_FOREACH(TFile* f, vFiles)
@@ -328,6 +331,7 @@ bool HTHis::GetTPros(std::string hisname)
 {
   vHistPros.clear();
 
+  if (analysis != "") hisname = analysis + "/" + hisname;
   assert(vFiles.front()->Get(hisname.c_str())->IsA() == TProfile::Class());
 
   BOOST_FOREACH(TFile* f, vFiles)
@@ -438,3 +442,13 @@ double HTHis::GetKFactor(std::string hname, int NCut)
   
 
 }       // -----  end of function HTHis::GetKFactor  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HTHis::SetAnalysis
+//  Description:  
+// ===========================================================================
+bool HTHis::SetAnalysis(const std::string& analysis_)
+{
+  analysis = analysis_;
+  return true;
+}       // -----  end of function HTHis::SetAnalysis  -----

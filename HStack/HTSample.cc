@@ -135,3 +135,15 @@ TH2D* HTSample::GetTH2D(std::string hname, int NCut, bool WithScale) const
   else
     return NULL;
 }       // -----  end of function HTSample::GetTH2D  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  HTSample::SetAnalysis
+//  Description:  Set analysis
+// ===========================================================================
+bool HTSample::SetAnalysis(const std::string& analysis_) const
+{
+  if (isHT)
+    return HT->SetAnalysis(analysis_);
+  else
+    return MC->SetAnalysis(analysis_);
+}       // -----  end of function HTSample::SetAnalysis  -----

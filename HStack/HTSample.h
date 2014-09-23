@@ -40,6 +40,7 @@ class HTSample
 
     /* ====================  ACCESSORS     ======================================= */
     bool InitSample(const int Lumi);
+    bool SetAnalysis(const std::string& analysis_) const;
     bool SetOptions(bool isSignal_, int color_);
 
     /* ====================  MUTATORS      ======================================= */

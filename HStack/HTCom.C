@@ -25,11 +25,12 @@
 int main ( int argc, char *argv[] )
 {
 
-  double InitLumifb = 3000;
-  std::map<std::string, HTSample*> MCSample;
-  std::vector<std::string> ProList; 
-  StopStyle();
-  const std::string& PU = "NoPileUp";
+  const double InitLumifb     = 3000;
+  const std::string& PU       = "NoPileUp";
+  const std::string& analysis = "NoPileUp";
+  const std::string& dir      = "./Sbottom/";
+  const std::string& detector = "Snowmass";
+  const std::string& Label    = "Sbottom";
   //const std::string& PU = "140PileUp";
   //const std::string& Label = "Zvv";
   //const std::string& Label = "ZvvJJ";
@@ -42,12 +43,13 @@ int main ( int argc, char *argv[] )
   //const std::string& Label = "Wlv0";
   //const std::string& Label = "Wlv";
   //const std::string& Label = "Sbottom140PU";
-  const std::string& Label = "Sbottom";
   //const std::string& Label = "Wino200";
   //const std::string& Label = "Compare";
-  const std::string& detector = "Snowmass";
   //const std::string& dir = "./TOOL/";
-  const std::string& dir = "./SbottomMar_5_30/";
+
+  std::map<std::string, HTSample*> MCSample;
+  std::vector<std::string> ProList; 
+  StopStyle();
 
   if (Label == "Sbottom")
   {
@@ -193,28 +195,30 @@ int main ( int argc, char *argv[] )
     ////MCSample["Zvv"]      = new HTSample("ECFA", "Zvv*_14TEV_HT", PU, "PhaseII4");
     ////MCSample["TT"]      = new HTSample("ECFA", "TT*_14TEV_HT", PU, "PhaseII4");
 
-  //MCSample["PhaseI_0PU"] -> SetOptions(true,  7);
-  //MCSample["PhaseI_140PU"] -> SetOptions(true,  1);
-  //MCSample["PhaseII3_140PU"] -> SetOptions(true,  6);
-  //MCSample["PhaseII4_140PU"] -> SetOptions(true,  4);
-  //MCSample["PhaseII4v2_140PU"] -> SetOptions(true,  2);
-  //MCSample["Snowmass_0PU"] -> SetOptions(true,  2);
-  //MCSample["Snowmass_140PU"] -> SetOptions(true,  kGreen);
-  ////MCSample["SnowmassOpt"] -> SetOptions(true,  6);
+    //MCSample["PhaseI_0PU"] -> SetOptions(true,  7);
+    //MCSample["PhaseI_140PU"] -> SetOptions(true,  1);
+    //MCSample["PhaseII3_140PU"] -> SetOptions(true,  6);
+    //MCSample["PhaseII4_140PU"] -> SetOptions(true,  4);
+    //MCSample["PhaseII4v2_140PU"] -> SetOptions(true,  2);
+    //MCSample["Snowmass_0PU"] -> SetOptions(true,  2);
+    //MCSample["Snowmass_140PU"] -> SetOptions(true,  kGreen);
+    ////MCSample["SnowmassOpt"] -> SetOptions(true,  6);
 
-  ////ProList.push_back("Snowmass_0PU");
-  ////ProList.push_back("Snowmass_140PU");
-  //////ProList.push_back("SnowmassOpt");
-  //ProList.push_back("PhaseI_0PU");
-  //ProList.push_back("PhaseI_140PU");
-  //ProList.push_back("PhaseII3_140PU");
-  //ProList.push_back("PhaseII4_140PU");
-  //ProList.push_back("PhaseII4v2_140PU");
-}
+    ////ProList.push_back("Snowmass_0PU");
+    ////ProList.push_back("Snowmass_140PU");
+    //////ProList.push_back("SnowmassOpt");
+    //ProList.push_back("PhaseI_0PU");
+    //ProList.push_back("PhaseI_140PU");
+    //ProList.push_back("PhaseII3_140PU");
+    //ProList.push_back("PhaseII4_140PU");
+    //ProList.push_back("PhaseII4v2_140PU");
+  }
+
   for(std::map<std::string, HTSample*>::iterator it=MCSample.begin();
-    it!=MCSample.end(); it++)
+      it!=MCSample.end(); it++)
   {
     it->second->InitSample(InitLumifb*1000);
+    it->second->SetAnalysis(analysis);
   }
 
 
@@ -371,22 +375,22 @@ int main ( int argc, char *argv[] )
     c1->cd();
     c1->Clear();
 
-   //TLegend *f = new TLegend(0.6912752,0.6885593,0.9513423,0.9470339,NULL,"brNDC"); //DR 
+    //TLegend *f = new TLegend(0.6912752,0.6885593,0.9513423,0.9470339,NULL,"brNDC"); //DR 
     TLegend *f = new TLegend(0.6744966,0.6313559,0.9110738,0.9258475,NULL,"brNDC");
-   //TLegend *f = new TLegend(0.4144295,0.1864407,0.6744966,0.4449153,NULL,"brNDC");
+    //TLegend *f = new TLegend(0.4144295,0.1864407,0.6744966,0.4449153,NULL,"brNDC");
     //TLegend *f = new TLegend(0.5889262,0.6483051,0.8255034,0.9427966,NULL,"brNDC");
     //TLegend *f = new TLegend(0.1996644,0.190678,0.4362416,0.4851695,NULL,"brNDC"); //ABS DPhi 
     //TLegend *f = NULL;
     //if (hit->find("J1Pt") != std::string::npos)
     //{
-      //f =  new TLegend(0.5855705,0.720339,0.8657718,0.9427966,NULL,"brNDC");
+    //f =  new TLegend(0.5855705,0.720339,0.8657718,0.9427966,NULL,"brNDC");
     //}
     //if (hit->find("J2Pt") != std::string::npos)
     //{
-      //f = new TLegend(0.5805369,0.6398305,0.8171141,0.934322,NULL,"brNDC");
+    //f = new TLegend(0.5805369,0.6398305,0.8171141,0.934322,NULL,"brNDC");
     ////}
     //TLegend *f = new TLegend( 0.1741611,0.6398305,0.4342282,0.8983051, NULL,"brNDC"); //Pt 
-   //TLegend *f = new TLegend(0.4228188,0.6567797,0.659396,0.9512712,NULL,"brNDC"); //JetETa 
+    //TLegend *f = new TLegend(0.4228188,0.6567797,0.659396,0.9512712,NULL,"brNDC"); //JetETa 
     f->SetBorderSize(0);
     f->SetFillStyle(0); //transparent hollow?
     f->SetTextFont(62); 
@@ -406,7 +410,7 @@ int main ( int argc, char *argv[] )
     for(std::vector<std::string>::iterator it=ProList.begin();
         it!=ProList.end(); it++)
     {
- 
+
       std::cout << "process" << *it << std::endl;
       TH1F* h = MCSample[*it]->GetTH1(*hit);
       //outroot.cd();
@@ -427,7 +431,7 @@ int main ( int argc, char *argv[] )
         std::cout <<  h->GetBinContent(1) << std::endl;
       }
       else h->Scale(1/h->Integral());
-      
+
       std::cout << "NA : " << h->GetTitle() << " from : " << *it << "int " << h->Integral()<< std::endl;
       Xlabel = h->GetXaxis()->GetTitle();
       Ylabel = h->GetYaxis()->GetTitle();
@@ -482,13 +486,13 @@ int main ( int argc, char *argv[] )
         h->GetYaxis()->SetTitle("Events");
         //h->GetYaxis()->SetTitle(Ylabel.c_str());
       }
-        h->GetXaxis()->SetTitle(Xlabel.c_str());
-        //h->GetYaxis()->SetTitle("Normalized to Unit Area");
-        //c1->SetLogy();
+      h->GetXaxis()->SetTitle(Xlabel.c_str());
+      //h->GetYaxis()->SetTitle("Normalized to Unit Area");
+      //c1->SetLogy();
 
 
-        ymin = ymin < h->GetMinimum() ? ymin : h->GetMinimum();
-        ymax = ymax > h->GetMaximum() ? ymax : h->GetMaximum();
+      ymin = ymin < h->GetMinimum() ? ymin : h->GetMinimum();
+      ymax = ymax > h->GetMaximum() ? ymax : h->GetMaximum();
 
       if (*it == "Wino100")
       {
@@ -541,7 +545,7 @@ int main ( int argc, char *argv[] )
 
     //if (hit->find("MJJ") != std::string::npos)
     //{
-      //xaxis->SetRangeUser(0, 3000);
+    //xaxis->SetRangeUser(0, 3000);
     //}
 
 

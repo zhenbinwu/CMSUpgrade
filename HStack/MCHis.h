@@ -41,6 +41,7 @@ class MCHis
     ~MCHis ();                                    /* destructor       */
 
     /* ====================  ACCESSORS     ======================================= */
+    bool SetAnalysis(const std::string& analysis_);
 
     /* ====================  MUTATORS      ======================================= */
 
@@ -62,6 +63,7 @@ class MCHis
     std::string sample;
     std::string pileup;
     std::string detector;
+    std::string analysis;
     TFile* File;
     TH1F* Hist;
     double Scale;

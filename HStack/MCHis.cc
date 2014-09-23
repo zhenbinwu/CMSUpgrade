@@ -21,7 +21,7 @@
 // Description:  constructor
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MCHis::MCHis(std::string dir_, std::string sample_, std::string pileup_, std::string detector_):
-  dir(dir_), sample(sample_), pileup(pileup_),detector(detector_)
+  dir(dir_), sample(sample_), pileup(pileup_),detector(detector_),analysis("")
 {
   GetFile();
 }  // ~~~~~  end of method MCHis::MCHis  (constructor)  ~~~~~
@@ -93,6 +93,7 @@ bool MCHis::GetScale(const int Lumi)
 // ===========================================================================
 TH1F* MCHis::GetTH1(std::string hname, bool WithScale)
 {
+  if (analysis != "") hname = analysis + "/" + hname;
   TH1F* his = (TH1F*)File->Get(hname.c_str());
 
   if (his->Integral() != 0.0)
@@ -110,6 +111,7 @@ TH1F* MCHis::GetTH1(std::string hname, bool WithScale)
 // ===========================================================================
 TH1F* MCHis::GetTH1(std::string hname, int NCut, bool WithScale)
 {
+  if (analysis != "") hname = analysis + "/" + hname;
   std::stringstream ss;
   ss<< hname <<"_" <<NCut;
   TH1F* his = (TH1F*)File->Get(ss.str().c_str());
@@ -123,3 +125,12 @@ TH1F* MCHis::GetTH1(std::string hname, int NCut, bool WithScale)
   return his;
 }       // -----  end of function MCHis::GetTH1  -----
 
+// ===  FUNCTION  ============================================================
+//         Name:  MCHis::SetAnalysis
+//  Description:  
+// ===========================================================================
+bool MCHis::SetAnalysis(const std::string& analysis_)
+{
+  analysis = analysis_;
+  return true;
+}       // -----  end of function MCHis::SetAnalysis  -----

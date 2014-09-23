@@ -49,6 +49,7 @@ class HTHis
 
     // ====================  ACCESSORS     ===============================
     bool Print() const;
+    bool SetAnalysis(const std::string& analysis_);
     double GetKFactor(std::string hanme, int NCut=-1);
 
     THStack* GetStack(std::string hname, bool WithScale=true);
@@ -82,6 +83,7 @@ class HTHis
     std::string sample;
     std::string pileup;
     std::string detector;
+    std::string analysis;
     std::vector<TFile*> vFiles;  // Vector to store files
     std::vector<TH1F*> vHists;   // Vector to store files
     std::vector<TH2D*> vHist2Ds;   // Vector to store files

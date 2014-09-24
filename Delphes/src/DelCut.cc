@@ -253,6 +253,7 @@ int DelCut::FillCut()
 
     // Filling by functions
     FillJets(i);
+    FillBJet(i);
     FillMet(i);
     FillLepton(i);
     FillSUSYVar(i);
@@ -639,33 +640,63 @@ int DelCut::FillJets(int NCut)
       }
     }
   }
-//----------------------------------------------------------------------------
-//  Fill in BJet information
-//----------------------------------------------------------------------------
-  His->FillTH1(NCut, "NBJets", int(Ana->vBJet.size()));
-  int centralb = 0;
-   for (int i = 0; i < Ana->vBJet.size(); ++i)
-   {
-     Jet bjet = Ana->vBJet.at(i);
-     His->FillTH1(NCut, "BJetPt", bjet.PT);
-     His->FillTH1(NCut, "BJetEta", bjet.Eta);
-     if ( (bjet.Eta > Ana->J1->Eta && bjet.Eta < Ana->J2->Eta) || 
-         (bjet.Eta > Ana->J2->Eta && bjet.Eta < Ana->J1->Eta))
-     {
-       His->FillTH1(NCut, "CentralBJetPt", bjet.PT);
-       His->FillTH1(NCut, "CentralBJetEta", bjet.Eta);
-       centralb++;
-       His->FillTH1(NCut, "CentralBJetOrder", i);
-     }
-     if (std::find(Ana->PileUpJet.begin(), Ana->PileUpJet.end(), i) != Ana->PileUpJet.end())
-       His->FillTH1(NCut, "CentralPUBJetOrder", i);
-   }
-
-   His->FillTH1(NCut, "NCentralBJets", centralb);
-
    return 1;
 }       // -----  end of function DelCut::FillJets  -----
 
+// ===  FUNCTION  ============================================================
+//         Name:  DelCut::FillBJet
+//  Description:  
+// ===========================================================================
+int DelCut::FillBJet(int NCut)
+{
+  //----------------------------------------------------------------------------
+  //  Fill in BJet information
+  //----------------------------------------------------------------------------
+  His->FillTH1(NCut, "NBJets", int(Ana->vBJet.size()));
+  int centralb = 0;
+  for (int i = 0; i < Ana->vBJet.size(); ++i)
+  {
+    Jet bjet = Ana->vBJet.at(i);
+    His->FillTH1(NCut, "BJetPt", bjet.PT);
+    His->FillTH1(NCut, "BJetEta", bjet.Eta);
+  }
+
+
+
+//----------------------------------------------------------------------------
+//  Fill in GenBJet Infor
+//----------------------------------------------------------------------------
+  int countb = 0;
+  for(unsigned int i=0; i < Ana->vGenParticle->size(); ++i)
+  {
+    GenParticle par = Ana->vGenParticle->at(i);
+    if (fabs(par.PID) == 5 && par.Status == 3 )
+    {
+      His->FillTH1(NCut, "GenBJetPt", par.PT);
+      His->FillTH1(NCut, "GenBJetEta", par.Eta);
+      countb++;
+    }
+  }
+  His->FillTH1(NCut, "NGenBJets", countb);
+
+
+  Jet *Lbjet = NULL;
+  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
+      it!=Ana->vJet->end(); ++it)
+  {
+    if (it->BTag & (1<<0))
+    {
+      Lbjet = &*it;
+      break;
+    }
+  }
+
+  if (Lbjet != NULL)
+    His->FillTH1(NCut, "dPhiMHTB1", Lbjet->P4().DeltaPhi(*Ana->MHT));
+
+  His->FillTH1(NCut, "MTT", Ana->MTT);
+  return 1;
+}       // -----  end of function DelCut::FillBJet  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  DelCut::FillEle
@@ -1270,10 +1301,8 @@ bool DelCut::BookBJet()
 //----------------------------------------------------------------------------
 // Central BJets
 //----------------------------------------------------------------------------
-  His->AddTH1C("NCentralBJets", "Num. of CentralBJets", "Number of CentralBJets", "Events", 10, 0, 10 );
-  His->AddTH1C("CentralBJetPt", "CentralBJetPt", "Pt_{Central BJet} [GeV]", "Events / 2 GeV", 500, 0, 1000.0 );
-  His->AddTH1C("CentralBJetEta", "CentralBJetEta", "#eta_{Central BJet}", "Events",  60, -6, 6 );
-  His->AddTH1C("CentralBJetOrder", "CentralBJetOrder", "Order of Central BJet", "Events",  10, 0, 10);
-  His->AddTH1C("CentralPUBJetOrder", "CentralPUBJetOrder", "Order of Central PUBJet", "Events",  10, 0, 10);
-  return true;
+
+  His->AddTH1C("dPhiMHTB1", "dPhiMHTB1", "#Delta #phi_{#slash{H}_{T}, bjet1}", "Events", 14, -7, 7    );
+  His->AddTH1C("MTT", "MTT", "M_{T}^{t} (Gev)", "Events", 500, 0, 1000  );
+  return true ;
 }       // -----  end of function DelCut::BookBJet  -----

@@ -180,7 +180,7 @@ bool DelCutVBFb::CheckCut()
   }
 
   if (ProName.find("Sys") == std::string::npos)
-    cutbit.set(11, !hasTau && Ana->vElectron->size() == 0 &&  Ana->vMuon->size() == 0);
+    cutbit.set(11, !hasTau && Ana->vElectron->size() == 0 &&  Ana->vPhoton->size() == 0 &&  Ana->vMuon->size() == 0);
   else 
     if (CheckSysLep() == false) return false;
 
@@ -233,6 +233,8 @@ int DelCutVBFb::FillCut()
 
     // Filling by functions
     FillJets(i);
+    FillBJet(i);
+    FillMet(i);
   }
 
   return true;

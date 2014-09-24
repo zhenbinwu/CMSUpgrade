@@ -17,6 +17,7 @@
 // ===========================================================================
 
 #include "DelAna.h"
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //       Class:  DelAna
 //      Method:  DelAna
@@ -38,8 +39,8 @@ DelAna::DelAna (DelEvent *DE, std::string pileup_,  std::string detector_)
   vMissingET = &DEV->vMissingET;
 
   PUCorMet = &DEV->PUCorMet;
-  MHT = &DE->MHT;
-  HT = &DE->HT;
+  MHT = &DEV->MHT;
+  HT = &DEV->HT;
 
   Weight = 1.0;
 }  // ~~~~~  end of method DelAna::DelAna  (constructor)  ~~~~~
@@ -119,6 +120,9 @@ bool DelAna::Clear()
   METAsys = -99;
   Mjj = 0.0;
   DelHT = -999.;
+  MTT = -999;
+  vBJet.clear();
+  assert(vBJet.empty());
 
   GenMet.SetPxPyPzE(0, 0, 0, 0);
 
@@ -147,6 +151,7 @@ int DelAna::GetBasic()
   Met   = PUCorMet->Mod();
   RawMet.SetMagPhi(vMissingET->at(0).MET, vMissingET->at(0).Phi);
   METAsys = std::fabs(Met - RawMet.Mod())/(Met + RawMet.Mod());
+  MTT = CalMTT();
   SysMet = SystemMet();
 
   if (vJet->size() > 0) J1 = &vJet->at(0);
@@ -161,6 +166,8 @@ int DelAna::GetBasic()
   for (int i = 0; i < vJet->size(); ++i)
   {
     RHT += vJet->at(i).P4().Mag();
+    if (vJet->at(i).BTag & (1<<0))
+      vBJet.push_back(vJet->at(i));
   }
   for (int i = 0; i < vElectron->size(); ++i)
   {
@@ -976,3 +983,43 @@ double DelAna::VBFBoostHT()
 
   return BoostHT.Pt();
 }       // -----  end of function DelAna::VBFBoostHT  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::CalMTT
+//  Description:  MTT defined in arXiv:1204.5182
+// ===========================================================================
+double DelAna::CalMTT()
+{
+  // Get 3 jets
+  if (vJet->size() < 3 ) return -999;
+  const double Wmass = 80.4;
+
+  // Find the jet not belonging to the pair of jets with the smallest
+  // invariant mass among the 3 pairs
+  typedef boost::bimap <
+    boost::bimaps::unordered_set_of <int>,
+    boost::bimaps::multiset_of<double, std::less<double> >
+  > bimass_bimap;
+  typedef bimass_bimap::value_type bimass;
+  bimass_bimap massmap;
+  massmap.insert(bimass(0, (vJet->at(1).P4() + vJet->at(2).P4()).M()));
+  massmap.insert(bimass(1, (vJet->at(0).P4() + vJet->at(2).P4()).M()));
+  massmap.insert(bimass(2, (vJet->at(0).P4() + vJet->at(1).P4()).M()));
+  /*
+   *for(bimass_bimap::right_const_iterator it=massmap.right.begin();
+   *  it!=massmap.right.end(); ++it)
+   *{
+   *  std::cout << " it " << it->first <<"  " << it->second << std::endl;
+   *}
+   */
+  Jet jeta = vJet->at(massmap.right.begin()->second);
+
+  // Term 1: (ET(ja) + sqrt(MET^2 + WMass^2))^2
+  double term1 = (jeta.P4().Et() + sqrt(pow(Met, 2) + pow(Wmass, 2)));
+  term1 = pow(term1, 2);
+
+  TLorentzVector LocalMET(MHT->Px(), MHT->Py(), 0, 0);
+  double term2 = (jeta.P4() + LocalMET).Mag2();
+
+  return sqrt(term1 + term2);
+}       // -----  end of function DelAna::CalMTT  -----

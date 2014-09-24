@@ -45,10 +45,8 @@ class DelCutDM : public DelCut
 
     /* ====================  ACCESSORS     ======================================= */
     bool BookHistogram();
-    bool FillSampleXS(double xs, double error);
     bool InitCutOrder(std::string ana="DM");
     int FillCut();
-    bool FillNEVT(double weight=1) const;
 
     /* ====================  MUTATORS      ======================================= */
     // Move HistTool to public so that the CMSSW can book and fill some
@@ -66,9 +64,6 @@ class DelCutDM : public DelCut
     bool CutFlow(std::bitset<NBITS> cutbit);
     bool CheckCut();
 
-    bool CheckSysLep() const;
-    double SysMet() const;
-    bool DetectorAccp(double Eta) const;
   private:
     /* ====================  DATA MEMBERS  ======================================= */
     DelAna *Ana;
@@ -81,25 +76,6 @@ class DelCutDM : public DelCut
     std::vector<std::string> CutOrder;
     std::map<std::string, std::string>  CutMap;
 
-    // Filling variables globally
-    int FillJets() const;
-    int FillLepton(int NCut) const;
-    bool BookLeptonEff();
-    bool BookJetEff();
-    bool BookBJet();
-
-    bool FillLepton();
-    // Filling variables for each cut
-    int FillJets(int NCut);
-    int FillEle(int NCut);
-    int FillMet(int NCut);
-
-    
-    int BookSUSYVar();
-    int FillSUSYVar(int NCut ) const;
-    // For MET Performance study
-    int BookMetPerf() const;
-    int FillMetPerf() const;
 }; /* -----  end of class DelCut  ----- */
 
 

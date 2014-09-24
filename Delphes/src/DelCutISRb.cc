@@ -149,22 +149,28 @@ bool DelCutISRb::CheckCut()
   {
     if (it->TauTag)
       if (it->PT > 20 && fabs(it->Eta) < 2.5)
+      {
         hasLep = true;
-    break;
+        break;
+      }
   }
   for(std::vector<Electron>::iterator it=Ana->vElectron->begin();
       it!=Ana->vElectron->end(); ++it)
   {
     if (it->PT > 20 && fabs(it->Eta) < 2.5)
+    {
       hasLep = true;
-    break;
+      break;
+    }
   }
   for(std::vector<Muon>::iterator it=Ana->vMuon->begin();
       it!=Ana->vMuon->end(); ++it)
   {
     if (it->PT > 20 && fabs(it->Eta) < 2.5)
+    {
       hasLep = true;
-    break;
+      break;
+    }
   }
   cutbit.set(5, !hasLep);
 
@@ -177,26 +183,28 @@ bool DelCutISRb::CheckCut()
       it!=Ana->vJet->end(); ++it)
   {
     if (it->BTag & (1<<0))
-        Lbjet = *it;
-    break;
+    {
+      Lbjet = *it;
+      break;
+    }
   }
 
 //----------------------------------------------------------------------------
 //  Upper limit cut on the leading b-jet
 //----------------------------------------------------------------------------
-  cutbit.set(5, Lbjet.PT < 100);
+  cutbit.set(5, Lbjet.PT != 0 && Lbjet.PT < 100);
 
 
 //----------------------------------------------------------------------------
 //  Delta Phi of leading b-jet and MET
 //----------------------------------------------------------------------------
   double deltaphi = Lbjet.P4().DeltaPhi(*Ana->MHT);
-  cutbit.set(6, fabs(deltaphi) < 1.8);
+  cutbit.set(6, Lbjet.PT != 0 && fabs(deltaphi) < 1.8);
 
 //----------------------------------------------------------------------------
 //  MTT: too complicated to be implemented
 //----------------------------------------------------------------------------
-  cutbit.set(7, true);
+  cutbit.set(7, Ana->MTT > 200);
 
 
 //----------------------------------------------------------------------------
@@ -232,6 +240,8 @@ int DelCutISRb::FillCut()
 
     // Filling by functions
     FillJets(i);
+    FillBJet(i);
+    FillMet(i);
   }
 
   return true;

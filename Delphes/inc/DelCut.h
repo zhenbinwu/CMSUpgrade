@@ -80,6 +80,7 @@ class DelCut
 
     // Filling variables for each cut
     int FillJets(int NCut);
+    int FillBJet(int NCut);
     int FillEle(int NCut);
     int FillMet(int NCut);
     

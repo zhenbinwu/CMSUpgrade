@@ -20,9 +20,13 @@
 #define  __DELANA_INC__
 
 
-#include <assert.h>
 #include "DelEvent.h"
 
+#include <assert.h>
+#include <functional>
+#include "boost/bimap.hpp"
+#include "boost/bimap/unordered_set_of.hpp"
+#include "boost/bimap/multiset_of.hpp"
 
 #ifdef  OXBRIDGE_MT2
 #include "Mt2/ChengHanBisect_Mt2_332_Calculator.h"
@@ -62,6 +66,7 @@ class DelAna
     bool DetectorApp(double Eta) const;
     int JetMatching(int GenIdx, std::vector<int>& JetIdx) const;
     /* ====================  MUTATORS      ======================================= */
+    double CalMTT();
     double Razor_CalcR();
     double Razor_CalcMRT();
     double Razor_CalcMR();
@@ -115,6 +120,7 @@ class DelAna
     int UtNPhotons;
     double UTJetsPT;
     double UTPhotonsPT;
+    double MTT; //Top transverse mass according to arXiv:1204.5182 
 
     // For Efficiency study
     // map<GenParticle index, reco index> 

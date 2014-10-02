@@ -56,6 +56,8 @@ class DelAna
     bool Clear();
     int GetBasic();
     bool MetDiLepton();
+    bool GetJetsPTorder();
+    bool GetJetsMassOrder();
     bool CalGenMet();
     bool FindMatchedJet();
     bool FindMatchedLep();

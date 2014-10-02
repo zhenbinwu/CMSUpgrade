@@ -71,7 +71,6 @@ bool DelCutISRb::InitCutOrder(std::string ana)
   CutOrder.clear();
   CutMap.clear();
 
-
   //Add name and order of the cutflow
   CutOrder.push_back("NoCut");
   CutOrder.push_back("METAsys");
@@ -108,7 +107,7 @@ bool DelCutISRb::InitCutOrder(std::string ana)
 // ===========================================================================
 bool DelCutISRb::CheckCut()
 {
-   cutbit.reset();
+  cutbit.reset();
 
   cutbit.set(0, Ana->METMHTAsys());
 
@@ -124,7 +123,6 @@ bool DelCutISRb::CheckCut()
 //  MHT cut on 430 as in Table 1
 //----------------------------------------------------------------------------
   cutbit.set(3, Ana->Met > 400);
-
 
 //----------------------------------------------------------------------------
 //  At least 1 bjet with PT > 25 and |eta| < 2.5
@@ -226,6 +224,9 @@ bool DelCutISRb::CheckCut()
 // ===========================================================================
 int DelCutISRb::FillCut()
 {
+  Ana->Clear();
+  Ana->GetJetsPTorder();
+  Ana->GetBasic();
 //----------------------------------------------------------------------------
 //  Check cut and fill cut-based plots
 //----------------------------------------------------------------------------

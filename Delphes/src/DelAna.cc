@@ -100,6 +100,7 @@ bool DelAna::CheckFlag(std::string name)
 bool DelAna::RunPerEvent()
 {
   Clear();
+  GetJetsPTorder();
   GetBasic();
 }       // -----  end of function DelAna::RunPerEvent  -----
 
@@ -154,13 +155,6 @@ int DelAna::GetBasic()
   MTT = CalMTT();
   SysMet = SystemMet();
 
-  if (vJet->size() > 0) J1 = &vJet->at(0);
-  if (vJet->size() > 1) 
-  {
-    J2 = &vJet->at(1);
-    Mjj = (J1->P4() + J2->P4()).M();
-  }
-  if (vJet->size() > 2) J3 = &vJet->at(2);
   Weight = vEvent->at(0).Weight;
 
   for (int i = 0; i < vJet->size(); ++i)
@@ -1023,3 +1017,71 @@ double DelAna::CalMTT()
 
   return sqrt(term1 + term2);
 }       // -----  end of function DelAna::CalMTT  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::GetJetsPTorder
+//  Description:  
+// ===========================================================================
+bool DelAna::GetJetsPTorder() 
+{
+  if (vJet->size() > 0) J1 = &vJet->at(0);
+  if (vJet->size() > 1) 
+  {
+    J2 = &vJet->at(1);
+    Mjj = (J1->P4() + J2->P4()).M();
+  }
+  if (vJet->size() > 2) J3 = &vJet->at(2);
+
+  return true;
+}       // -----  end of function DelAna::GetJetsPTorder  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  DelAna::GetJetsMassOrder
+//  Description:  
+// ===========================================================================
+bool DelAna::GetJetsMassOrder()
+{
+  if (vJet->size() < 3 ) 
+  {
+    std::cout<<"Run to \033[0;31m"<<__func__<<"\033[0m at \033[1;36m"<< __FILE__<<"\033[0m, line \033[0;34m"<< __LINE__<<"\033[0m"<< std::endl; 
+    GetJetsPTorder();
+    return false;
+  }
+
+  // Find the jet not belonging to the pair of jets with the smallest
+  // invariant mass among the 3 pairs
+  typedef boost::bimap <
+    boost::bimaps::unordered_set_of <int>,
+    boost::bimaps::multiset_of<double, std::greater<double> >
+  > bimass_bimap;
+  typedef bimass_bimap::value_type bimass;
+  bimass_bimap massmap;
+  massmap.insert(bimass(0, (vJet->at(1).P4() + vJet->at(2).P4()).M()));
+  massmap.insert(bimass(1, (vJet->at(0).P4() + vJet->at(2).P4()).M()));
+  massmap.insert(bimass(2, (vJet->at(0).P4() + vJet->at(1).P4()).M()));
+
+  for(bimass_bimap::right_const_iterator it=massmap.right.begin();
+    it!=massmap.right.end(); ++it)
+  {
+    std::cout << " it " << it->first <<"  " << it->second << std::endl;
+  }
+  
+  J3 = &vJet->at(massmap.right.begin()->second);
+
+  double J1Pt = -999;
+  for (int i = 0; i < 3; ++i)
+  {
+    if (i == massmap.right.begin()->second) continue;
+
+
+    if ( vJet->at(i).PT > J1Pt) 
+    { 
+      J1 = &vJet->at(i);
+      J1Pt = J1->PT;
+    }
+    else
+      J2 = &vJet->at(i);
+  }
+  
+  return true;
+}       // -----  end of function DelAna::GetJetsMassOrder  -----

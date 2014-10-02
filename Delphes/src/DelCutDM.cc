@@ -220,6 +220,10 @@ bool DelCutDM::CheckCut()
 // ===========================================================================
 int DelCutDM::FillCut()
 {
+  Ana->Clear();
+  Ana->GetJetsMassOrder();
+  Ana->GetBasic();
+
   His->FillTH1("MetRelSys", Ana->METAsys);
   His->FillTPro("MHTAsys", Ana->Met, Ana->METAsys);
   His->FillTPro("METAsys", Ana->RawMet.Mod(), Ana->METAsys);

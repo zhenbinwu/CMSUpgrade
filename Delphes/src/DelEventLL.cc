@@ -122,7 +122,7 @@ int DelEventLL::CheckLeptonMode()
   }
   
    
-  assert(vEle.size() + vMuon.size() + vTau.size() + vNv.size() == 2);
+  //assert(vEle.size() + vMuon.size() + vTau.size() + vNv.size() == 2);
 
   if (vEle.size() == 2) return 1;
   if (vMuon.size() == 2) return 2;

@@ -12,9 +12,10 @@ import subprocess
 RunProxy  = True
 DelDir    = '/home/benwu/CMSUpgrade_TP/Delphes'
 DelExe    = 'DelFill'
-Directory = '/home/benwu/CMSUpgrade_TP/Output/Sbottom300'
-Analysis  = 'DM_5_30'
+Directory = '/home/benwu/CMSUpgrade_TP/Output/0PUOct'
+Analysis  = 'DM-VBFb-ISRb_5_30'
 UserEMAIL = 'benwu@fnal.gov'
+Fraction  = 3
 Detectors = [
     'Snowmass',
     #'PhaseI',
@@ -36,35 +37,69 @@ Processes = [
     ##'WJETS_13TEV',
     ##'ZJETS_13TEV',
     ##'TTBAR_13TEV',
-    'Sbottom300_2p_14TeV', 
-    'Sbottom300_QCD0_14TeV', 
-    'Sbottom300_QED0_14TeV',    
-    'Sbottom300_QCD2QED2_14TeV', 
+    'BJ_14TEV_HT7',
+    'BJ_14TEV_HT6',
+    'BJ_14TEV_HT5',
+    'BJ_14TEV_HT4',
+    'BJ_14TEV_HT3',
+    'BJ_14TEV_HT2',
+    'BJ_14TEV_HT1',
+    'BJJ_14TEV_HT5',
+    'BJJ_14TEV_HT4',
+    'BJJ_14TEV_HT3',
+    'BJJ_14TEV_HT2',
+    'BJJ_14TEV_HT1',
+    'TT_14TEV_HT5',
+    'TT_14TEV_HT4',
+    'TT_14TEV_HT3',
+    'TT_14TEV_HT2',
+    'TT_14TEV_HT1',
+    'B_14TEV_HT1' ,
 
-    #'B_14TEV_HT1' ,
-    #'BJ_14TEV_HT1',
-    #'BJ_14TEV_HT2',
-    #'BJ_14TEV_HT3',
-    #'BJ_14TEV_HT4',
-    #'BJ_14TEV_HT5',
-    #'BJ_14TEV_HT6',
-    #'BJ_14TEV_HT7',
-    #'BJJ_14TEV_HT1',
-    #'BJJ_14TEV_HT2',
-    #'BJJ_14TEV_HT3',
-    #'BJJ_14TEV_HT4',
-    #'BJJ_14TEV_HT5',
-    #'TT_14TEV_HT1',
-    #'TT_14TEV_HT2',
-    #'TT_14TEV_HT3',
-    #'TT_14TEV_HT4',
-    #'TT_14TEV_HT5',
-    #'LL_14TEV_HT1',
-    #'LL_14TEV_HT2',
-    #'LL_14TEV_HT3',
-    #'LL_14TEV_HT4',
-    #'LL_14TEV_HT5',
-    #'LL_14TEV_HT6',
+    'BB_14TEV_HT1' ,
+    'BB_14TEV_HT2' ,
+    'BB_14TEV_HT3' ,
+    'BB_14TEV_HT4' ,
+    'BB_14TEV_HT5' ,
+    'BBB_14TEV_HT1',
+    'BBB_14TEV_HT2',
+    'BBB_14TEV_HT3',
+    'H_14TEV_HT1'  ,
+    'H_14TEV_HT2'  ,
+    'H_14TEV_HT3'  ,
+    'H_14TEV_HT4'  ,
+    'LL_14TEV_HT1' ,
+    'LL_14TEV_HT2' ,
+    'LL_14TEV_HT3' ,
+    'LL_14TEV_HT4' ,
+    'LL_14TEV_HT5' ,
+    'LL_14TEV_HT6' ,
+    'LLB_14TEV_HT1',
+    'LLB_14TEV_HT2',
+    'LLB_14TEV_HT3',
+    'TB_14TEV_HT1' ,
+    'TB_14TEV_HT2' ,
+    'TB_14TEV_HT3' ,
+    'TB_14TEV_HT4' ,
+    'TB_14TEV_HT5' ,
+    'TJ_14TEV_HT1' ,
+    'TJ_14TEV_HT2' ,
+    'TJ_14TEV_HT3' ,
+    'TJ_14TEV_HT4' ,
+    'TJ_14TEV_HT5' ,
+
+    'Sbottom50_QCD4QED4_14TEV',
+    'Sbottom100_QCD4QED4_14TEV',
+    'Sbottom150_QCD4QED4_14TEV',
+    'Sbottom200_QCD4QED4_14TEV',
+    'Sbottom300_QCD4QED4_14TEV',
+    'Sbottom400_QCD4QED4_14TEV',
+    'Sbottom500_QCD4QED4_14TEV',
+    'Sbottom600_QCD4QED4_14TEV',
+    'Sbottom700_QCD4QED4_14TEV',
+    'Sbottom1000_QCD4QED4_14TEV',
+
+
     
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 33TEV ~~~~~
     #'B_33TEV_HT1',
@@ -170,7 +205,25 @@ def QSUB(Analysis, Process, Pileup, Detector):
     command1 = "%s/%s %s %s %s %s" % (DelDir, DelExe, Pileup, Process, Analysis, Detector)
 
 
-    job_string = """#!/bin/tcsh
+    #job_string = """#!/bin/tcsh
+    ##PBS -l walltime=%s
+    ##PBS -l %s
+    ##PBS -N %s
+    ##PBS -d %s
+    ##PBS -o ./%s_stdout
+    ##PBS -e ./%s_stderr
+    #env
+    #pwd
+    #date
+    #cd %s/..
+    #source setup.csh
+    #setenv X509_USER_PROXY ~/.x509_user_proxy
+    #cd $PBS_O_WORKDIR
+    #pwd
+    #%s
+    #date""" % (job_name, walltime, processors, Directory, job_name, job_name, DelDir, command1)
+
+    job_string = """#!/bin/bash
     #PBS -N %s
     #PBS -l walltime=%s
     #PBS -l %s
@@ -179,8 +232,8 @@ def QSUB(Analysis, Process, Pileup, Detector):
     #PBS -e ./%s_stderr
     date
     cd %s/..
-    source setup.csh
-    setenv X509_USER_PROXY ~/.x509_user_proxy
+    source setup.sh
+    export X509_USER_PROXY=~/.x509_user_proxy
     cd $PBS_O_WORKDIR
     pwd
     %s
@@ -246,17 +299,19 @@ def my_process():
           for splitpro in SplitPro(det, pu, pro):
             print splitpro
             QSUB(Analysis, splitpro, pu, det)
+            time.sleep(2)
+          time.sleep(10)
 
 def SplitPro(detector, pileup, pro):
     globout=glob.glob('%s/FileList/%s/%s*%s.list'  % (Directory, detector, pro, pileup))
     testout=[]
-    for out in globout:
+    bend = len(globout)/Fraction
+    if bend == 0:
+      bend = 1
+    for out in sorted(globout)[:bend]:
         file = out.split('/')[-1]
-        #print file
         match = re.match(r'(%s.*)_%s\.list' % (pro, pileup), file)
-        #match = re.match('%s*%s' % (pro, pileup), file)
         if match != None:
-            #print match.group(0)
             print match.group(1)
             testout.append(match.group(1))
     return testout

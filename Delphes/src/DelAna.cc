@@ -1060,14 +1060,17 @@ bool DelAna::GetJetsMassOrder()
   massmap.insert(bimass(1, (vJet->at(0).P4() + vJet->at(2).P4()).M()));
   massmap.insert(bimass(2, (vJet->at(0).P4() + vJet->at(1).P4()).M()));
 
-  for(bimass_bimap::right_const_iterator it=massmap.right.begin();
-    it!=massmap.right.end(); ++it)
-  {
-    std::cout << " it " << it->first <<"  " << it->second << std::endl;
-  }
+  /*
+   *for(bimass_bimap::right_const_iterator it=massmap.right.begin();
+   *  it!=massmap.right.end(); ++it)
+   *{
+   *  std::cout << " it " << it->first <<"  " << it->second <<" PT " << vJet->at(it->second).PT << std::endl;
+   *}
+   */
   
   J3 = &vJet->at(massmap.right.begin()->second);
 
+  //std::cout << "J3 " << J3->PT << std::endl;
   double J1Pt = -999;
   for (int i = 0; i < 3; ++i)
   {
@@ -1076,12 +1079,16 @@ bool DelAna::GetJetsMassOrder()
 
     if ( vJet->at(i).PT > J1Pt) 
     { 
+      J2 = J1;
       J1 = &vJet->at(i);
       J1Pt = J1->PT;
     }
     else
       J2 = &vJet->at(i);
   }
+  Mjj = (J1->P4() + J2->P4()).M();
   
+  //std::cout << "J1 " << J1->PT << std::endl;
+  //std::cout << "J2 " << J2->PT << std::endl;
   return true;
 }       // -----  end of function DelAna::GetJetsMassOrder  -----

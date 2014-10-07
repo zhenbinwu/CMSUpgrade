@@ -301,11 +301,11 @@ int DPhes::SetPreName(std::string process, std::string pu, std::string detector)
     //tempname = ModifiedPreName(name, "LL", "Lep");
     //MDelPro["Lep"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    tempname = ModifiedPreName(name, "LL", "SysEE");
-    MDelPro["SysEE"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    //tempname = ModifiedPreName(name, "LL", "SysEE");
+    //MDelPro["SysEE"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
-    tempname = ModifiedPreName(name, "LL", "SysMM");
-    MDelPro["SysMM"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
+    //tempname = ModifiedPreName(name, "LL", "SysMM");
+    //MDelPro["SysMM"] = std::unique_ptr<DelProcess>(new DelProcess(ANA, tempname.Data()));
 
     return 1;
   }

@@ -62,6 +62,11 @@ Ken: Ken.o MCHis.o HTHis.o HTSample.o StopStyle.o
 HTCom: HTCom.o MCHis.o HTHis.o HTSample.o StopStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"
+
+CombingBkg: CombingBkg.o MCHis.o HTHis.o HTSample.o StopStyle.o
+	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
+	@echo "$@ done"
+
 PlotEff: PlotEff.o MCHis.o HTHis.o HTSample.o StopStyle.o HiggsPaperStyle.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt) $@
 	@echo "$@ done"

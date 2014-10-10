@@ -74,24 +74,24 @@ bool DelCutISRb::InitCutOrder(std::string ana)
   //Add name and order of the cutflow
   CutOrder.push_back("NoCut");
   CutOrder.push_back("METAsys");
-  CutOrder.push_back("Leadbjet");
-  CutOrder.push_back("MET400");
+  CutOrder.push_back("LeadNonbjet");
   CutOrder.push_back("Nbjet");
   CutOrder.push_back("LepVeto");
-  CutOrder.push_back("LBjetPT");
-  CutOrder.push_back("dPhibMET");
+  CutOrder.push_back("MET430");
   CutOrder.push_back("MTtop");
+  CutOrder.push_back("dPhibMET");
+  CutOrder.push_back("LBjetPT");
 
   //Set the cutbit of each cut
-  CutMap["NoCut"]    = "00000000000000000";
-  CutMap["METAsys"]  = "00000000000000001";
-  CutMap["Leadbjet"] = "00000000000000111";
-  CutMap["MET400"]   = "00000000000001111";
-  CutMap["Nbjet"]    = "00000000000011111";
-  CutMap["LepVeto"]  = "00000000000111111";
-  CutMap["LBjetPT"]  = "00000000001111111";
-  CutMap["dPhibMET"] = "00000000011111111";
-  CutMap["MTtop"]    = "00000000111111111";
+  CutMap["NoCut"]       = "00000000000000000";
+  CutMap["METAsys"]     = "00000000000000001";
+  CutMap["LeadNonbjet"] = "00000000000000011";
+  CutMap["Nbjet"]       = "00000000000000111";
+  CutMap["LepVeto"]     = "00000000000001111";
+  CutMap["MET430"]      = "00000000000011111";
+  CutMap["MTtop"]       = "00000000000111111";
+  CutMap["dPhibMET"]    = "00000000001111111";
+  CutMap["LBjetPT"]     = "00000000011111111";
 
 
   assert(CutOrder.size() == CutMap.size());
@@ -109,38 +109,48 @@ bool DelCutISRb::CheckCut()
 {
   cutbit.reset();
 
-  cutbit.set(0, Ana->METMHTAsys());
 
-//----------------------------------------------------------------------------
-// The leading non b-jet with PT(j1) > 120GeV
-//----------------------------------------------------------------------------
-  cutbit.set(1, Ana->J1 !=0 && !Ana->J1->BTag & (1<<0));
-  if (Ana->J1 != 0)
-  cutbit.set(2, Ana->J1->PT > 120);
-
-
-//----------------------------------------------------------------------------
-//  MHT cut on 430 as in Table 1
-//----------------------------------------------------------------------------
-  cutbit.set(3, Ana->Met > 400);
-
-//----------------------------------------------------------------------------
-//  At least 1 bjet with PT > 25 and |eta| < 2.5
-//----------------------------------------------------------------------------
+  Jet LeadNonbJet;
+  Jet Leadbjet;
+  Leadbjet.PT = -999;
+  LeadNonbJet.PT = -999;
   int Nbjet = 0;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
       it!=Ana->vJet->end(); ++it)
   {
+    if (LeadNonbJet.PT == -999 && !(it->BTag & (1<<0)))
+    {
+      LeadNonbJet  = *it;
+    }
+
     if (it->BTag & (1<<0))
+    {
+      if (Leadbjet.PT == -999)
+      {
+        Leadbjet = *it;
+      }
+
       if (it->PT > 25 && fabs(it->Eta) < 2.5)
         Nbjet++;
+    }
   }
-  cutbit.set(4, Nbjet >= 1);
+
+  cutbit.set(0, Ana->METMHTAsys());
+
+  //----------------------------------------------------------------------------
+  // The leading non b-jet with PT(j1) > 120GeV
+  //---------------------------------------------------------------------------- 
+  cutbit.set(1, LeadNonbJet.PT > 120);
+
+  //----------------------------------------------------------------------------
+  //  At least 1 bjet with PT > 25 and |eta| < 2.5
+  //----------------------------------------------------------------------------
+  cutbit.set(2, Nbjet >= 1);
 
 
-//----------------------------------------------------------------------------
-//  Lepton veto: Pt> 20GeV and |eta| < 2.5
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //  Lepton veto: Pt> 20GeV and |eta| < 2.5
+  //----------------------------------------------------------------------------
   bool hasLep = false;
   for(std::vector<Jet>::iterator it=Ana->vJet->begin();
       it!=Ana->vJet->end(); ++it)
@@ -170,44 +180,34 @@ bool DelCutISRb::CheckCut()
       break;
     }
   }
-  cutbit.set(5, !hasLep);
+  cutbit.set(3, !hasLep);
 
 
-//----------------------------------------------------------------------------
-// Get the Leading b-jet
-//----------------------------------------------------------------------------
-  Jet Lbjet;
-  for(std::vector<Jet>::iterator it=Ana->vJet->begin();
-      it!=Ana->vJet->end(); ++it)
-  {
-    if (it->BTag & (1<<0))
-    {
-      Lbjet = *it;
-      break;
-    }
-  }
+  //----------------------------------------------------------------------------
+  //  MHT cut on 430 as in Table 1
+  //----------------------------------------------------------------------------
+  cutbit.set(4, Ana->Met > 430);
 
-//----------------------------------------------------------------------------
-//  Upper limit cut on the leading b-jet
-//----------------------------------------------------------------------------
-  cutbit.set(5, Lbjet.PT != 0 && Lbjet.PT < 100);
+  //----------------------------------------------------------------------------
+  //  MTT: too complicated to be implemented
+  //----------------------------------------------------------------------------
+  cutbit.set(5, Ana->MTT > 200);
 
+  //----------------------------------------------------------------------------
+  //  Delta Phi of leading b-jet and MET
+  //----------------------------------------------------------------------------
+  double deltaphi = Leadbjet.P4().DeltaPhi(*Ana->MHT);
+  cutbit.set(6, Leadbjet.PT != -999 && fabs(deltaphi) < 1.8);
 
-//----------------------------------------------------------------------------
-//  Delta Phi of leading b-jet and MET
-//----------------------------------------------------------------------------
-  double deltaphi = Lbjet.P4().DeltaPhi(*Ana->MHT);
-  cutbit.set(6, Lbjet.PT != 0 && fabs(deltaphi) < 1.8);
-
-//----------------------------------------------------------------------------
-//  MTT: too complicated to be implemented
-//----------------------------------------------------------------------------
-  cutbit.set(7, Ana->MTT < 200);
+  //----------------------------------------------------------------------------
+  //  Upper limit cut on the leading b-jet
+  //----------------------------------------------------------------------------
+  cutbit.set(7, Leadbjet.PT != -999 && Leadbjet.PT < 100);
 
 
-//----------------------------------------------------------------------------
-//  Always fill in the event cutbits information
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //  Always fill in the event cutbits information
+  //----------------------------------------------------------------------------
   std::vector<bool> Vbits;
   for (std::size_t i = 0; i < cutbit.size(); ++i)
     Vbits.push_back(cutbit.test(i));

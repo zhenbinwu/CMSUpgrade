@@ -984,8 +984,20 @@ double DelAna::VBFBoostHT()
 // ===========================================================================
 double DelAna::CalMTT()
 {
+
+  std::vector<Jet> vTempJets;
+  for (unsigned i = 0; i < vJet->size(); ++i)
+  {
+    if (vJet->at(i).PT > 25)
+    {
+      vTempJets.push_back(vJet->at(i));
+    }
+  }
   // Get 3 jets
-  if (vJet->size() < 3 ) return -999;
+  if (vTempJets.size() < 3 ) return 0;
+
+
+
   const double Wmass = 80.4;
 
   // Find the jet not belonging to the pair of jets with the smallest
@@ -996,9 +1008,9 @@ double DelAna::CalMTT()
   > bimass_bimap;
   typedef bimass_bimap::value_type bimass;
   bimass_bimap massmap;
-  massmap.insert(bimass(0, (vJet->at(1).P4() + vJet->at(2).P4()).M()));
-  massmap.insert(bimass(1, (vJet->at(0).P4() + vJet->at(2).P4()).M()));
-  massmap.insert(bimass(2, (vJet->at(0).P4() + vJet->at(1).P4()).M()));
+  massmap.insert(bimass(0, (vTempJets.at(1).P4() + vTempJets.at(2).P4()).M()));
+  massmap.insert(bimass(1, (vTempJets.at(0).P4() + vTempJets.at(2).P4()).M()));
+  massmap.insert(bimass(2, (vTempJets.at(0).P4() + vTempJets.at(1).P4()).M()));
   /*
    *for(bimass_bimap::right_const_iterator it=massmap.right.begin();
    *  it!=massmap.right.end(); ++it)
@@ -1006,9 +1018,9 @@ double DelAna::CalMTT()
    *  std::cout << " it " << it->first <<"  " << it->second << std::endl;
    *}
    */
-  Jet jeta = vJet->at(massmap.right.begin()->second);
+  Jet jeta = vTempJets.at(massmap.right.begin()->second);
 
-  // Term 1: (ET(ja) + sqrt(MET^2 + WMass^2))^2
+  // Term 1: (ET(ja) +.qrt(MET^2 + WMass^2))^2
   double term1 = (jeta.P4().Et() + sqrt(pow(Met, 2) + pow(Wmass, 2)));
   term1 = pow(term1, 2);
 

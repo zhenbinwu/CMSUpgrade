@@ -142,6 +142,8 @@ bool DelCutDM::CheckCut()
 //----------------------------------------------------------------------------
   if (Ana->PileUp == "140PileUp")
     cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 200);
+  else if (Ana->PileUp == "50PileUp")
+    cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 70);
   else
     cutbit.set(7,  Ana->J1 != 0 && Ana->J1->PT >= 50);
 
